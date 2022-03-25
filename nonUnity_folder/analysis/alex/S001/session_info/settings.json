@@ -1,0 +1,10 @@
+{
+    "blocks": 6,
+    "trialsPerBlock": 12,
+    "cueTime": 2,
+    "delay": 4,
+    "ITI": 6,
+    "spawnRadius": 85,
+    "spawnRadius_object": 70,
+    "trial_specification_name": "trialData.csv"
+}

@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,targets,start_x,start_z,end_z,target_z,euclideanDistance,objectName,experimentStarted,objectNumber,navStartTime,navEndTime,navTime,timesObjectPresented,player_movement_location_0
+AMT_standard,remix-cad0c258-2f74-4165-9314-216b8fe3e82a,1,1,1,1,8.201792,75.44601,6,46.70823,-65.49192,,,,,,,,,,,AMT_standard/remix-cad0c258-2f74-4165-9314-216b8fe3e82a/S001/trackers/player_movement_T001.csv

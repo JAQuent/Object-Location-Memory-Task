@@ -1,0 +1,33 @@
+{
+    "blocks": 6,
+    "trialsPerBlock": 12,
+    "cueTime": 2,
+    "delay": 4,
+    "ITI": 1,
+    "spawnRadius": 85,
+    "spawnRadius_object": 70,
+    "trial_specification_name": "trialData.csv",
+    "language": "english",
+    "objectNames_eng": [
+        "backpack",
+        "football",
+        "barrel",
+        "chair",
+        "teddy",
+        "vase"
+    ],
+    "cueInstructions_eng": "Go to the \n",
+    "trial_eng": "trial",
+    "block_eng": "block",
+    "objectNames_cn": [
+        "\u80cc\u5305",
+        "\u8db3\u7403",
+        "\u6876",
+        "\u6905\u5b50",
+        "\u73a9\u5076\u718a",
+        "\u82b1\u74f6"
+    ],
+    "cueInstructions_cn": "\u524d\u5f80 \n",
+    "trial_cn": "trial",
+    "block_cn": "block"
+}

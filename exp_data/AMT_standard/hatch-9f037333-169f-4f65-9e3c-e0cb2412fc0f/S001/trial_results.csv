@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,targets,start_x,start_z,end_z,target_z,euclideanDistance,objectName,experimentStarted,objectNumber,navStartTime,navEndTime,navTime,timesObjectPresented,player_movement_location_0
+AMT_standard,hatch-9f037333-169f-4f65-9e3c-e0cb2412fc0f,1,1,1,1,11.09604,63.49846,6,72.41827,-21.04803,,,,,,,,,,,AMT_standard/hatch-9f037333-169f-4f65-9e3c-e0cb2412fc0f/S001/trackers/player_movement_T001.csv

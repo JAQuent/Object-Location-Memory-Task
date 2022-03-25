@@ -1,0 +1,4 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,targets,start_x,start_z,end_z,target_z,euclideanDistance,objectName,experimentStarted,objectNumber,navStartTime,navEndTime,navTime,timesObjectPresented,end_x,target_x,player_movement_location_0
+AMT_standard,alex2,1,1,1,1,13.90921,31.12,6,45.80211,-50.33202,-58.56562,-59.7073,2.658363,vase,13.90921,6,19.92212,31.12,11.19787,1,1.879295,-0.521424,AMT_standard/alex2/S001/trackers/player_movement_T001.csv
+AMT_standard,alex2,1,2,2,1,32.12117,67.68,6,-14.77795,62.89227,-20.27672,-59.7073,41.09776,vase,13.90921,6,38.13359,67.68,29.54641,2,11.06542,-0.521424,AMT_standard/alex2/S001/trackers/player_movement_T002.csv
+AMT_standard,alex2,1,3,2,2,68.69011,98.32,6,-36.65963,-24.91437,-62.34697,-59.7073,5.104044,vase,13.90921,6,74.70284,98.32,23.61716,3,3.847031,-0.521424,AMT_standard/alex2/S001/trackers/player_movement_T003.csv

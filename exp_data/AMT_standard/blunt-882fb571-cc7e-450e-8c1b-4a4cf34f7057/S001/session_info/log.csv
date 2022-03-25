@@ -1,0 +1,41 @@
+timestamp,log_type,message,stacktrace
+7.576078,Log,[<b><color=#AD477C>UXF</color></b>] Beginning session.,UnityEngine.Debug:Log (object).  UXF.Utilities:UXFDebugLog (string) (at Assets/UXF/Scripts/Etc/Utilities.cs:13).  UXF.Session:Begin (stringstringintSystem.Collections.Generic.Dictionary`2<string object>UXF.Settings) (at Assets/UXF/Scripts/Session.cs:333).  UXF.UI.UIController/<TryBeginSessionFromUISequence>d__43:MoveNext () (at Assets/UXF/Scripts/UI/UIController.cs:421).  UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator).  UXF.UI.UIController:TryBeginSessionFromUI () (at Assets/UXF/Scripts/UI/UIController.cs:214).  UnityEngine.EventSystems.EventSystem:Update () (at Library/PackageCache/com.unity.ugui@1.0.0/Runtime/EventSystem/EventSystem.cs:385).  
+10.72738,Log,Start message send,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:69).  
+10.72738,Log,Cue start of trial 1,UnityEngine.Debug:Log (object).  ExperimentController/<ShowCue>d__39:MoveNext () (at Assets/Scripts/ExperimentController.cs:267).  UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator).  ExperimentController:SetUpTrial () (at Assets/Scripts/ExperimentController.cs:141).  UnityEngine.Events.UnityEvent`1<UXF.Trial>:Invoke (UXF.Trial).  UXF.Trial:Begin () (at Assets/UXF/Scripts/Etc/Trial.cs:122).  UXF.Session:BeginNextTrial () (at Assets/UXF/Scripts/Session.cs:414).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:75).  
+12.72923,Log,Cue end of trial 1,UnityEngine.Debug:Log (object).  ExperimentController/<ShowCue>d__39:MoveNext () (at Assets/Scripts/ExperimentController.cs:285).  UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumeratorintptr).  
+12.72923,Log,Start of delay period of trial 1,UnityEngine.Debug:Log (object).  ExperimentController/<Delay>d__40:MoveNext () (at Assets/Scripts/ExperimentController.cs:306).  UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator).  ExperimentController/<ShowCue>d__39:MoveNext () (at Assets/Scripts/ExperimentController.cs:299).  UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumeratorintptr).  
+16.73205,Log,End of delay period of trial 1,UnityEngine.Debug:Log (object).  ExperimentController/<Delay>d__40:MoveNext () (at Assets/Scripts/ExperimentController.cs:325).  UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumeratorintptr).  
+16.84464,Log,leftTurn was pressed.,UnityEngine.Debug:Log (object).  ThreeButtonMovement:Update () (at Assets/Scripts/ThreeButtonMovement.cs:45).  
+22.41909,Log,leftTurn was pressed.,UnityEngine.Debug:Log (object).  ThreeButtonMovement:Update () (at Assets/Scripts/ThreeButtonMovement.cs:45).  
+22.71269,Log,rightTurn was pressed.,UnityEngine.Debug:Log (object).  ThreeButtonMovement:Update () (at Assets/Scripts/ThreeButtonMovement.cs:51).  
+27.34655,Log,rightTurn was pressed.,UnityEngine.Debug:Log (object).  ThreeButtonMovement:Update () (at Assets/Scripts/ThreeButtonMovement.cs:51).  
+27.74896,Log,forwardKey was pressed.,UnityEngine.Debug:Log (object).  ThreeButtonMovement:Update () (at Assets/Scripts/ThreeButtonMovement.cs:39).  
+34.15955,Log,forwardKey was pressed.,UnityEngine.Debug:Log (object).  ThreeButtonMovement:Update () (at Assets/Scripts/ThreeButtonMovement.cs:39).  
+34.58126,Log,leftTurn was pressed.,UnityEngine.Debug:Log (object).  ThreeButtonMovement:Update () (at Assets/Scripts/ThreeButtonMovement.cs:45).  
+37.94185,Log,leftTurn was pressed.,UnityEngine.Debug:Log (object).  ThreeButtonMovement:Update () (at Assets/Scripts/ThreeButtonMovement.cs:45).  
+38.97088,Log,leftTurn was pressed.,UnityEngine.Debug:Log (object).  ThreeButtonMovement:Update () (at Assets/Scripts/ThreeButtonMovement.cs:45).  
+39.69889,Log,leftTurn was pressed.,UnityEngine.Debug:Log (object).  ThreeButtonMovement:Update () (at Assets/Scripts/ThreeButtonMovement.cs:45).  
+40.07183,Log,forwardKey was pressed.,UnityEngine.Debug:Log (object).  ThreeButtonMovement:Update () (at Assets/Scripts/ThreeButtonMovement.cs:39).  
+42.35952,Log,forwardKey was pressed.,UnityEngine.Debug:Log (object).  ThreeButtonMovement:Update () (at Assets/Scripts/ThreeButtonMovement.cs:39).  
+44.63681,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.64448,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.65283,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.65772,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.66256,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.66793,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.67312,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.67822,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.68295,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.68858,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.69346,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.69863,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.7042,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.70989,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.71502,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.7215,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.73047,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.73544,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.74019,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.74502,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+44.74995,Log,The end,UnityEngine.Debug:Log (object).  ExperimentController:Update () (at Assets/Scripts/ExperimentController.cs:105).  
+52.44331,Log,Start of ITI period of trial1,UnityEngine.Debug:Log (object).  ExperimentController/<countdownITI>d__41:MoveNext () (at Assets/Scripts/ExperimentController.cs:332).  UnityEngine.MonoBehaviour:StartCoroutine (System.Collections.IEnumerator).  ExperimentController:BeingCountdownITI () (at Assets/Scripts/ExperimentController.cs:348).  UnityEngine.Events.UnityEvent`1<UXF.Trial>:Invoke (UXF.Trial).  UXF.Trial:End () (at Assets/UXF/Scripts/Etc/Trial.cs:139).  UXF.Session:End () (at Assets/UXF/Scripts/Session.cs:631).  UXF.Session:OnApplicationQuit () (at Assets/UXF/Scripts/Session.cs:718).  

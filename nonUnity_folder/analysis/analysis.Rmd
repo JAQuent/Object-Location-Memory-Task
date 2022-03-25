@@ -1,0 +1,268 @@
+---
+title: "How to analyse AMT data"
+author: "Joern Alexander Quent"
+date: "11/11/2021"
+output: html_document
+---
+
+```{r setup, include = FALSE, warning = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = FALSE,  warning = FALSE, message = FALSE)
+```
+
+```{r}
+library(ggplot2)
+library(plyr)
+library(assortedRFunctions)
+library(knitr)
+library(brms)
+```
+
+```{r}
+subjectName <- "alex2/"
+
+path <- paste0(subjectName, "S001/")
+```
+
+# Trial results
+```{r, load_trial_results}
+trialResults <- read.table(paste0(path, "trial_results.csv"), header = TRUE, sep = ",")
+```
+
+## Learning curve
+```{r learning_curve}
+trialResults_afterBlock1 <- trialResults[trialResults$block_num > 1, ]
+trialResults_afterBlock1$Object <- trialResults_afterBlock1$objectName
+
+trialResults_afterBlock1$timesObjectPresented <- as.factor(trialResults_afterBlock1$timesObjectPresented)
+
+ggplot(trialResults_afterBlock1, aes(x = timesObjectPresented , y = euclideanDistance)) + 
+  geom_point(aes(group = Object, colour = Object)) + 
+  geom_line(aes(group = Object, colour = Object)) +
+  labs(title = "Learning Curve: Placement", x = "Number of times the object was presented", y = "Euclidean distance in vm")
+```
+
+```{r, eval = FALSE}
+df <- trialResults_afterBlock1
+df$timesObjectPresented <- as.numeric(df$timesObjectPresented)
+
+m1  <- glm(euclideanDistance ~ timesObjectPresented, data = df, family = Gamma)
+bm1 <- brm(euclideanDistance ~ timesObjectPresented, data = df, family = Gamma)
+
+# https://cran.r-project.org/web/packages/brms/vignettes/brms_monotonic.html
+```
+
+
+```{r}
+ggplot(trialResults_afterBlock1, aes(x = timesObjectPresented, y = navTime)) + 
+  geom_point(aes(group = Object, colour = Object)) + 
+  geom_line(aes(group = Object, colour = Object)) +
+  labs(title = "Learning Curve: Navigation time", x = "Number of times the object was presented", y = "Trial length time in seconds")
+```
+
+
+```{r objectLocations}
+objectLocations <- ddply(trialResults, c("objectName"), summarise, x = mean(target_x), z = mean(target_z))
+```
+
+## How long on average was a trial?
+Here only data from Block 1 to 6 is used?
+
+```{r}
+trial_length <- ddply(trialResults_afterBlock1, c('trial_num'), summarise, duration = end_time  - start_time)
+```
+
+Average trial length was `r mean(trial_length$duration)` seconds. 
+
+# Position tracker
+```{r}
+# Get all files
+path2tracker <- paste0(path, "trackers/")
+allTrackers  <- list.files(path2tracker)
+n            <- length(allTrackers)
+
+# First manually then loop
+  temp       <- read.table(paste0(path2tracker, allTrackers[1]), header = TRUE, sep = ",") 
+  temp$trial <- 1
+  temp$time  <- temp$time - min(temp$time)
+  data_FPC   <- temp
+
+# Loop
+for(i in 2:n){
+  temp       <- read.table(paste0(path2tracker, allTrackers[i]), header = TRUE, sep = ",") 
+  temp$trial <- i
+  temp$time  <- temp$time - min(temp$time)
+  
+  # Bind
+  data_FPC <- rbind(data_FPC, temp)
+}
+  
+# Create prober boolean
+data_FPC$moving <- ifelse(data_FPC$moving == "True", TRUE, FALSE)
+```
+
+## Show rotation in polar histogram
+```{r}
+# Function by https://stackoverflow.com/questions/66196451/draw-straight-line-between-any-two-point-when-using-coord-polar-in-ggplot2-r
+geom_segment_straight <- function(...) {
+  layer <- geom_segment(...)
+  new_layer <- ggproto(NULL, layer)
+  old_geom <- new_layer$geom
+  geom <- ggproto(
+    NULL, old_geom,
+    draw_panel = function(data, panel_params, coord, 
+                          arrow = NULL, arrow.fill = NULL,
+                          lineend = "butt", linejoin = "round",
+                          na.rm = FALSE) {
+      data <- ggplot2:::remove_missing(
+        data, na.rm = na.rm, c("x", "y", "xend", "yend", 
+                               "linetype", "size", "shape")
+      )
+      if (ggplot2:::empty(data)) {
+        return(zeroGrob())
+      }
+      coords <- coord$transform(data, panel_params)
+      # xend and yend need to be transformed separately, as coord doesn't understand
+      ends <- transform(data, x = xend, y = yend)
+      ends <- coord$transform(ends, panel_params)
+      
+      arrow.fill <- if (!is.null(arrow.fill)) arrow.fill else coords$colour
+      return(grid::segmentsGrob(
+        coords$x, coords$y, ends$x, ends$y,
+        default.units = "native", gp = grid::gpar(
+          col = alpha(coords$colour, coords$alpha),
+          fill = alpha(arrow.fill, coords$alpha),
+          lwd = coords$size * .pt,
+          lty = coords$linetype,
+          lineend = lineend,
+          linejoin = linejoin
+        ),
+        arrow = arrow
+      ))
+      
+    }
+  )
+  new_layer$geom <- geom
+  return(new_layer)
+}
+```
+
+```{r get_movement_only}
+distance <- c(NA, euclideanDistance3D(data_FPC$pos_x[1:(nrow(data_FPC) - 1)], 
+                                      2, 
+                                      data_FPC$pos_z[1:(nrow(data_FPC) - 1)], 
+                                      data_FPC$pos_x[1:(nrow(data_FPC) - 1)+ 1], 
+                                      2, 
+                                      data_FPC$pos_z[1:(nrow(data_FPC) - 1) + 1]))
+
+# Replace values that where trial changes
+# Source https://stackoverflow.com/questions/39929966/in-r-how-do-i-get-the-position-at-which-there-is-a-change-in-the-element-of-a-ve
+newTrial <- c(1, which(diff(data_FPC$trial)!= 0) + 1)
+distance[newTrial] <- NA
+
+# add to DF and subset
+data_FPC$distance <- distance
+data_FPC_movementOnly <- data_FPC[data_FPC$moving, ]
+
+```
+
+
+```{r fig2, fig.height = 6, fig.width = 6}
+ggplot(data_FPC_movementOnly, aes(x = rot_y )) +
+  geom_histogram(binwidth = 7.5, boundary = -7.5, colour = "black", size = .25) +
+  scale_x_continuous(limits = c(0,360),
+                     breaks = seq(0, 360, by = 60),
+                     minor_breaks = seq(0, 360, by = 15))  +
+  coord_polar() +
+  labs(title = 'Polar histogram of player rotation during movement',
+       y = 'Count',
+       x = '')
+```
+
+
+## Show position on 2D plane per time
+```{r fig3, fig.height = 6, fig.width = 6}
+circleFun <- function(center = c(0,0),diameter = 1, npoints = 100){
+    r = diameter / 2
+    tt <- seq(0,2*pi,length.out = npoints)
+    xx <- center[1] + r * cos(tt)
+    yy <- center[2] + r * sin(tt)
+    return(data.frame(x = xx, y = yy))
+}
+
+dat <- circleFun(c(0,-0), 180 ,npoints = 100)
+
+
+ggplot(data_FPC, aes(x = pos_x , y = pos_z)) + 
+  geom_path(alpha = 0.5, mapping = aes(group = trial), size = 1) + 
+  coord_cartesian(ylim = c(-90, 90), xlim = c(-90, 90)) +
+  geom_path(data = dat, mapping = aes(x = x, y = y)) +
+  geom_point(data = objectLocations, mapping = aes(x = x, y = z, colour = objectName), size = 6) +
+  theme(legend.position = 'none') +
+  labs(x = "Position on x-axis", y = "Position on z-axis")
+``` 
+
+## How long did the participant spend moving? 
+```{r movementPerTrial}
+# Calculate movement per trial
+movementPerTrial <- ddply(data_FPC, c('trial'), summarise, start = min(time), end = max(time), moving = sum(moving), total = length(time))
+movementPerTrial$movementTime  <- (movementPerTrial$end/movementPerTrial$total)*movementPerTrial$moving
+```
+
+On average there was `r mean(movementPerTrial$movementTime)` seconds movement per trial.
+
+```{r movementPerTrial_hist}
+ggplot(movementPerTrial, aes(x = movementTime)) + geom_histogram() + labs(title = "How many seconds did the participant move per trial?",
+                                                                          x = "Movement time in seconds",
+                                                                          y = "Count")
+```
+
+# Analysing log entry data
+```{r load_log_entries}
+# The last column needs to be removed. 
+log_entries <- read.table("alex/S001/session_info/log.csv", header = TRUE, sep = ",")
+```
+
+## How long are the cue periods according to the log entries?
+```{r cue_period}
+# Load library stringr
+library("stringr")
+ 
+# Filter data with str_detect for strings
+# containing "Cue"
+cue_only <- log_entries[str_detect(log_entries$message, "Cue"), ]
+
+# Calculate how long the cue periods are
+cue_only$trial <- rep(1:(nrow(cue_only)/2), each = 2)
+cue_periods    <- ddply(cue_only, c('trial'), summarise, cue_period = timestamp[2] - timestamp[1])
+```
+
+The average cue period was `r mean(cue_periods$cue_period)` seconds. 
+
+## How long were the delay periods? 
+```{r delay_period}
+# Filter data with str_detect for strings
+# containing "delay"
+delay_only <- log_entries[str_detect(log_entries$message, "delay"), ]
+
+# Calculate how long the cue periods are
+delay_only$trial <- rep(1:(nrow(delay_only)/2), each = 2)
+delay_periods    <- ddply(delay_only, c('trial'), summarise, delay_period = timestamp[2] - timestamp[1])
+```
+
+
+The average cue period was `r mean(delay_periods$delay_period)` seconds. 
+
+# How many frames did we get per second (FPS)? 
+```{r}
+df_Hz <- ddply(data_FPC, c('trial'), summarise, 
+               trial_duration = max(time) - min(time),
+               samples = length(time))
+
+# Calculate frequency
+df_Hz$Hz <- df_Hz$samples/df_Hz$trial_duration
+
+# Show result per trial
+#kable(df_Hz)
+```
+
+The average FPS was `r round(mean(df_Hz$Hz))`. 

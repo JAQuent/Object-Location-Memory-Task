@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,targets,start_x,start_z,end_z,target_z,euclideanDistance,objectName,experimentStarted,objectNumber,navStartTime,navEndTime,navTime,timesObjectPresented,player_movement_location_0
+AMT_standard,rival-fade4310-23a7-4b45-8776-562c9bc5d7a0,1,1,1,1,12.09052,64.93145,6,-3.869716,58.43341,,,,,,,,,,,AMT_standard/rival-fade4310-23a7-4b45-8776-562c9bc5d7a0/S001/trackers/player_movement_T001.csv

@@ -1,0 +1,18 @@
+{
+    "blocks": 6,
+    "trialsPerBlock": 12,
+    "cueTime": 2,
+    "delay": 4,
+    "ITI": 6,
+    "spawnRadius": 85,
+    "spawnRadius_object": 70,
+    "trial_specification_name": "trialData.csv",
+    "language": "english",
+    "startUp_eng": "Startup",
+    "instructions1_eng": "Welcome to the Arena Memory Task (AMT)",
+    "instructions2_eng": "You could use this space to display some instructions to the researcher or the participant.",
+    "objectNames_eng": [
+        "test1",
+        "test2"
+    ]
+}

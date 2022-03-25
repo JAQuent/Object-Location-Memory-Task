@@ -1,0 +1,3 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,targets,start_x,start_z,end_z,target_z,euclideanDistance,objectName,experimentStarted,objectNumber,navStartTime,navEndTime,navTime,timesObjectPresented,end_x,target_x,player_movement_location_0
+AMT_standard,suds-09320a7a-9f18-471e-a57d-67d5c7a36358,1,1,1,1,9.549302,30.74,6,67.54394,50.776,28.13129,25.8412,2.756236,vase,9.549302,6,15.55928,30.74,15.18072,1,51.94361,50.40989,AMT_standard/suds-09320a7a-9f18-471e-a57d-67d5c7a36358/S001/trackers/player_movement_T001.csv
+AMT_standard,suds-09320a7a-9f18-471e-a57d-67d5c7a36358,1,2,2,1,31.74143,55.4963,6,-72.16458,19.1057,,,,,,,,,,,,,AMT_standard/suds-09320a7a-9f18-471e-a57d-67d5c7a36358/S001/trackers/player_movement_T002.csv

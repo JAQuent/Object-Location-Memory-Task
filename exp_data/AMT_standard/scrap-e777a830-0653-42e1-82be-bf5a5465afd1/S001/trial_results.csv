@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,targets,start_x,start_z,end_z,target_z,euclideanDistance,objectName,experimentStarted,objectNumber,navStartTime,navEndTime,navTime,timesObjectPresented,player_movement_location_0
+AMT_standard,scrap-e777a830-0653-42e1-82be-bf5a5465afd1,1,1,1,1,9.794675,50.89314,6,-60.96036,-24.48585,,,,,,,,,,,AMT_standard/scrap-e777a830-0653-42e1-82be-bf5a5465afd1/S001/trackers/player_movement_T001.csv

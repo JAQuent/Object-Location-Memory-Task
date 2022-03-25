@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,targets,start_x,start_z,end_z,target_z,euclideanDistance,objectName,experimentStarted,objectNumber,navStartTime,navEndTime,navTime,timesObjectPresented,end_x,target_x,player_movement_location_0
+AMT_standard,music-b4ba5558-539e-4f3f-a1c0-7e5d4ec10eb6,1,1,1,1,10.99938,47.9,6,-29.21842,-56.78742,-21.83915,-23.37084,2.562414,vase,10.99938,6,17.00955,47.9,30.89045,1,62.78403,64.83826,AMT_standard/music-b4ba5558-539e-4f3f-a1c0-7e5d4ec10eb6/S001/trackers/player_movement_T001.csv
