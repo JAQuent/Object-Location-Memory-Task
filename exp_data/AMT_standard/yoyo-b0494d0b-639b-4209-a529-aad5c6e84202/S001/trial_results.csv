@@ -1,2 +1,0 @@
-experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,targets,start_x,start_z,end_z,target_z,euclideanDistance,objectName,experimentStarted,objectNumber,navStartTime,navEndTime,navTime,timesObjectPresented,player_movement_location_0
-AMT_standard,yoyo-b0494d0b-639b-4209-a529-aad5c6e84202,1,1,1,1,12.31928,18.11485,6,55.12374,-46.80831,,,,,,,,,,,AMT_standard/yoyo-b0494d0b-639b-4209-a529-aad5c6e84202/S001/trackers/player_movement_T001.csv

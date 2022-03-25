@@ -1,2 +1,0 @@
-experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,targets,start_x,start_z,end_z,target_z,euclideanDistance,objectName,experimentStarted,objectNumber,navStartTime,navEndTime,navTime,timesObjectPresented,player_movement_location_0
-AMT_standard,turf-a1ab05e6-a330-4b2e-b604-2ef203d893ab,1,1,1,1,14.18337,46.06707,6,-22.50754,20.56599,,,,,,,,,,,AMT_standard/turf-a1ab05e6-a330-4b2e-b604-2ef203d893ab/S001/trackers/player_movement_T001.csv

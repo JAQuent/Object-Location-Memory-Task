@@ -1,2 +1,0 @@
-experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,targets,start_x,start_z,end_z,target_z,euclideanDistance,objectName,experimentStarted,objectNumber,navStartTime,navEndTime,navTime,timesObjectPresented,player_movement_location_0
-AMT_standard,test·,1,1,1,1,23.02892,35.20223,6,-43.4602,42.58401,,,,,,,,,,,AMT_standard/test·/S001/trackers/player_movement_T001.csv

@@ -1,4 +1,0 @@
-experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,targets,start_x,start_z,end_z,target_z,euclideanDistance,objectName,experimentStarted,objectNumber,navStartTime,navEndTime,navTime,timesObjectPresented,end_x,target_x,player_movement_location_0
-AMT_standard,test,1,1,1,1,10.16034,36.6,6,-36.12443,29.71579,56.81213,59.18227,2.788213,vase,10.16034,6,16.16325,36.6,20.43674,1,-28.08607,-26.61754,AMT_standard/test/S001/trackers/player_movement_T001.csv
-AMT_standard,test,1,2,2,1,37.60474,67.7,6,9.582581,2.662292,2.662311,59.18227,67.11896,vase,10.16034,6,43.60837,67.7,24.09163,2,9.58258,-26.61754,AMT_standard/test/S001/trackers/player_movement_T002.csv
-AMT_standard,test,1,3,2,2,68.70307,73.57961,6,-64.5858,-30.55496,,,,,,,,,,,,,AMT_standard/test/S001/trackers/player_movement_T003.csv

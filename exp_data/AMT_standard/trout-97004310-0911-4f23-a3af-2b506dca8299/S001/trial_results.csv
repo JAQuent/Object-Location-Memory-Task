@@ -1,2 +1,0 @@
-experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,targets,start_x,start_z,end_z,target_z,euclideanDistance,objectName,experimentStarted,objectNumber,navStartTime,navEndTime,navTime,timesObjectPresented,player_movement_location_0
-AMT_standard,trout-97004310-0911-4f23-a3af-2b506dca8299,1,1,1,1,6.780079,30.34791,6,2.784449,-24.40045,,,,,,,,,,,AMT_standard/trout-97004310-0911-4f23-a3af-2b506dca8299/S001/trackers/player_movement_T001.csv
