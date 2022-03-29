@@ -18,7 +18,7 @@ library(brms)
 ```
 
 ```{r}
-subjectName <- "alex2/"
+subjectName <- "newtest1/"
 
 path <- paste0(subjectName, "S001/")
 ```
@@ -177,7 +177,6 @@ ggplot(data_FPC_movementOnly, aes(x = rot_y )) +
        y = 'Count',
        x = '')
 ```
-
 
 ## Show position on 2D plane per time
 ```{r fig3, fig.height = 6, fig.width = 6}

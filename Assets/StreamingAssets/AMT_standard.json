@@ -1,19 +1,12 @@
 {
-	"blocks": 6,
-    "trialsPerBlock": 12,
-    "cueTime": 2.0,
-    "delay": 4.0,
-    "ITI": 1,
     "spawnRadius": 85,
     "spawnRadius_object": 70,
     "trial_specification_name": "trialData.csv",
     "language": "chinese",
-    "objectNames_eng": ["backpack", "football", "barrel", "chair", "teddy", "vase"],
+    "objectNames_eng": ["backpack", "football", "barrel", "chair", "teddy", "vase", "gift"],
     "cueInstructions_eng": "Go to the \n",
-    "trial_eng": "trial",
-    "block_eng": "block",
-    "objectNames_cn": ["背包", "足球", "桶", "椅子", "玩偶熊", "花瓶"],
-    "cueInstructions_cn": "前往\n",
-    "trial_cn": "trial",
-    "block_cn": "block"
+    "blockMessage1_eng": "Before you see the object, you have to go to the location, where you think the object is and press E. After that the object will appear you collect it and move on to the next trial.",
+    "blockMessage2_eng": "Now you will see an extra object (a gift box) and you simply have collect the object without having to retrieve its location like you did at the beginning.",
+    "blockMessage1_cn": "NA",
+    "blockMessage2_cn": "NA"
 }

@@ -26,7 +26,7 @@ public class ExperimentController : MonoBehaviour{
     public Text progress;
     public Text currentTarget;
     public GameObject panel;
-    public GameObject fixationCross;
+    public GameObject fixationMarker;
     public GameObject player;
     public float distance;
     public List<int> timesObjectPresented; // How often have this object been presented?
@@ -41,10 +41,14 @@ public class ExperimentController : MonoBehaviour{
     private bool buttonPressed = false;
     private float navStartTime; // Start of the navigation period
     private float navEndTime; // End of the navigation period
+    private float cueTime; // How long is the cue present?
+    private float delay; // How long is the delay?
+    private float ITI; // How long is the ITI?
+    private string trialType; // Type of the current trial (i.e. standard vs. control)
 
     // Private language vars
     private string language;
-    private List<string> objectNames_eng; // English object names?
+    private List<string> objectNames_eng; // English object names
     private string cueInstructions_eng;
     private string trial_eng;
     private string block_eng;
@@ -77,7 +81,8 @@ public class ExperimentController : MonoBehaviour{
         }
 
         // Only allow this in second block and only during a trial
-        if(Input.GetKey(confirmButton) & blockNum > 1 & session.InTrial & !buttonPressed){
+        // Also only for standard trial
+        if(Input.GetKey(confirmButton) & blockNum > 1 & session.InTrial & !buttonPressed & trialType == "standard"){
             // Log entry
             Debug.Log("Confirm button pressed: trial" + trialNum);
 
@@ -115,13 +120,9 @@ public class ExperimentController : MonoBehaviour{
         // Initialise the button press so it can be pressed. 
         buttonPressed = false;
 
-        // Reset movement so that player is stationary at the beginning
-        ThreeButtonMovement.reset = true;
-
-    	// Get current values
+    	// Get current trial and block
     	trialNum =  session.currentTrialNum; 
 		blockNum =  session.currentBlockNum;
-		float cueTime = session.settings.GetFloat("cueTime");
 
 		// Update progress
         if(language == "chinese"){
@@ -133,16 +134,25 @@ public class ExperimentController : MonoBehaviour{
 		// Get current trial
 		trial = session.CurrentTrial;
 
-		// Get target
+		// Get current trial values
 		target = trial.settings.GetInt("targets");
+		delay = trial.settings.GetFloat("delay");
+		cueTime = trial.settings.GetFloat("cue");
+		ITI = trial.settings.GetFloat("ITI");
+		trialType = trial.settings.GetString("trialType");
 
-		string targetName = objects[target - 1].name;
+		// Set movement param
+		ThreeButtonMovement.forwardSpeed = trial.settings.GetInt("speedForward");
+		ThreeButtonMovement.rotationSpeed = trial.settings.GetInt("rotationSpeed");
+
+		// Reset movement so that player is stationary at the beginning
+        ThreeButtonMovement.reset = true;
 		
 		// Show cue
-		StartCoroutine(ShowCue(cueTime, targetName));
+		StartCoroutine(ShowCue(cueTime));
 
-		// In first block show the object
-		if(blockNum == 1){
+		// In first block & on control trials show the object
+		if(blockNum == 1 | trialType == "control"){
 			objects[target - 1].SetActive(true);
 		} 
 
@@ -153,7 +163,8 @@ public class ExperimentController : MonoBehaviour{
         arrow = Instantiate(arrowPrefab);
         arrow.transform.position = new Vector3(objPos.x, arrow.transform.position.y, objPos.z);
 
-        if(blockNum > 1){
+        // For blocks over 1 that are standard
+        if(blockNum > 1 & trialType == "standard"){
             arrow.SetActive(false);
         }
 
@@ -172,7 +183,7 @@ public class ExperimentController : MonoBehaviour{
     ////////////////////////////////
     // Function that handles everything to the set up the objects
     public void SetUpObjectLocations(){
-    	// Oobject index
+    	// Object index
     	int j;
 
     	// Instatiate objects and set in-active
@@ -205,7 +216,7 @@ public class ExperimentController : MonoBehaviour{
 
 
         // Calculate distance
-        if(blockNum == 1){
+        if(blockNum == 1 | trialType == "control"){
             // Create Vector2 for player position
             endPosition = new Vector2(player.transform.position.x, player.transform.position.z);
 
@@ -263,21 +274,17 @@ public class ExperimentController : MonoBehaviour{
 
     ////////////////////////////////
     // IEnumerator that handels the time the cue is presented
-    IEnumerator ShowCue(float cueTime, string targetName){
+    IEnumerator ShowCue(float cueTime){
         // Log entry
         Debug.Log("Cue start of trial " + trialNum);
+
+        // Hide the fixation marker so the image can be displayed
+        fixationMarker.SetActive(false);
 
     	// Show cueImage
         panel.SetActive(true);
         cueImage.sprite = objectsImages[target - 1];
     	cueImage.enabled = true;
-
-    	// Show text
-        // if(language == "chinese"){
-        //     cueText.text = cueInstructions_cn + objectNames_cn[target - 1];
-        // } else {
-        //     cueText.text = cueInstructions_eng + objectNames_eng[target - 1];
-        // }
 
     	// Disable movement
     	ThreeButtonMovement.movementAllowed = false;
@@ -287,16 +294,8 @@ public class ExperimentController : MonoBehaviour{
         // Log entry
         Debug.Log("Cue end of trial " + trialNum);
 
-        // Reset cue text & panel
-        //cueText.text = "";
+        // Reset cue
     	cueImage.enabled = false;
-
-        // Display current target rigt bottom corner
-        // if(language == "chinese"){
-        //     currentTarget.text = objectNames_cn[target - 1];
-        // } else {
-        //     currentTarget.text = objectNames_eng[target - 1];
-        // }
 
     	// Start delay
 		StartCoroutine(Delay());
@@ -308,16 +307,14 @@ public class ExperimentController : MonoBehaviour{
         // Log entry
         Debug.Log("Start of delay period of trial " + trialNum);
 
-    	// Show fixationCross
-    	fixationCross.SetActive(true);
+    	// Show fixationMarker
+    	fixationMarker.SetActive(true);
 
     	// Wait delay then start new trial
-    	float delay = session.settings.GetFloat("delay");
     	yield return new WaitForSeconds(delay);
 
-    	// Hide fixationCross
+    	// Hide the background panel again
     	panel.SetActive(false);
-    	fixationCross.SetActive(false);
 
         // Enable movement
         ThreeButtonMovement.movementAllowed = true;
@@ -336,7 +333,6 @@ public class ExperimentController : MonoBehaviour{
         Debug.Log("Start of ITI period of trial" + trialNum);
 
     	// Wait ITI then start new trial
-    	float ITI = session.settings.GetFloat("ITI");
     	yield return new WaitForSeconds(ITI);
 
         // Log entry
@@ -367,24 +363,14 @@ public class ExperimentController : MonoBehaviour{
 
 // Post processing
 // recursive player position etc.
-// define how shadows are drawn
-// add customisable speed to each block
 // https://www.youtube.com/watch?v=GtwaN-bONvA&ab_channel=TheChase-racinggame
 // https://github.com/samoliverdev/ShaderGraphStochastic
 // http://boundingboxsoftware.com/materialize/getkey.php
 // add grass https://www.youtube.com/watch?v=L_Bzcw9tqTc&ab_channel=Brackeys
-// add music
-// add a fixation cross? Let's have it
 // add random orientation
-// random objects
 // for shadows go setting/ and URP seetings
-// Change so I can easily calculate ITI
 // https://gamedev.stackexchange.com/questions/84401/locking-frame-rate-to-60-in-the-editor
 // https://www.youtube.com/watch?v=v5_RN8o1b3g&ab_channel=YagmanX
 // check aidan's retrieval phase
 // Four block: 6 x 4 -> 24 trials 
-// Picture? 
 // Add another object for a controll task (like a gift)
-// Cue images instead of word
-// remove board
-// remove reminder about which object is the current one
