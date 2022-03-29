@@ -21,10 +21,10 @@ public class ExperimentController : MonoBehaviour{
 	public GameObject arrowPrefab;
 	public KeyCode startButton = KeyCode.S;
 	public KeyCode confirmButton = KeyCode.E;
+    public KeyCode forwardKey = KeyCode.W;
     public int target;
     public Image cueImage;
-    public Text progress;
-    public Text currentTarget;
+    public Text blockMessage;
     public GameObject panel;
     public GameObject fixationMarker;
     public GameObject player;
@@ -45,17 +45,22 @@ public class ExperimentController : MonoBehaviour{
     private float delay; // How long is the delay?
     private float ITI; // How long is the ITI?
     private string trialType; // Type of the current trial (i.e. standard vs. control)
+    private bool drawMessageNextTrial = true; // Should a message be shown on the next trial?
+    private bool closeMessage = false; // Will switch to true if forward key is pressed during presentation of mesage
+    private bool messageDrawn = false;
+    private bool sessionStarted = false;
+    private string message2draw;
+    private int blockMessage1_trial;
+    private int blockMessage2_trial;
+    private string blockMessage1_eng;
+    private string blockMessage2_eng;
+    private string blockMessage1_cn;
+    private string blockMessage2_cn;
+    
 
     // Private language vars
     private string language;
     private List<string> objectNames_eng; // English object names
-    private string cueInstructions_eng;
-    private string trial_eng;
-    private string block_eng;
-    private List<string> objectNames_cn;
-    private string cueInstructions_cn;
-    private string trial_cn;
-    private string block_cn;
 
     // Excuted at the beginging
     void Start(){
@@ -69,7 +74,7 @@ public class ExperimentController : MonoBehaviour{
     // Update is called once per frame
     void Update(){
     	// Start first trial
-        if(Input.GetKey(startButton) & !session.InTrial){
+        if(Input.GetKey(startButton) & !session.InTrial & sessionStarted){
             // Log entry
             Debug.Log("Start message send");
 
@@ -105,6 +110,13 @@ public class ExperimentController : MonoBehaviour{
             distance = Vector2.Distance(endPosition, targetPosition); 
         }
 
+        // Close message if drawn
+        if(drawMessageNextTrial & messageDrawn){
+            if(Input.GetKeyDown(forwardKey)){
+                closeMessage = !closeMessage;
+            }
+        }
+
         // Stop Experiment
         if(Input.GetKey(KeyCode.Escape)){
             // Log entry
@@ -113,6 +125,9 @@ public class ExperimentController : MonoBehaviour{
             // Close application
             TheEnd();
         }
+    }
+    public void sessionStart(){
+        sessionStarted = true;
     }
 
     // Setting up trial
@@ -123,13 +138,6 @@ public class ExperimentController : MonoBehaviour{
     	// Get current trial and block
     	trialNum =  session.currentTrialNum; 
 		blockNum =  session.currentBlockNum;
-
-		// Update progress
-        if(language == "chinese"){
-            progress.text =  "第" + trialNum + "次\n第"  + blockNum + "轮";
-        } else {
-            progress.text =  trial_eng + ": " + trialNum + "\n" + block_eng +": " + blockNum;
-        }
 
 		// Get current trial
 		trial = session.CurrentTrial;
@@ -178,6 +186,31 @@ public class ExperimentController : MonoBehaviour{
 		// Save that information for analysis
 		session.CurrentTrial.result["start_x"] = randomPosition.x;
 		session.CurrentTrial.result["start_z"] = randomPosition.y; // Note it's because it comes from Vector2
+
+        // Check if message should be drawn and the end
+        if(trialNum == blockMessage1_trial){
+            // Set 2 true
+            drawMessageNextTrial = true;
+
+            // Selct the corret message
+            if(language == "chinese"){
+                message2draw = blockMessage1_cn;
+            } else {
+                message2draw = blockMessage1_eng;
+            } 
+        } else if (trialNum == blockMessage2_trial){
+            // Set 2 true
+            drawMessageNextTrial = true;
+
+            // Selct the corret message
+            if(language == "chinese"){
+                message2draw = blockMessage2_cn;
+            } else {
+                message2draw = blockMessage2_eng;
+            } 
+        } else {
+            drawMessageNextTrial = false;
+        }
     }
 
     ////////////////////////////////
@@ -250,8 +283,6 @@ public class ExperimentController : MonoBehaviour{
         // Reset movement so that player is stationary
     	ThreeButtonMovement.reset = true;
 
-        // Reseting current target display
-        currentTarget.text = "";
 
         // End trial
 		session.EndCurrentTrial();
@@ -263,13 +294,12 @@ public class ExperimentController : MonoBehaviour{
     public void LanguageInformation(){
         language = session.settings.GetString("language");
         objectNames_eng = session.settings.GetStringList("objectNames_eng");
-        cueInstructions_eng = session.settings.GetString("cueInstructions_eng");
-        trial_eng = session.settings.GetString("trial_eng");
-        block_eng = session.settings.GetString("block_eng");
-        objectNames_cn = session.settings.GetStringList("objectNames_cn");
-        cueInstructions_cn = session.settings.GetString("cueInstructions_cn");
-        trial_cn = session.settings.GetString("trial_cn");
-        block_cn = session.settings.GetString("block_cn");
+        blockMessage1_eng = session.settings.GetString("blockMessage1_eng");
+        blockMessage2_eng = session.settings.GetString("blockMessage2_eng");
+        blockMessage1_cn = session.settings.GetString("blockMessage1_cn");
+        blockMessage2_cn = session.settings.GetString("blockMessage2_cn");
+        blockMessage1_trial = session.settings.GetInt("blockMessage1_trial");
+        blockMessage2_trial = session.settings.GetInt("blockMessage2_trial");
     }
 
     ////////////////////////////////
@@ -326,8 +356,9 @@ public class ExperimentController : MonoBehaviour{
         Debug.Log("End of delay period of trial " + trialNum);
     }
 
+
     ////////////////////////////////
-    // IEnumerator that handels the ITI countdown
+    // IEnumerator that handels the ITI countdown and message draw
     IEnumerator countdownITI(){
         // Log entry
         Debug.Log("Start of ITI period of trial" + trialNum);
@@ -338,8 +369,45 @@ public class ExperimentController : MonoBehaviour{
         // Log entry
         Debug.Log("End of ITI period of trial" + trialNum);
 
-    	// Start new trial
-    	session.BeginNextTrial(); 
+        // If statement to handle if a message should be drawn at the end
+        if(drawMessageNextTrial){
+            // Present message first
+            // Log entry
+            Debug.Log("Started presenting message");
+
+            // Activate panel and change text to message
+            panel.SetActive(true);
+            blockMessage.text = message2draw;
+
+            // Hide fixationMarker
+            fixationMarker.SetActive(false);
+
+            // Flip messageDrawn so that only then pressing foward
+            // will close the message
+            messageDrawn = ! messageDrawn;
+
+            // Wait until forward key is pressed
+            yield return new WaitUntil(() => closeMessage);
+
+            // Deactivate panel and change text to message back to empty
+            panel.SetActive(false);
+            blockMessage.text = "";
+
+            // Flip closeMessage
+            closeMessage = !closeMessage;
+
+            // Flip messageDrawn back
+            messageDrawn = ! messageDrawn;
+
+            // Log entry
+            Debug.Log("Stopped presenting message");
+
+            // Start new trial
+            session.BeginNextTrial(); 
+        } else {
+            // Start new trial
+            session.BeginNextTrial(); 
+        }
     }
 
     ////////////////////////////////
@@ -374,3 +442,4 @@ public class ExperimentController : MonoBehaviour{
 // check aidan's retrieval phase
 // Four block: 6 x 4 -> 24 trials 
 // Add another object for a controll task (like a gift)
+// check if pressing S at beginning is an issue

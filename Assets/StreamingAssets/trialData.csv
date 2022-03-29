@@ -1,3 +1,5 @@
 block_num,targets,speedForward,rotationSpeed,cue,delay,ITI,trialType
 1,3,8,30,2,6,2,standard
 8,7,8,30,1,2,1.5,control
+8,7,8,30,1,2,1.5,control
+
