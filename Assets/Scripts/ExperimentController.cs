@@ -443,3 +443,6 @@ public class ExperimentController : MonoBehaviour{
 // Four block: 6 x 4 -> 24 trials 
 // Add another object for a controll task (like a gift)
 // check if pressing S at beginning is an issue
+
+
+// add set up reflection probe

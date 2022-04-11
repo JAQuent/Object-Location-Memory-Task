@@ -1,4 +1,4 @@
-# Script to run generate trial data for AMT version 1 (standard)
+# Script to run generate trial data for OLM task
 # Version 1.0
 # Date:  24/03/2022
 # Author: Joern Alexander Quent
