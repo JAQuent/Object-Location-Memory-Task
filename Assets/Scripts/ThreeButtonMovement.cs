@@ -7,8 +7,8 @@ using UnityEngine;
 public class ThreeButtonMovement : MonoBehaviour{
 	// Static variables
 	public static bool movementAllowed = true;
-	public static float forwardSpeed = 8.0f;
-	public static float rotationSpeed = 30.0f;
+	public static float forwardSpeed = 15.0f;
+	public static float rotationSpeed = 50.0f;
 	public static bool reset = false;
 	// This can be accessed by other scripts to disable movement functionality
 	// Or changed the speed etc.

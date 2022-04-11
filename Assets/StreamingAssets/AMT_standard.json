@@ -1,5 +1,5 @@
 {
-    "spawnRadius": 85,
+    "targetFrameRate": 60,
     "spawnRadius_object": 70,
     "trial_specification_name": "trialData.csv",
     "language": "english",

@@ -47,15 +47,21 @@ public class ExperimentController : MonoBehaviour{
     private string trialType; // Type of the current trial (i.e. standard vs. control)
     private bool drawMessageNextTrial = true; // Should a message be shown on the next trial?
     private bool closeMessage = false; // Will switch to true if forward key is pressed during presentation of mesage
-    private bool messageDrawn = false;
-    private bool sessionStarted = false;
-    private string message2draw;
-    private int blockMessage1_trial;
+    private bool messageDrawn = false; // Was the message drawn yet?
+    private bool sessionStarted = false; // Has the session started yet?
+    private string message2draw; // Should a message be drawn after this trial?
+    private int blockMessage1_trial; 
     private int blockMessage2_trial;
     private string blockMessage1_eng;
     private string blockMessage2_eng;
     private string blockMessage1_cn;
     private string blockMessage2_cn;
+    private float start_x; // Start position of the player
+    private float start_z; // Start position of the player 
+    private float start_yRotation; // Start rotation of the player
+    private float object_x; // Object position
+    private float object_z; // object position
+    private GameObject currentObject; // the current object of the trial
     
 
     // Private language vars
@@ -95,7 +101,7 @@ public class ExperimentController : MonoBehaviour{
             buttonPressed = !buttonPressed; 
 
         	// Show object as feedback
-        	objects[target - 1].SetActive(true);
+        	currentObject.SetActive(true);
 
             // Get position of object
             arrow.SetActive(true);
@@ -104,15 +110,15 @@ public class ExperimentController : MonoBehaviour{
             endPosition = new Vector2(player.transform.position.x, player.transform.position.z);
 
             // Create vector2 for target position
-            targetPosition = new Vector2(objects[target - 1].transform.position.x, objects[target - 1].transform.position.z);
+            targetPosition = new Vector2(currentObject.transform.position.x, currentObject.transform.position.z);
 
             // Calculate Euclidean distance
             distance = Vector2.Distance(endPosition, targetPosition); 
         }
 
-        // Close message if drawn
+        // Close message if it is drawn and the confirmButton is pressed. 
         if(drawMessageNextTrial & messageDrawn){
-            if(Input.GetKeyDown(forwardKey)){
+            if(Input.GetKeyDown(startButton)){
                 closeMessage = !closeMessage;
             }
         }
@@ -125,9 +131,19 @@ public class ExperimentController : MonoBehaviour{
             // Close application
             TheEnd();
         }
+
+        // Log entry for each startButton pressed
+        if(Input.GetKeyDown(startButton)){
+        	Debug.Log("confirmButton was pressed");
+        }
     }
+
+    // Starting the session
     public void sessionStart(){
         sessionStarted = true;
+
+        // Set maximum frames per second
+        SetTargetFrameRate.targetFrameRate = session.settings.GetInt("targetFrameRate");
     }
 
     // Setting up trial
@@ -153,6 +169,21 @@ public class ExperimentController : MonoBehaviour{
 		ThreeButtonMovement.forwardSpeed = trial.settings.GetInt("speedForward");
 		ThreeButtonMovement.rotationSpeed = trial.settings.GetInt("rotationSpeed");
 
+		// Get position and rotation for this trial
+		start_x = trial.settings.GetFloat("start_x");
+		start_z = trial.settings.GetFloat("start_z");
+		start_yRotation = trial.settings.GetFloat("start_yRotation");
+
+		// Get object positions
+		object_x = trial.settings.GetFloat("object_x");
+		object_z = trial.settings.GetFloat("object_z");
+
+		// Instantiate object
+        currentObject = Instantiate(objects[target - 1]);
+        currentObject.SetActive(false);
+        currentObject.name = "Object" + target;
+		currentObject.transform.position = new Vector3(object_x, currentObject.transform.position.y, object_z);
+
 		// Reset movement so that player is stationary at the beginning
         ThreeButtonMovement.reset = true;
 		
@@ -161,11 +192,11 @@ public class ExperimentController : MonoBehaviour{
 
 		// In first block & on control trials show the object
 		if(blockNum == 1 | trialType == "control"){
-			objects[target - 1].SetActive(true);
+			currentObject.SetActive(true);
 		} 
 
         // Get position of object
-        Vector3 objPos = objects[target - 1].transform.position;
+        Vector3 objPos = currentObject.transform.position;
 
         // Add arrow to indicate where object is and move over to correc
         arrow = Instantiate(arrowPrefab);
@@ -176,16 +207,9 @@ public class ExperimentController : MonoBehaviour{
             arrow.SetActive(false);
         }
 
-		// Get spawn radius
-		int spawnRadius = session.settings.GetInt("spawnRadius");
-
-		// Random position of player
-		Vector2 randomPosition  = Random.insideUnitCircle * spawnRadius;
-		player.transform.position = new Vector3(randomPosition.x, 2.0f, randomPosition.y);
-
-		// Save that information for analysis
-		session.CurrentTrial.result["start_x"] = randomPosition.x;
-		session.CurrentTrial.result["start_z"] = randomPosition.y; // Note it's because it comes from Vector2
+		// Set player position and rotation
+		player.transform.position = new Vector3(start_x, 1.0f, start_z);
+		player.transform.rotation = Quaternion.Euler(0, start_yRotation, 0);
 
         // Check if message should be drawn and the end
         if(trialNum == blockMessage1_trial){
@@ -213,27 +237,6 @@ public class ExperimentController : MonoBehaviour{
         }
     }
 
-    ////////////////////////////////
-    // Function that handles everything to the set up the objects
-    public void SetUpObjectLocations(){
-    	// Object index
-    	int j;
-
-    	// Instatiate objects and set in-active
-		for (int i = 0; i < objects.Count; i++){
-        	objects[i] = Instantiate(objects[i]);
-        	objects[i].SetActive(false);
-        	j = i + 1;
-        	objects[i].name = "Object" + j;
-
-        	// Get spawn radius
-			int spawnRadius_object = session.settings.GetInt("spawnRadius_object");
-
-			// Random position of object
-			Vector2 randomPosition  = Random.insideUnitCircle * spawnRadius_object;
-			objects[i].transform.position = new Vector3(randomPosition.x, objects[i].transform.position.y, randomPosition.y);
-		}
-    }
 
     ////////////////////////////////
     // Function that handles everything at the end of trial
@@ -245,7 +248,7 @@ public class ExperimentController : MonoBehaviour{
         navEndTime = Time.time;
 
         // Set the object inactive
-		objects[target - 1].SetActive(false);
+		currentObject.SetActive(false);
 
 
         // Calculate distance
@@ -254,7 +257,7 @@ public class ExperimentController : MonoBehaviour{
             endPosition = new Vector2(player.transform.position.x, player.transform.position.z);
 
             // Create vector2 for target position
-            targetPosition = new Vector2(objects[target - 1].transform.position.x, objects[target - 1].transform.position.z);
+            targetPosition = new Vector2(currentObject.transform.position.x, currentObject.transform.position.z);
 
             // Calculate Euclidean distance
             distance = Vector2.Distance(endPosition, targetPosition); 
@@ -319,6 +322,7 @@ public class ExperimentController : MonoBehaviour{
     	// Disable movement
     	ThreeButtonMovement.movementAllowed = false;
 
+    	// Wait until cue time is over 
         yield return new WaitForSeconds(cueTime);
 
         // Log entry
@@ -430,19 +434,16 @@ public class ExperimentController : MonoBehaviour{
 }
 
 // Post processing
-// recursive player position etc.
-// https://www.youtube.com/watch?v=GtwaN-bONvA&ab_channel=TheChase-racinggame
-// https://github.com/samoliverdev/ShaderGraphStochastic
-// http://boundingboxsoftware.com/materialize/getkey.php
-// add grass https://www.youtube.com/watch?v=L_Bzcw9tqTc&ab_channel=Brackeys
-// add random orientation
-// for shadows go setting/ and URP seetings
-// https://gamedev.stackexchange.com/questions/84401/locking-frame-rate-to-60-in-the-editor
-// https://www.youtube.com/watch?v=v5_RN8o1b3g&ab_channel=YagmanX
-// check aidan's retrieval phase
-// Four block: 6 x 4 -> 24 trials 
-// Add another object for a controll task (like a gift)
-// check if pressing S at beginning is an issue
 
+
+// add random orientation
+
+
+// Four block: 6 x 4 -> 24 trials 
+// check if pressing S at beginning is an issue
+// get trigger times for each run
 
 // add set up reflection probe
+// check if everything is saved
+// test what happens if you pressed weird order of buttons
+// actually set the frame rate to something
