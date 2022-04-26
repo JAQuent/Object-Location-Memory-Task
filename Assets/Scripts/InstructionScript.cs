@@ -39,11 +39,14 @@ public class InstructionScript : MonoBehaviour{
         InstructionData Profile = JsonUtility.FromJson<InstructionData>(fileContents);
 
         // Change the instructions accordingly
-        if(Profile.language == "chinese"){
+        if(WelcomeScript.language == "chinese"){
         	startUp.text = Profile.startUp_cn;
         	instructions1.text = Profile.instructions1_cn;
         	instructions2.text = Profile.instructions2_cn;
         } else {
+            startUp.text = Profile.startUp_eng;
+            instructions1.text = Profile.instructions1_eng;
+            instructions2.text = Profile.instructions2_eng;
         }
     }
 }

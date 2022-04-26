@@ -1,0 +1,796 @@
+---
+title: 'Trial Generation: Code & reasoning'
+author: "Joern Alexander Quent"
+date: "12/04/2022"
+output: html_document
+---
+
+```{r setup, include = FALSE, message = FALSE, warnings = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+# Libs
+library(ggplot2)
+library(latex2exp)
+library(assortedRFunctions) #devtools::install_github("JAQuent/assortedRFunctions", upgrade = 'never')
+library(knitr)
+library(plyr)
+```
+
+# Aim
+The main aim of this document is to generate the .csv file for the Object-Location Memory (OLM) Task but I will also outline and describe the trigonometry behind this process for future reference. 
+
+# Placing 6 objects on circle with 60 degree off-set
+Getting the points in a coordinate system that correspond to certain degrees is actually pretty easy. The famous rule _Soh Cah Toa_ helps to memorise the relationship between hypotenuse (h), adjacent (a) and opposite (o) and sin, cosine and tangent. 
+
+$$sin(\theta) = o/h$$
+$$cos(\theta) = a/h$$
+
+$$tan(\theta) = o/a$$
+Here is a unit circle with a triangle in it to illustrate this relationship. 
+
+```{r unit_circle_triangle, fig.height = 6, fig.width = 6}
+# Create points on unit cirlce
+circle   <- circleFun(c(0,-0), 2 ,npoints = 100)
+
+# Take one to draw a triangle
+triangle <- data.frame(x = c(0, circle[10, 1], circle[10,1], 0),
+                       y = c(0, 0, circle[10, 2], 0))
+
+ggplot(circle, aes(x = x, y = y)) + 
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0)+
+  geom_path() + # Circle
+  geom_path(data = triangle, mapping = aes(x = x, y = y), colour = 'red') + # triangle
+  annotate('text', x = 0.51, y = -0.05, label = TeX("$cos(\\theta) = a/1$")) +
+  annotate('text', x = 0.89, y = 0.2, label = TeX("$sin(\\theta) = o/1$"), angle = 90)
+```
+ 
+
+We get the angle $\theta$ simply by using the inverse of $tan()$, which is $atan()$, which can be done like tihis: 
+
+```{r calc_exmaple_degree}
+theta_radians <- atan(circle[10, 2]/circle[10, 1]) # Will result in angle in radians
+theta_degrees <- rad2deg(theta_radians) # which then needs to be transformed to degrees. 
+theta_degrees
+```
+
+So to draw 6 objects on circle we only need create a vector with the angles and use $sin()$ & $cos()$ to get the corresponding coordinates. Note from now I will swap the labels that y-axis is now the z-axis as it would be in Unity. In addition to the 6 object locations, there are also 6 so-called start locations that are simply the object locations with a $15^\circ$ offset. Below they are illustrated in red. 
+
+```{r object_circle, fig.height = 6, fig.width = 6}
+# Start with degrees
+object_df <- data.frame(anglesDegrees = seq(60, 360, length.out = 6))
+
+# Convert to radians
+object_df$anglesRadians <- deg2rad(object_df$anglesDegrees)
+
+# Use radians to get x and z (because 3D) as it were on unit circle
+object_df$x <- cos(object_df$anglesRadians)
+object_df$z <- sin(object_df$anglesRadians)
+object_df$type <- "object"
+
+# Add the start locations that 15 degrees minus the object locations
+start_df <- data.frame(anglesDegrees = object_df$anglesDegrees - 15)
+start_df$anglesRadians <- deg2rad(start_df$anglesDegrees)
+
+# Use radians to get x and z (because 3D) as it were on unit circle
+start_df$x    <- cos(start_df$anglesRadians)
+start_df$z    <- sin(start_df$anglesRadians)
+start_df$type <- "start"
+
+
+ggplot(object_df, aes(x = x, y = z)) + 
+  geom_point(size = 5) +
+  geom_point(data = start_df, mapping = aes(x = x, y = z), size = 5, colour = 'red')
+```
+
+
+In the task, it is planned that one set of starting locations of the participant are other object locations themselves. So each participants will go from  each object to every other object. Similarly, participants will go from each start location to every object location but the one that is closest, which gives an extra coverage of angles.To visualise this, let's get the angles of every possible path when the location of object 1 serves as the starting point. For simplicity, I  shifted every point so that Object 1 ends up at (0, 0), and then use same approach as above. 
+
+First we need to calculate the angles,
+```{r calculate_angles}
+# Recentring
+object_df_reCentred <- object_df
+object_df_reCentred$x <- object_df_reCentred$x - object_df_reCentred[1, 'x']
+object_df_reCentred$z <- object_df_reCentred$z - object_df_reCentred[1, 'z']
+
+# Now calculate all angles
+anglesDegree <- c()
+
+# Loop through all options
+for(i in 2:6){
+  # Step 1 calculate h
+  x <- object_df_reCentred[i, 'x']
+  z <- object_df_reCentred[i, 'z']
+  
+  # Convert radians to degree
+  anglesDegree[i - 1] <- getAngleInDegreesFromPoint(x, z)
+}
+```
+
+which gives us these angles: 
+
+```{r plot_angles, fig.height = 6, fig.width = 6, echo = FALSE}
+ggplot(object_df_reCentred, aes(x = x, y = z)) + 
+  geom_point(size = 5) + 
+  geom_path(data = circle, mapping = aes(x = x, y = y)) +
+  geom_segment(aes(x = object_df_reCentred[1, 3], y = object_df_reCentred[1, 4], xend = object_df_reCentred[2, 3], yend = object_df_reCentred[2, 4])) +
+  geom_segment(aes(x = object_df_reCentred[1, 3], y = object_df_reCentred[1, 4], xend = object_df_reCentred[3, 3], yend = object_df_reCentred[3, 4])) +
+  geom_segment(aes(x = object_df_reCentred[1, 3], y = object_df_reCentred[1, 4], xend = object_df_reCentred[4, 3], yend = object_df_reCentred[4, 4])) +
+  geom_segment(aes(x = object_df_reCentred[1, 3], y = object_df_reCentred[1, 4], xend = object_df_reCentred[5, 3], yend = object_df_reCentred[5, 4])) +
+  geom_segment(aes(x = object_df_reCentred[1, 3], y = object_df_reCentred[1, 4], xend = object_df_reCentred[6, 3], yend = object_df_reCentred[6, 4])) +
+  coord_cartesian(xlim = c(-2, 2), ylim = c(-2, 2)) +
+  annotate('text', x = -1.2, y = 0,    label = TeX(paste0("$", anglesDegree[1], "\\degree$"))) +
+  annotate('text', x = -1.5, y = -1,   label = TeX(paste0("$", anglesDegree[2], "\\degree$"))) +
+  annotate('text', x = -1,   y = -1.9, label = TeX(paste0("$", anglesDegree[3], "\\degree$"))) +
+  annotate('text', x = 0,    y = -1.9, label = TeX(paste0("$", anglesDegree[4], "\\degree$"))) +
+  annotate('text', x = 0.5,  y = -1,   label = TeX(paste0("$", anglesDegree[5], "\\degree$")))
+```
+
+# Calculating all angles that are  possible in the task
+
+This is a visualisation of all object 2 object and start location 2 object paths :
+
+```{r all_obj2obj_path_plot, fig.height = 6, fig.width = 6, echo = FALSE}
+ggplot(object_df, aes(x = x, y = z)) + 
+  geom_path(data = circle, mapping = aes(x = x, y = y)) +
+  # From Object 1 to others
+  geom_segment(aes(x = object_df[1, 3], y = object_df[1, 4], xend = object_df[2, 3], yend = object_df[2, 4])) +
+  geom_segment(aes(x = object_df[1, 3], y = object_df[1, 4], xend = object_df[3, 3], yend = object_df[3, 4])) +
+  geom_segment(aes(x = object_df[1, 3], y = object_df[1, 4], xend = object_df[4, 3], yend = object_df[4, 4])) +
+  geom_segment(aes(x = object_df[1, 3], y = object_df[1, 4], xend = object_df[5, 3], yend = object_df[5, 4])) +
+  geom_segment(aes(x = object_df[1, 3], y = object_df[1, 4], xend = object_df[6, 3], yend = object_df[6, 4])) +
+  # From Object 2 to others
+  geom_segment(aes(x = object_df[2, 3], y = object_df[2, 4], xend = object_df[2, 3], yend = object_df[2, 4])) +
+  geom_segment(aes(x = object_df[2, 3], y = object_df[2, 4], xend = object_df[3, 3], yend = object_df[3, 4])) +
+  geom_segment(aes(x = object_df[2, 3], y = object_df[2, 4], xend = object_df[4, 3], yend = object_df[4, 4])) +
+  geom_segment(aes(x = object_df[2, 3], y = object_df[2, 4], xend = object_df[5, 3], yend = object_df[5, 4])) +
+  geom_segment(aes(x = object_df[2, 3], y = object_df[2, 4], xend = object_df[6, 3], yend = object_df[6, 4])) +
+  # From Object 3 to others
+  geom_segment(aes(x = object_df[3, 3], y = object_df[3, 4], xend = object_df[1, 3], yend = object_df[1, 4])) +
+  geom_segment(aes(x = object_df[3, 3], y = object_df[3, 4], xend = object_df[2, 3], yend = object_df[2, 4])) +
+  geom_segment(aes(x = object_df[3, 3], y = object_df[3, 4], xend = object_df[4, 3], yend = object_df[4, 4])) +
+  geom_segment(aes(x = object_df[3, 3], y = object_df[3, 4], xend = object_df[5, 3], yend = object_df[5, 4])) +
+  geom_segment(aes(x = object_df[3, 3], y = object_df[3, 4], xend = object_df[6, 3], yend = object_df[6, 4])) +
+  # From Object 4 to others
+  geom_segment(aes(x = object_df[4, 3], y = object_df[4, 4], xend = object_df[1, 3], yend = object_df[1, 4])) +
+  geom_segment(aes(x = object_df[4, 3], y = object_df[4, 4], xend = object_df[2, 3], yend = object_df[2, 4])) +
+  geom_segment(aes(x = object_df[4, 3], y = object_df[4, 4], xend = object_df[3, 3], yend = object_df[3, 4])) +
+  geom_segment(aes(x = object_df[4, 3], y = object_df[4, 4], xend = object_df[5, 3], yend = object_df[5, 4])) +
+  geom_segment(aes(x = object_df[4, 3], y = object_df[4, 4], xend = object_df[6, 3], yend = object_df[6, 4])) +
+  # From Object 5 to others
+  geom_segment(aes(x = object_df[5, 3], y = object_df[5, 4], xend = object_df[1, 3], yend = object_df[1, 4])) +
+  geom_segment(aes(x = object_df[5, 3], y = object_df[5, 4], xend = object_df[2, 3], yend = object_df[2, 4])) +
+  geom_segment(aes(x = object_df[5, 3], y = object_df[5, 4], xend = object_df[3, 3], yend = object_df[3, 4])) +
+  geom_segment(aes(x = object_df[5, 3], y = object_df[5, 4], xend = object_df[4, 3], yend = object_df[4, 4])) +
+  geom_segment(aes(x = object_df[5, 3], y = object_df[5, 4], xend = object_df[6, 3], yend = object_df[6, 4])) +
+  # From Start 1 to others
+  geom_segment(aes(x = start_df[1, 3], y = start_df[1, 4], xend = object_df[2, 3], yend = object_df[2, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[1, 3], y = start_df[1, 4], xend = object_df[3, 3], yend = object_df[3, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[1, 3], y = start_df[1, 4], xend = object_df[4, 3], yend = object_df[4, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[1, 3], y = start_df[1, 4], xend = object_df[5, 3], yend = object_df[5, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[1, 3], y = start_df[1, 4], xend = object_df[6, 3], yend = object_df[6, 4]), colour = 'red') +
+  # From Start 2 to others
+  geom_segment(aes(x = start_df[2, 3], y = start_df[2, 4], xend = object_df[1, 3], yend = object_df[1, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[2, 3], y = start_df[2, 4], xend = object_df[3, 3], yend = object_df[3, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[2, 3], y = start_df[2, 4], xend = object_df[4, 3], yend = object_df[4, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[2, 3], y = start_df[2, 4], xend = object_df[5, 3], yend = object_df[5, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[2, 3], y = start_df[2, 4], xend = object_df[6, 3], yend = object_df[6, 4]), colour = 'red') +
+  # From Start 3 to others
+  geom_segment(aes(x = start_df[3, 3], y = start_df[3, 4], xend = object_df[1, 3], yend = object_df[1, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[3, 3], y = start_df[3, 4], xend = object_df[2, 3], yend = object_df[2, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[3, 3], y = start_df[3, 4], xend = object_df[4, 3], yend = object_df[4, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[3, 3], y = start_df[3, 4], xend = object_df[5, 3], yend = object_df[5, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[3, 3], y = start_df[3, 4], xend = object_df[6, 3], yend = object_df[6, 4]), colour = 'red') +
+  # From Start 4 to others
+  geom_segment(aes(x = start_df[4, 3], y = start_df[4, 4], xend = object_df[1, 3], yend = object_df[1, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[4, 3], y = start_df[4, 4], xend = object_df[2, 3], yend = object_df[2, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[4, 3], y = start_df[4, 4], xend = object_df[3, 3], yend = object_df[3, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[4, 3], y = start_df[4, 4], xend = object_df[5, 3], yend = object_df[5, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[4, 3], y = start_df[4, 4], xend = object_df[6, 3], yend = object_df[6, 4]), colour = 'red') +
+  # From Start 5 to others
+  geom_segment(aes(x = start_df[5, 3], y = start_df[5, 4], xend = object_df[1, 3], yend = object_df[1, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[5, 3], y = start_df[5, 4], xend = object_df[2, 3], yend = object_df[2, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[5, 3], y = start_df[5, 4], xend = object_df[3, 3], yend = object_df[3, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[5, 3], y = start_df[5, 4], xend = object_df[4, 3], yend = object_df[4, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[5, 3], y = start_df[5, 4], xend = object_df[6, 3], yend = object_df[6, 4]), colour = 'red') +
+  # From Start 6 to others
+  geom_segment(aes(x = start_df[6, 3], y = start_df[6, 4], xend = object_df[1, 3], yend = object_df[1, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[6, 3], y = start_df[6, 4], xend = object_df[2, 3], yend = object_df[2, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[6, 3], y = start_df[6, 4], xend = object_df[3, 3], yend = object_df[3, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[6, 3], y = start_df[6, 4], xend = object_df[4, 3], yend = object_df[4, 4]), colour = 'red') +
+  geom_segment(aes(x = start_df[6, 3], y = start_df[6, 4], xend = object_df[5, 3], yend = object_df[5, 4]), colour = 'red') +
+  # Points
+  geom_point(data = start_df, mapping = aes(x = x, y = z), size = 5, colour = 'red') +
+  geom_point(size = 5) + 
+  coord_cartesian(xlim = c(-1, 1), ylim = c(-1, 1))
+```
+
+
+The angles of the paths from Object 1 to all other objects were already calculated in the step above, so now I will just repeat this step for Object 2 - 6 plus for the offset starting points.  
+
+```{r calculate_allAngles}
+# All objects
+allObjects <- 1:6
+
+# Loop through all the remaining object 2 object paths
+for(j in 2:6){
+    # Recentring
+  object_df_reCentred   <- object_df
+  object_df_reCentred$x <- object_df_reCentred$x - object_df_reCentred[j, 'x']
+  object_df_reCentred$z <- object_df_reCentred$z - object_df_reCentred[j, 'z']
+  
+  # Now calculate all angles
+  tempAnglesDegree <- c()
+  index <- 1
+  
+  # Remove seed objects
+  targetObjects <- allObjects[allObjects != j]
+  
+  # Loop through all options
+  for(i in targetObjects){
+    # Step 1 calculate h
+    x <- object_df_reCentred[i, 'x']
+    z <- object_df_reCentred[i, 'z']
+    
+    # Convert radians to degree
+    tempAnglesDegree[index] <- getAngleInDegreesFromPoint(x, z)
+    index <- index + 1
+  }
+  # Add to existing angles
+  anglesDegree <- c(anglesDegree, tempAnglesDegree)
+}
+
+# Now do the same for the offset start locations
+# But now it has to be recentred based on the start locations not the object locations
+for(j in 1:6){
+  # Recentring
+  object_df_reCentred   <- object_df
+  object_df_reCentred$x <- object_df_reCentred$x - start_df[j, 'x']
+  object_df_reCentred$z <- object_df_reCentred$z - start_df[j, 'z']
+  
+  # Now calculate all angles
+  tempAnglesDegree <- c()
+  index <- 1
+  
+  # Remove seed objects
+  targetObjects <- allObjects[allObjects != j]
+  
+  # Loop through all options
+  for(i in targetObjects){
+    # Step 1 calculate h
+    x <- object_df_reCentred[i, 'x']
+    z <- object_df_reCentred[i, 'z']
+    
+    # Convert radians to degree
+    tempAnglesDegree[index] <- getAngleInDegreesFromPoint(x, z)
+    index <- index + 1
+  }
+  # Add to existing angles
+  anglesDegree <- c(anglesDegree, tempAnglesDegree)
+}
+```
+
+After calculating all angles, I can now plot their distribution in a polar histogram. 
+
+```{r polar_plot, fig.height = 6, fig.width = 6, echo = FALSE}
+anglesDegree[anglesDegree == 450] <- 90
+
+angle_df <- data.frame(anglesDegree = anglesDegree)
+
+ggplot(angle_df, aes(x = anglesDegree)) +
+  geom_histogram(binwidth = 7.5, boundary = -7.5, colour = "black", size = .25) +
+  scale_x_continuous(limits = c(0,360),
+                     breaks = seq(0, 360, by = 60),
+                     minor_breaks = seq(0, 360, by = 15))  +
+  coord_polar() +
+  labs(title = 'Distribution of angles',
+       y = 'Count',
+       x = '')
+```
+
+Note to myself: There was one instance where the result was $450^\circ$ instead of $90^\circ$, which I just replaced to make this polar histogram. No idea why that is. 
+
+# Generating the input .csv for the task
+
+The .csv that is need for both the practice as well as the fMRI version of task needs entries the following columns: 
+
+- _block_num_ = Number of the block (needed for UXF).
+- _targets_	= The target given as the object number from 1 - 13 (see below how these numbers correspond to the object names).
+- _start_x_	= Start location of the player.
+- _start_z_	= Start location of the player.
+- _start_yRotation_	= Start rotation of the player. 
+- _object_x_	= Object location of the target. With the exception of control trials, this must be the same for all trials with the same target. 
+- _object_z_	= Object location of the target. With the exception of control trials, this must be the same for all trials with the same target. 
+- _cue_ = Period the cue is presented in seconds.
+- _delay_	= Delay period after the cue was presented in seconds. 
+- _ITI_	= ITI in seconds. 
+- _trialType_	= Trial type i.e. standard or control trials using the gift as the object. 
+- _speedForward_	= Forward speed in vm/s. 
+- _rotationSpeed_	= Rotation speed in degrees/s.
+- _messageToDisplay_ = Integer indicating whether a messages should be displayed after the trial (yes if >= 0, no if -1). Numbers above -1 are used as the index of the message from the list. 
+
+## The objects
+```{r object_table, echo = FALSE}
+tab1 <- data.frame(Object = c("Drum", "Basketball", "Pineapple", "Dice", "Cake", "Lamp", "Barrel", "Football", "Pawn", "Traffic cone", "Donut", "Vase", "Gift"),
+                   Number = c(7, 2, 12, 5, 3, 10, 1, 8, 11, 4, 6, 13, 9),
+                   Version = c(rep(c('Practice', 'fMRI'), each = 6), 'control'))
+
+kable(tab1)
+```
+
+## The seed for this randomisation
+```{r seed}
+set.seed(20220413)
+```
+
+## General task parameters
+In the following are general parameters that are the same across all parts of the experiment. The initial orientation (i.e. heading direction) in each trial will be randomly selected from a uniform distribution from 0 to 360. 
+
+```{r general_task_param}
+speedForward  <- 15 # vm/s
+rotationSpeed <- 50 # degrees/s
+spawnRadius <- 60 # Radius of the circle for spawning the object in the environment
+``` 
+
+## Practice II (Desert square)
+### Experimental Design
+1 run of encoding task (6 objects x 2 trial ~ 3 min), 1 run of retrieval task with 1 task block (6 objects x 2 trials ~ 5 min) = 10 minutes in total. The participant starts from one of the other object locations during this part of the experiment. Each object serves as a starting location twice in total. 
+
+```{r practice2_input}
+startDegree <- 15 # Generate object coordinates (360/(number of objects) degree offset starting at 15 degree)
+```
+
+Generating the sequence and the location: 
+```{r practice2_sequence_and_location}
+# Get objects
+practiceObjects <- tab1[tab1$Version == 'Practice', ]
+
+# Get trial numbers etc.
+numOfObjects  <- nrow(practiceObjects) 
+
+# Convoluted way of generating a sequence starting at startDegree then go in regular steps around a circle 
+practiceLocations <- data.frame(anglesDegrees = 0:(numOfObjects-1)*(360/numOfObjects) + startDegree)
+
+# Convert to radians
+practiceLocations$anglesRadians <- deg2rad(practiceLocations$anglesDegrees)
+
+# Use radians to get x and z (because 3D so it is not y) and multiply with spawnRadius
+practiceLocations$x <- spawnRadius * cos(practiceLocations$anglesRadians)
+practiceLocations$z <- spawnRadius * sin(practiceLocations$anglesRadians)
+
+# Assign the object to these locations
+practiceLocations$targets <- practiceObjects$Number
+
+# Create the sequence of targets
+encodingPhase  <- rbind(practiceLocations, practiceLocations) # Repeat each object twice
+encodingPhase  <- encodingPhase[sample(1:nrow(encodingPhase)), ] # Shuffle
+retrievalPhase <- encodingPhase[sample(1:nrow(encodingPhase)), ] # shuffle again to generate retrieval
+
+# Select starting locations
+startLocations <- encodingPhase
+
+# Shuffle run 1
+startLocations <- startLocations[sample(1:nrow(startLocations)),]
+
+# Check if there is case where the start location is the same as the object location
+while(any(startLocations$targets == encodingPhase$targets)){
+  startLocations <- startLocations[sample(1:nrow(startLocations)),]
+}
+
+# Assign to the data.frame
+encodingPhase$start_x <- startLocations$x
+encodingPhase$start_z <- startLocations$z
+
+# Repeat for retrieval 
+# Shuffle run 1
+startLocations <- startLocations[sample(1:nrow(startLocations)),]
+
+# Check if there is case where the start location is the same as the object location
+while(any(startLocations$targets == retrievalPhase$targets)){
+  startLocations <- startLocations[sample(1:nrow(startLocations)),]
+}
+
+# Assign to the data.frame
+retrievalPhase$start_x <- startLocations$x
+retrievalPhase$start_z <- startLocations$z
+```
+
+
+### Timings
+- Encoding phase:
+    - Cue Phase (2 s)
+    - Delay Phase (1-2 s)
+    - Collect Phase (participant determined ~6 s)
+    - ITI Phase (1-2 s)
+- Retrieval phase:
+    - Cue Phase (2 s)
+    - Delay Phase (1-2 s)
+    - Replace Phase (participant determined ~6 s)
+    - Feedback & Collect Phase (participant determined ~6 s)
+    - ITI Phase (1-2 s)
+    
+```{r practice2_timings}
+cuePeriod   <- 2 # seconds
+delayPeriods <- seq(from = 1, to = 2, length.out = 3) # 1 1.5 & 2
+ITIPeriods   <- seq(from = 1, to = 2, length.out = 3) # 1 1.5 & 2
+
+# Now shuffle and these timings to the data frame.
+# Encoding
+encodingPhase$cue   <- cuePeriod
+encodingPhase$delay <- sample(rep(delayPeriods, each = 4))
+encodingPhase$ITI   <- sample(rep(ITIPeriods, each = 4))
+# Retrieval
+retrievalPhase$cue   <- cuePeriod
+retrievalPhase$delay <- sample(rep(delayPeriods, each = 4))
+retrievalPhase$ITI   <- sample(rep(ITIPeriods, each = 4))
+```
+
+In addition, subjects will also complete 5 control trials at the end to prepare them for the control trials in the real task. 
+
+```{r control_trials_practice2}
+# Get the control objects
+controlObject <- tab1[tab1$Version == 'control', 'Number']
+
+# Get the object location from run 1 
+objectLocations <- ddply(encodingPhase, c('targets'), summarise, x = x[1], z = z[1])
+
+# Repeat control trial x 1
+controlTrials <- objectLocations
+
+# Now repeat the same process that was used for the encoding trials
+# Create the columns
+controlTrials$start_x <- NA
+controlTrials$start_z <- NA
+
+# Get index objects
+indexObjects <- unique(controlTrials$targets)
+
+
+# Loop through all indexObjects 
+for(i in indexObjects){
+  otherObjects <- indexObjects[!(indexObjects %in% i)] # Get all objects that are not the target
+  controlTrials[controlTrials$targets == i, 'start_x'] <- objectLocations[objectLocations$targets %in% otherObjects, 'x'][1] # Select the first
+  controlTrials[controlTrials$targets == i, 'start_z'] <- objectLocations[objectLocations$targets %in% otherObjects, 'z'][1] # Select the first
+}
+
+# Add timings
+controlTrials$cue   <- cuePeriod
+controlTrials$delay <- sample(rep(delayPeriods))
+controlTrials$ITI   <- sample(rep(ITIPeriods))
+
+# Shuffle
+controlTrials <- controlTrials[sample(1:nrow(controlTrials)),]
+
+# Add run
+controlTrials$run <- 1
+
+# Replace targets with the control task time
+controlTrials$targets <- controlObject
+```
+
+### Create .csv file
+Now I create the data.frame using the relevant column names that the Unity task needs as input. 
+
+```{r practice2_csv_file}
+# Create data.frame
+practice2 <- data.frame(block_num = c(rep(1, nrow(encodingPhase)), rep(2, nrow(retrievalPhase)), rep(3, nrow(controlTrials))),
+                        targets   = c(encodingPhase$targets, retrievalPhase$targets, controlTrials$targets),
+                        start_x   = c(encodingPhase$start_x, retrievalPhase$start_x, controlTrials$start_x),
+                        start_z   = c(encodingPhase$start_z, retrievalPhase$start_z, controlTrials$start_z),
+                        #start_yRotation = sample(rep(intital_yRotation, 4)), # sample y rotation
+                        object_x = c(encodingPhase$x, retrievalPhase$x, controlTrials$x),
+                        object_z = c(encodingPhase$z, retrievalPhase$z, controlTrials$z),
+                        cue = c(encodingPhase$cue, retrievalPhase$cue, controlTrials$cue),
+                        delay = c(encodingPhase$delay, retrievalPhase$delay, controlTrials$delay),
+                        ITI = c(encodingPhase$ITI, retrievalPhase$ITI, controlTrials$ITI),
+                        trialType = c(rep('encoding', nrow(encodingPhase)), rep('retrieval', nrow(retrievalPhase)), rep('control', nrow(controlTrials))),
+                        speedForward = speedForward,
+                        rotationSpeed = rotationSpeed,
+                        messageToDisplay = -1)
+
+# Sample start locations from uniform distribution
+practice2$start_yRotation <- runif(n = nrow(practice2), min = 0, max = 360)
+
+# Add a message after the encoding block
+practice2[12, 'messageToDisplay'] <- 1 # Between retrieval and encoding
+practice2[24, 'messageToDisplay'] <- 2 # Before control trials
+
+# Write .csv file
+write.csv(x = practice2, file = 'practice.csv', quote = FALSE, row.names = FALSE)
+```
+
+## Main task (grassy arena)
+### Experimental Design
+For __encoding__, each object will be seen 5 times, corresponding to 5 routes (6 objects x 5 trials ~ 6 min) and two runs will be provided. Starting positions will be shifted by 15 degrees between the two runs, while the object locations will remain the same. 
+
+For __retrieval__, each object will be cued 5 times, corresponding to 5 routes (6 objects x 5 trials ~ 6 min) and two runs will be provided. Starting positions will be shifted by 15 degrees between the runs, while the object locations will remain the same. 
+
+There will be as many control trials as there will be retrieval trials, which will be interleaved so that there are always 15 trials of one type in a row. 
+
+The experiment will start with 30 encoding trials, followed by the retrieval + control trials and the end there will be an additional 30 'encoding' trials so that we can examine whether the memory task is crucial for the grid-signal to arise but at the same time we didn't want to overtrain the subjects. 
+
+
+```{r mainTask_input}
+startDegree <- 60 # Generate object coordinates (360/(number of objects) degree offset starting at 60 degree)
+repetitionPerObject <- 5 # How often (per run) should the object be repeated?
+```
+
+Generating the sequence and the location: 
+```{r mainTask_sequence_and_location}
+# Start with run 1
+# Get objects
+mainTaskObjects <- tab1[tab1$Version == 'fMRI', ]
+
+# Get trial numbers etc.
+numOfObjects  <- nrow(mainTaskObjects) 
+
+# Convoluted way of generating a sequence starting at startDegree then go in regular steps around a circle 
+mainTask_locations <- data.frame(anglesDegrees = 0:(numOfObjects-1)*(360/numOfObjects) + startDegree)
+
+# Convert to radians
+mainTask_locations$anglesRadians <- deg2rad(mainTask_locations$anglesDegrees)
+
+# Use radians to get x and z (because 3D so it is not y) and multiply with spawnRadius
+mainTask_locations$x <- spawnRadius * cos(mainTask_locations$anglesRadians)
+mainTask_locations$z <- spawnRadius * sin(mainTask_locations$anglesRadians)
+
+# Assign the object to these locations
+mainTask_locations$targets <- mainTaskObjects$Number
+
+# Create the sequence of targets
+encodingPhase_run1 <- do.call("rbind", replicate(repetitionPerObject, mainTask_locations, simplify = FALSE)) # Repeat each object x times
+
+# Save locations in temp variable
+startLocations <- encodingPhase_run1
+
+# Reduce startLocations to one instance per target
+startLocations <- ddply(startLocations, c('targets'), summarise, x = x[1], z = z[1])
+
+# Select five locations that are not the target locations
+indexObjects <- unique(encodingPhase_run1$targets) # Get all unique objects
+
+# Create the columns
+encodingPhase_run1$start_x <- NA
+encodingPhase_run1$start_z <- NA
+
+# Loop through all indexObjects 
+for(i in indexObjects){
+  otherObjects <- indexObjects[!(indexObjects %in% i)] # Get all objects that are not the target
+  encodingPhase_run1[encodingPhase_run1$targets == i, 'start_x'] <- startLocations[startLocations$targets %in% otherObjects, 'x']
+  encodingPhase_run1[encodingPhase_run1$targets == i, 'start_z'] <- startLocations[startLocations$targets %in% otherObjects, 'z']
+}
+
+# Copy for retrieval
+retrievalPhase_run1 <- encodingPhase_run1
+
+# Shuffle
+encodingPhase_run1  <- encodingPhase_run1[sample(1:nrow(encodingPhase_run1)), ] # Shuffle
+retrievalPhase_run1 <- encodingPhase_run1[sample(1:nrow(encodingPhase_run1)), ] # shuffle again to generate retrieval
+```
+
+For the 2nd run of both the encoding and the retrieval phase, start locations are offset by $15^\circ$, otherwise everything else remains the same. 
+
+```{r mainTask_run2}
+# Re-use the same locations but offset them by 15 degrees
+mainTask_locations <- data.frame(anglesDegrees = 0:(numOfObjects-1)*(360/numOfObjects) + startDegree + 15)
+
+# Convert to radians
+mainTask_locations$anglesRadians <- deg2rad(mainTask_locations$anglesDegrees)
+
+# Use radians to get x and z (because 3D so it is not y) and multiply with spawnRadius
+mainTask_locations$x <- spawnRadius * cos(mainTask_locations$anglesRadians)
+mainTask_locations$z <- spawnRadius * sin(mainTask_locations$anglesRadians)
+
+# Assign the object to these locations
+mainTask_locations$targets <- mainTaskObjects$Number
+
+# Copy the sequence of targets from run 1
+encodingPhase_run2 <- encodingPhase_run1 
+
+# Copy starting locations
+startLocations <- encodingPhase_run2
+
+# Reduce startLocations to one instance per target
+startLocations <- ddply(mainTask_locations, c('targets'), summarise, x = x[1], z = z[1])
+
+# Select five locations that are not the target locations
+indexObjects <- unique(encodingPhase_run2$targets) # Get all unique objects
+
+# Create the columns
+encodingPhase_run2$start_x <- NA
+encodingPhase_run2$start_z <- NA
+
+# Loop through all indexObjects 
+for(i in indexObjects){
+  otherObjects <- indexObjects[!(indexObjects %in% i)] # Get all objects that are not the target
+  encodingPhase_run2[encodingPhase_run2$targets == i, 'start_x'] <- startLocations[startLocations$targets %in% otherObjects, 'x']
+  encodingPhase_run2[encodingPhase_run2$targets == i, 'start_z'] <- startLocations[startLocations$targets %in% otherObjects, 'z']
+}
+
+# Copy for retrieval
+retrievalPhase_run2 <- encodingPhase_run2
+
+# Shuffle
+encodingPhase_run2  <- encodingPhase_run2[sample(1:nrow(encodingPhase_run2)), ] # Shuffle
+retrievalPhase_run2 <- encodingPhase_run2[sample(1:nrow(encodingPhase_run2)), ] # shuffle again to generate retrieval
+```
+
+
+```{r bind_runs}
+# Add run information
+encodingPhase_run1$run  <- 1
+encodingPhase_run2$run  <- 2
+retrievalPhase_run1$run <- 1
+retrievalPhase_run2$run <- 2
+
+# Bind to df per phase
+encodingPhase  <- rbind(encodingPhase_run1, encodingPhase_run2)
+retrievalPhase <- rbind(retrievalPhase_run1, retrievalPhase_run2)
+```
+
+### Timings
+The timings are the same as in during the practice with the exception that I use more jittering (i.e. more steps).
+
+```{r mainTask_timings}
+cuePeriod    <- 2 # seconds
+delayPeriods <- seq(from = 1, to = 2, length.out = 6) # 1 1.5 & 2
+ITIPeriods   <- seq(from = 1, to = 2, length.out = 6) # 1 1.5 & 2
+
+# Now shuffle and these timings to the data frame.
+# Encoding
+encodingPhase$cue   <- cuePeriod
+encodingPhase$delay <- sample(rep(delayPeriods, each = 10))
+encodingPhase$ITI   <- sample(rep(ITIPeriods, each = 10))
+# Retrieval
+retrievalPhase$cue   <- cuePeriod
+retrievalPhase$delay <- sample(rep(delayPeriods, each = 10))
+retrievalPhase$ITI   <- sample(rep(ITIPeriods, each = 10))
+```
+
+### Crate & insert the control trials into the retrieval block
+Cue, delay, and ITI durations will be identical to the experimental trials. There will be a total of 30 control trials corresponding to 6 object locations and 5 routes. 
+
+```{r control_trials}
+# Get the control objects
+controlObject <- tab1[tab1$Version == 'control', 'Number']
+
+# Get the object location from run 1 
+objectLocations <- ddply(encodingPhase, c('targets'), summarise, x = x[1], z = z[1])
+
+# Repeat control trial x times
+controlTrials <- do.call("rbind", replicate(repetitionPerObject, objectLocations, simplify = FALSE)) # Repeat each object x times
+
+# Now repeat the same process that was used for the encoding trials
+# Create the columns
+controlTrials$start_x <- NA
+controlTrials$start_z <- NA
+
+# Loop through all indexObjects 
+for(i in indexObjects){
+  otherObjects <- indexObjects[!(indexObjects %in% i)] # Get all objects that are not the target
+  controlTrials[controlTrials$targets == i, 'start_x'] <- objectLocations[objectLocations$targets %in% otherObjects, 'x']
+  controlTrials[controlTrials$targets == i, 'start_z'] <- objectLocations[objectLocations$targets %in% otherObjects, 'z']
+}
+
+# Add timings
+controlTrials$cue   <- cuePeriod
+controlTrials$delay <- sample(rep(delayPeriods, each = 5))
+controlTrials$ITI   <- sample(rep(ITIPeriods, each = 5))
+
+# Shuffle
+controlTrials <- controlTrials[sample(1:nrow(controlTrials)),]
+
+# Add run
+controlTrials$run <- 1
+
+# Replace targets with the control task time
+controlTrials$targets <- controlObject
+```
+
+### Create the .csv file
+```{r mainTask_csv_file}
+# Encoding run 1
+tempVar <- encodingPhase[encodingPhase$run == 1, ]
+begining <- data.frame(block_num = c(rep(1, nrow(tempVar))),
+                       run = c(tempVar$run),
+                       targets = c(tempVar$targets),
+                       start_x = c(tempVar$start_x),
+                       start_z = c(tempVar$start_z),
+                       object_x = c(tempVar$x),
+                       object_z = c(tempVar$z),
+                       cue = c(tempVar$cue),
+                       delay = c(tempVar$delay),
+                       ITI = c(tempVar$ITI),
+                       trialType = c(rep('encoding', nrow(tempVar))),
+                       speedForward = speedForward,
+                       rotationSpeed = rotationSpeed,
+                       messageToDisplay = -1)
+
+# Retrieval & control trials
+middle1 <- data.frame(block_num = c(rep(2, nrow(retrievalPhase))),
+                      run = c(retrievalPhase$run),
+                      targets = c(retrievalPhase$targets),
+                      start_x = c(retrievalPhase$start_x),
+                      start_z = c(retrievalPhase$start_z),
+                      object_x = c(retrievalPhase$x),
+                      object_z = c(retrievalPhase$z),
+                      cue = c(retrievalPhase$cue),
+                      delay = c(retrievalPhase$delay),
+                      ITI = c(retrievalPhase$ITI),
+                      trialType = c(rep('retrieval', nrow(retrievalPhase))),
+                      speedForward = speedForward,
+                      rotationSpeed = rotationSpeed,
+                      messageToDisplay = -1)
+
+middle2 <- data.frame(block_num = c(rep(2, nrow(controlTrials))),
+                      run = c(controlTrials$run),
+                      targets = c(controlTrials$targets),
+                      start_x = c(controlTrials$start_x),
+                      start_z = c(controlTrials$start_z),
+                      object_x = c(controlTrials$x),
+                      object_z = c(controlTrials$z),
+                      cue = c(controlTrials$cue),
+                      delay = c(controlTrials$delay),
+                      ITI = c(controlTrials$ITI),
+                      trialType = c(rep('control', nrow(controlTrials))),
+                      speedForward = speedForward,
+                      rotationSpeed = rotationSpeed,
+                      messageToDisplay = -1)
+
+# Encoding run 2
+tempVar <- encodingPhase[encodingPhase$run == 2, ]
+end <- data.frame(block_num = c(rep(3, nrow(tempVar))),
+                  run = c(tempVar$run),
+                  targets = c(tempVar$targets),
+                  start_x = c(tempVar$start_x),
+                  start_z = c(tempVar$start_z),
+                  object_x = c(tempVar$x),
+                  object_z = c(tempVar$z),
+                  cue = c(tempVar$cue),
+                  delay = c(tempVar$delay),
+                  ITI = c(tempVar$ITI),
+                  trialType = c(rep('encoding', nrow(tempVar))),
+                  speedForward = speedForward,
+                  rotationSpeed = rotationSpeed,
+                  messageToDisplay = -1)
+
+# Add to on df called mainTask
+mainTask <- rbind(begining,
+                  middle1[1:15, ], # retrieval run 1.1
+                  middle2[1:15, ], # control half 1
+                  middle1[16:30, ], # retrieval run 1.2
+                  middle2[16:30, ], # control half 2
+                  middle1[31:45, ], # retrieval run 2.1
+                  middle2[sample(1:15),], # control half 1 but shuffled
+                  middle1[46:60, ], # retrieval run 2.2
+                  middle2[sample(16:30),],
+                  end) # control half 2 but shuffled
+
+# Sample start locations from uniform distribution
+mainTask$start_yRotation <- runif(n = nrow(mainTask), min = 0, max = 360)
+
+
+# Add a messages after the runs and in front of the first gift trial
+mainTask[30, 'messageToDisplay']  <- 1 # Before retrieval
+mainTask[60, 'messageToDisplay']  <- 0 # Waiting message 
+mainTask[90, 'messageToDisplay']  <- 0 # Waiting message
+mainTask[120, 'messageToDisplay'] <- 0 # Waiting message
+mainTask[150, 'messageToDisplay'] <- 0 # Waiting message
+
+# Write .csv file
+write.csv(x = mainTask, file = 'mainTask.csv', quote = FALSE, row.names = FALSE)
+```
+
+
+###
+```{r check_plot, fig.height = 6, fig.width = 7, echo = FALSE}
+# Convert to factor
+mainTask$run <- as.factor(mainTask$run)
+
+# Plot
+ggplot(mainTask, aes(x = start_x, y = start_z, colour = trialType, shape = run)) + 
+  geom_jitter(width = 5, height = 5) +
+  labs(title = "Were the correct locations used?", x = '', y = '')
+```
+
+Above is a quick check if the start positions are correct. Here the squares all need to be in one place, which are the object locations. This also includes the red control trials, which only go from object to object. The triangles are the offset start locations from run 2. 

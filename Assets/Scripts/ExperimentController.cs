@@ -10,10 +10,14 @@ using System.IO;
 
 public class ExperimentController : MonoBehaviour{
     // Public static vars
-    public static float experimentStarted; 
+    public static float triggerSend_timeStamp; 
 
 	// reference to the UXF Session 
     public Session session; 
+
+    // reference to camera (for SkyBox) & to background to activate & deactivate on control trials
+    public Camera mainCam;
+    public GameObject background;
 
 	// Public vars
 	public List<GameObject> objects;
@@ -21,7 +25,6 @@ public class ExperimentController : MonoBehaviour{
 	public GameObject arrowPrefab;
 	public KeyCode startButton = KeyCode.S;
 	public KeyCode confirmButton = KeyCode.E;
-    public KeyCode forwardKey = KeyCode.W;
     public int target;
     public Image cueImage;
     public Text blockMessage;
@@ -46,22 +49,26 @@ public class ExperimentController : MonoBehaviour{
     private float ITI; // How long is the ITI?
     private string trialType; // Type of the current trial (i.e. standard vs. control)
     private bool drawMessageNextTrial = true; // Should a message be shown on the next trial?
-    private bool closeMessage = false; // Will switch to true if forward key is pressed during presentation of mesage
+    private bool closeMessage1 = false; // Will switch to true if the experimenter presses SPACE
+    private bool closeMessage2 = false; // Will switch to true if the letter S is pressed or the scanner sends and S. 
+    private bool trialEnded = true;
     private bool messageDrawn = false; // Was the message drawn yet?
     private bool sessionStarted = false; // Has the session started yet?
     private string message2draw; // Should a message be drawn after this trial?
-    private int blockMessage1_trial; 
-    private int blockMessage2_trial;
-    private string blockMessage1_eng;
-    private string blockMessage2_eng;
-    private string blockMessage1_cn;
-    private string blockMessage2_cn;
+    private List<string> blockMessage_eng; // List with the block messages displayed after each block. 
+    private List<string> blockMessage_cn; // List with the block messages displayed after each block. 
+    private string waitForExperimenter_eng; // String for screen that will be presented for each block message. 
+    private string waitForExperimenter_cn; // String for screen that will be presented for each block message.
     private float start_x; // Start position of the player
     private float start_z; // Start position of the player 
     private float start_yRotation; // Start rotation of the player
     private float object_x; // Object position
     private float object_z; // object position
     private GameObject currentObject; // the current object of the trial
+    private bool experimentStarted = false; // Bool if the experiment has been started by pressing S or scanner send S
+    private int messageToDisplay; // Should a message be displayed after the current trial (-1 = no). If yes, then value
+    // is > 0 and can be used as an index for blockMessage
+    private bool displayingBackground = true; // Is the background (including skybox) currenly displayed?
     
 
     // Private language vars
@@ -79,13 +86,17 @@ public class ExperimentController : MonoBehaviour{
 
     // Update is called once per frame
     void Update(){
-    	// Start first trial
-        if(Input.GetKey(startButton) & !session.InTrial & sessionStarted){
+    	// Start first trial if not in trial already, session started and when the experiment is not started yet
+    	// These conditions are important so that the programm doesn't attempt to start the experiment at the wrong time
+        if(Input.GetKey(startButton) & !session.InTrial & sessionStarted & !experimentStarted){
             // Log entry
             Debug.Log("Start message send");
 
             // Start experiment and log time
-            experimentStarted = Time.time; 
+            triggerSend_timeStamp = Time.time; 
+
+            // Set experiment started to true
+            experimentStarted = true;
 
             // Begin first trial
         	session.BeginNextTrial(); 
@@ -93,7 +104,7 @@ public class ExperimentController : MonoBehaviour{
 
         // Only allow this in second block and only during a trial
         // Also only for standard trial
-        if(Input.GetKey(confirmButton) & blockNum > 1 & session.InTrial & !buttonPressed & trialType == "standard"){
+        if(Input.GetKey(confirmButton) & blockNum > 1 & session.InTrial & !buttonPressed & trialType == "retrieval"){
             // Log entry
             Debug.Log("Confirm button pressed: trial" + trialNum);
 
@@ -116,10 +127,18 @@ public class ExperimentController : MonoBehaviour{
             distance = Vector2.Distance(endPosition, targetPosition); 
         }
 
+
+        // Wait for space bar press
+		if(Input.GetKeyDown(KeyCode.Space) & !closeMessage1 & trialEnded){
+        		closeMessage1 = !closeMessage1;
+        		Debug.Log("Experimenter pressed space bar.");
+        }
+
         // Close message if it is drawn and the confirmButton is pressed. 
         if(drawMessageNextTrial & messageDrawn){
             if(Input.GetKeyDown(startButton)){
-                closeMessage = !closeMessage;
+                closeMessage2 = !closeMessage2;
+                Debug.Log("Close message!");
             }
         }
 
@@ -132,18 +151,23 @@ public class ExperimentController : MonoBehaviour{
             TheEnd();
         }
 
-        // Log entry for each startButton pressed
-        if(Input.GetKeyDown(startButton)){
-        	Debug.Log("confirmButton was pressed");
+        // Log entry for each startButton pressed after the experiment started
+        if(Input.GetKeyDown(startButton) & experimentStarted){
+        	Debug.Log("trigger was send");
+
+        	// Log time
+            triggerSend_timeStamp = Time.time; 
         }
     }
 
     // Starting the session
     public void sessionStart(){
+    	// Set bool to true
         sessionStarted = true;
 
-        // Set maximum frames per second
-        SetTargetFrameRate.targetFrameRate = session.settings.GetInt("targetFrameRate");
+        // Set frame rate to maximum
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = session.settings.GetInt("targetFrameRate");
     }
 
     // Setting up trial
@@ -151,7 +175,7 @@ public class ExperimentController : MonoBehaviour{
         // Initialise the button press so it can be pressed. 
         buttonPressed = false;
 
-    	// Get current trial and block
+    	// Get current trial and block number
     	trialNum =  session.currentTrialNum; 
 		blockNum =  session.currentBlockNum;
 
@@ -164,6 +188,7 @@ public class ExperimentController : MonoBehaviour{
 		cueTime = trial.settings.GetFloat("cue");
 		ITI = trial.settings.GetFloat("ITI");
 		trialType = trial.settings.GetString("trialType");
+		messageToDisplay = trial.settings.GetInt("messageToDisplay");
 
 		// Set movement param
 		ThreeButtonMovement.forwardSpeed = trial.settings.GetInt("speedForward");
@@ -178,6 +203,20 @@ public class ExperimentController : MonoBehaviour{
 		object_x = trial.settings.GetFloat("object_x");
 		object_z = trial.settings.GetFloat("object_z");
 
+		// Set up background 
+		if(trialType == "control" & displayingBackground){
+			// For control trials
+			mainCam.GetComponent<Skybox>().enabled = false;
+			background.SetActive(false);
+			displayingBackground = false;
+		} else if (trialType != "control" & !displayingBackground){
+			// For normal encoding & retrieval trials
+			mainCam.GetComponent<Skybox>().enabled = true;
+			background.SetActive(true);
+			displayingBackground = true;
+		}
+
+
 		// Instantiate object
         currentObject = Instantiate(objects[target - 1]);
         currentObject.SetActive(false);
@@ -190,20 +229,20 @@ public class ExperimentController : MonoBehaviour{
 		// Show cue
 		StartCoroutine(ShowCue(cueTime));
 
-		// In first block & on control trials show the object
-		if(blockNum == 1 | trialType == "control"){
+		// During encoding & on control trials show the object immediately
+		if(trialType == "encoding" | trialType == "control"){
 			currentObject.SetActive(true);
 		} 
 
-        // Get position of object
+        // Get position of current object 
         Vector3 objPos = currentObject.transform.position;
 
-        // Add arrow to indicate where object is and move over to correc
+        // Add arrow to indicate where object is and move over to correcy location
         arrow = Instantiate(arrowPrefab);
         arrow.transform.position = new Vector3(objPos.x, arrow.transform.position.y, objPos.z);
 
         // For blocks over 1 that are standard
-        if(blockNum > 1 & trialType == "standard"){
+        if(blockNum > 1 & trialType == "retrieval"){
             arrow.SetActive(false);
         }
 
@@ -211,30 +250,24 @@ public class ExperimentController : MonoBehaviour{
 		player.transform.position = new Vector3(start_x, 1.0f, start_z);
 		player.transform.rotation = Quaternion.Euler(0, start_yRotation, 0);
 
-        // Check if message should be drawn and the end
-        if(trialNum == blockMessage1_trial){
+        // Check if message should be drawn after the trial.
+        // by checking if messageToDisplay is above -1. If not, it means not message.
+        if(messageToDisplay >= 0){
             // Set 2 true
             drawMessageNextTrial = true;
 
-            // Selct the corret message
-            if(language == "chinese"){
-                message2draw = blockMessage1_cn;
+            // Select the correct message
+            if(WelcomeScript.language == "chinese"){
+                message2draw = blockMessage_cn[messageToDisplay];
             } else {
-                message2draw = blockMessage1_eng;
-            } 
-        } else if (trialNum == blockMessage2_trial){
-            // Set 2 true
-            drawMessageNextTrial = true;
-
-            // Selct the corret message
-            if(language == "chinese"){
-                message2draw = blockMessage2_cn;
-            } else {
-                message2draw = blockMessage2_eng;
+                message2draw = blockMessage_eng[messageToDisplay];
             } 
         } else {
             drawMessageNextTrial = false;
         }
+
+        // Set trial ended to false
+        trialEnded = false;
     }
 
 
@@ -269,15 +302,13 @@ public class ExperimentController : MonoBehaviour{
         // Save that information for this trial
         session.CurrentTrial.result["end_x"] = endPosition.x;
         session.CurrentTrial.result["end_z"] = endPosition.y; // Note it's y because it comes from Vector2
-        session.CurrentTrial.result["target_x"] = targetPosition.x;
-        session.CurrentTrial.result["target_z"] = targetPosition.y; // Note it's y because it comes from Vector2
         session.CurrentTrial.result["euclideanDistance"] = distance; 
         session.CurrentTrial.result["objectName"] = objectNames_eng[target - 1];
         session.CurrentTrial.result["objectNumber"] = target;
         session.CurrentTrial.result["navStartTime"] = navStartTime;
         session.CurrentTrial.result["navEndTime"] = navEndTime;
         session.CurrentTrial.result["navTime"] = navEndTime - navStartTime;
-        session.CurrentTrial.result["experimentStarted"] = experimentStarted;
+        session.CurrentTrial.result["triggerSend_timeStamp"] = triggerSend_timeStamp;
         session.CurrentTrial.result["timesObjectPresented"] = timesObjectPresented[target - 1];
 
         // Destroy arrow
@@ -286,23 +317,22 @@ public class ExperimentController : MonoBehaviour{
         // Reset movement so that player is stationary
     	ThreeButtonMovement.reset = true;
 
-
         // End trial
 		session.EndCurrentTrial();
+
+		// Set trial ended to true
+		trialEnded = true;
     }
 
     ////////////////////////////////
     // The function should be added to the UXF rig event 
     ///at the beginning of the session. 
     public void LanguageInformation(){
-        language = session.settings.GetString("language");
         objectNames_eng = session.settings.GetStringList("objectNames_eng");
-        blockMessage1_eng = session.settings.GetString("blockMessage1_eng");
-        blockMessage2_eng = session.settings.GetString("blockMessage2_eng");
-        blockMessage1_cn = session.settings.GetString("blockMessage1_cn");
-        blockMessage2_cn = session.settings.GetString("blockMessage2_cn");
-        blockMessage1_trial = session.settings.GetInt("blockMessage1_trial");
-        blockMessage2_trial = session.settings.GetInt("blockMessage2_trial");
+        blockMessage_eng = session.settings.GetStringList("blockMessage_eng");
+        blockMessage_cn = session.settings.GetStringList("blockMessage_cn");
+        waitForExperimenter_eng = session.settings.GetString("waitForExperimenter_eng");
+        waitForExperimenter_cn = session.settings.GetString("waitForExperimenter_cn");
     }
 
     ////////////////////////////////
@@ -362,13 +392,16 @@ public class ExperimentController : MonoBehaviour{
 
 
     ////////////////////////////////
-    // IEnumerator that handels the ITI countdown and message draw
+    // IEnumerator that handels the ITI countdown and the message draw
     IEnumerator countdownITI(){
         // Log entry
         Debug.Log("Start of ITI period of trial" + trialNum);
 
     	// Wait ITI then start new trial
     	yield return new WaitForSeconds(ITI);
+
+    	// Disable movement
+    	ThreeButtonMovement.movementAllowed = false;
 
         // Log entry
         Debug.Log("End of ITI period of trial" + trialNum);
@@ -377,10 +410,22 @@ public class ExperimentController : MonoBehaviour{
         if(drawMessageNextTrial){
             // Present message first
             // Log entry
-            Debug.Log("Started presenting message");
+            Debug.Log("Waiting for experimenter to press space.");
 
             // Activate panel and change text to message
             panel.SetActive(true);
+
+            // Select the correct message and display
+            if(WelcomeScript.language == "chinese"){
+                blockMessage.text = waitForExperimenter_cn;
+            } else {
+                blockMessage.text = waitForExperimenter_eng;
+            } 
+
+            // Wait until S key is pressed or send
+            yield return new WaitUntil(() => closeMessage1);
+
+            // Display message
             blockMessage.text = message2draw;
 
             // Hide fixationMarker
@@ -390,15 +435,16 @@ public class ExperimentController : MonoBehaviour{
             // will close the message
             messageDrawn = ! messageDrawn;
 
-            // Wait until forward key is pressed
-            yield return new WaitUntil(() => closeMessage);
+            // Wait until S key is pressed or send
+            yield return new WaitUntil(() => closeMessage2);
 
             // Deactivate panel and change text to message back to empty
             panel.SetActive(false);
             blockMessage.text = "";
 
             // Flip closeMessage
-            closeMessage = !closeMessage;
+            closeMessage1 = !closeMessage1;
+            closeMessage2 = !closeMessage2;
 
             // Flip messageDrawn back
             messageDrawn = ! messageDrawn;
@@ -432,18 +478,3 @@ public class ExperimentController : MonoBehaviour{
         Cursor.visible = false;
     }
 }
-
-// Post processing
-
-
-// add random orientation
-
-
-// Four block: 6 x 4 -> 24 trials 
-// check if pressing S at beginning is an issue
-// get trigger times for each run
-
-// add set up reflection probe
-// check if everything is saved
-// test what happens if you pressed weird order of buttons
-// actually set the frame rate to something

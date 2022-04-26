@@ -1,0 +1,47 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
+public class WelcomeScript : MonoBehaviour{
+	// public vars
+	public Toggle m_Toggle;
+
+	// Static
+	public static string language;
+
+    // Start is called before the first frame update
+    void Start(){
+        //Add listener for when the state of the Toggle changes, and output the state
+        m_Toggle.onValueChanged.AddListener(delegate {
+            ToggleValueChanged(m_Toggle);
+        });
+
+        //Initialize the Text to say whether the Toggle is in a positive or negative state
+        language = "chinese";
+    }
+
+    //Output the new state of the Toggle into Text when the user uses the Toggle
+    void ToggleValueChanged(Toggle change){
+    	if(m_Toggle.isOn){
+    		Debug.Log("Language set to Chinese.");
+    		language = "chinese";
+    	} else {
+    		Debug.Log("Language set to English.");
+    		language = "english";
+    	}
+    }
+
+    // Method to load practice scene
+    public void LoadPracticeVersion(){
+    	Debug.Log("Load square scene.");
+    	SceneManager.LoadScene("square");
+    }
+
+    // Method to load fMRI scene
+    public void LoadfMRIVersion(){
+    	Debug.Log("Load arena scene.");
+    	SceneManager.LoadScene("arena");
+    }
+}

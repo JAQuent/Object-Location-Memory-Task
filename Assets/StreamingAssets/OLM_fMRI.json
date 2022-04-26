@@ -1,0 +1,9 @@
+{
+    "targetFrameRate": 60,
+    "trial_specification_name": "mainTask.csv",
+    "waitForExperimenter_eng": "wait...",
+    "waitForExperimenter_cn": "等。。。",
+    "objectNames_eng": ["barrel", "basketball", "cake", "cone", "dice", "donut", "drum", "football", "gift", "lamp", "pawn", "pineapple", "vase"],
+    "blockMessage_eng": ["Wait for the scanner signal.","Before you see the object, you have to go to the location, where you think the object is and press E. After that the object will appear you collect it and move on to the next trial.", "Now you will see an extra object (a gift box) and you simply have to collect the object without having to retrieve its location like you did at the beginning."],
+    "blockMessage_cn": ["请等待扫描仪器信号。", "在您能看到物品之前，需要先走到您记忆中该物品所在的位置并按下E键。此时物品会出现，您拾起它后即可进入下一次测试。", "现在您会看到一件额外的物品（礼品盒），您只需要拾起它即可，无需反馈它的位置。"],
+}

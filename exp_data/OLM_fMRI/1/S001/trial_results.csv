@@ -1,0 +1,2 @@
+experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,run,targets,start_x,start_z,start_yRotation,object_x,object_z,cue,delay,ITI,trialType,speedForward,rotationSpeed,messageToDisplay,end_z,euclideanDistance,objectName,triggerSend_timeStamp,objectNumber,navStartTime,navEndTime,navTime,timesObjectPresented,player_movement_location_0
+OLM_fMRI,1,1,1,1,1,5.470077,19.55768,1,8,60,-1.47E-14,300,-30,51.96152423,2,2,1,encoding,15,50,0,,,,,,,,,,OLM_fMRI/1/S001/trackers/player_movement_T001.csv

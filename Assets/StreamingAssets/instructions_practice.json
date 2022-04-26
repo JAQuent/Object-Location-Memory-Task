@@ -1,0 +1,8 @@
+{
+    "startUp_eng": "Startup",
+    "instructions1_eng": "Welcome to the Arena Memory Task (AMT)",
+    "instructions2_eng": "Your task will be to learn the locations of six objects (backpack, football, barrel, chair, teddy and vase) in an arena. You are able to move by pressing W for moving forward and A and D to rotate left and right. Note that you have to press the currently active button again to stop and switch to a new action (for example from rotation left to moving forward). A trial ends when you find the object and pick it up by walking over it. When you successfully picked the object up, you will hear a sound. For the first block, we will always show you the object location from the beginning but with Block 2 you will have to indicate where the object is before you can see and collect by pressing E. \n After filling out the from by providing your participant name and demographic information, press “Begin session”. The experiment starts after you have pressed S on your keyboard. \n The task has 6 blocks with each 12 trials and will take 40 minutes to complete.",
+    "startUp_cn": "设置",
+    "instructions1_cn": "欢迎来到 Arena Memory Task (AMT)",
+    "instructions2_cn": "您的任务是学习以下6件物品在虚拟场景中的位置：背包、足球、桶、椅子、玩偶熊和花瓶。您可以通过按键盘上的W来前进，A向左转，D向右转。请注意，当您从一个行动状态转至另一个状态时，您需要先再次按下代表当前行动的按键来结束这一状态（例如，若您正在向左转向并且需要变为前进，您需要先按A来结束左转向再按W来前进）。当您找到某件物品，您可以通过经过它来拾起，此时一次测试结束。当您成功地拾起物品，您会听到一声提示音。在第一轮任务中，我们会告诉您每一件物品的位置。但是从第二轮任务开始，您将根据自己的记忆去寻找每一件物品的位置，并通过按下E键来确认您所找的位置。同一件物品在每一轮任务的每一次测试中都是相同的。\n在填写您的名字和个人信息的表格后，请点击“开始任务”按钮。我们的实验将在您按S键后正式开始。\n本任务共有六轮，每轮12次测试，完成任务大概需要40min。"
+}
