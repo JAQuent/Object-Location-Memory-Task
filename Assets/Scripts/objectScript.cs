@@ -13,6 +13,9 @@ public class objectScript : MonoBehaviour{
         transform.Rotate(new Vector3(0, -1, 0) * Time.deltaTime * rotationSpeed);
     }
 
+    /// <summary>
+    /// If the player enters the collider end the trial.
+    /// </summary>
     void OnTriggerEnter(Collider other){
     	if (other.name == "Player"){
     		// Logging

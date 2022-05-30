@@ -22,7 +22,17 @@ public class WelcomeScript : MonoBehaviour{
         language = "chinese";
     }
 
-    //Output the new state of the Toggle into Text when the user uses the Toggle
+    void Update(){
+        // Check if secret button is pressed. 
+        if(Input.GetKeyDown(KeyCode.LeftBracket)){
+            Debug.Log("Super secret mode");
+            SceneManager.LoadScene("videoScene");
+        }
+    }
+
+    /// <summary>
+    /// Output the new state of the Toggle into Text when the user uses the Toggle
+    /// </summary>
     void ToggleValueChanged(Toggle change){
     	if(m_Toggle.isOn){
     		Debug.Log("Language set to Chinese.");
@@ -33,13 +43,17 @@ public class WelcomeScript : MonoBehaviour{
     	}
     }
 
-    // Method to load practice scene
+    /// <summary>
+    /// Method to load practice scene
+    /// </summary>
     public void LoadPracticeVersion(){
     	Debug.Log("Load square scene.");
     	SceneManager.LoadScene("square");
     }
 
-    // Method to load fMRI scene
+    /// <summary>
+    /// Method to load main task scene
+    /// </summary>
     public void LoadfMRIVersion(){
     	Debug.Log("Load arena scene.");
     	SceneManager.LoadScene("arena");

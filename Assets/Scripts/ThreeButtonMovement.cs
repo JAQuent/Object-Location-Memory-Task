@@ -22,7 +22,7 @@ public class ThreeButtonMovement : MonoBehaviour{
 	// If false, players can move forward and rotate at the same time as Input.GetKey is used. 
 
 	// Private vars
-	// Bools for actionNeedToBeEnded functinality
+	// Bools for actionNeedToBeEnded functionality
 	public static bool  movingForward = false; // So it can be used by the tracker
 	private bool turnignLeft = false;
 	private bool turningRight = false;
@@ -51,7 +51,7 @@ public class ThreeButtonMovement : MonoBehaviour{
                     Debug.Log("rightTurn was pressed.");
     			}
 
-    			// Do actions
+    			// Do the actions
     			if(movingForward){
     				transform.Translate(Vector3.forward * forwardSpeed * Time.deltaTime);
     			}
@@ -64,8 +64,8 @@ public class ThreeButtonMovement : MonoBehaviour{
 
     		} else {
     			// Player do not need to end their response before switching. 
-    		    // If forward key is pressed
                 // Log entries are also recorded here but this might a large number of entries. 
+    		    // If forward key is pressed
 		        if(Input.GetKey(forwardKey)){
 		        	transform.Translate(Vector3.forward * forwardSpeed * Time.deltaTime);
                     Debug.Log("forwardKey was pressed.");
@@ -83,14 +83,14 @@ public class ThreeButtonMovement : MonoBehaviour{
                     Debug.Log("rightTurn was pressed.");
 		        }
     		}
-
-    		// Rest to no movement
-    		if(reset){
-    			movingForward = false;
-    			turnignLeft = false;
-    			turningRight = false;
-    			reset = false; // Turn of again
-    		}
     	}
+
+        // Reset to no movement
+        if(reset){
+            movingForward = false;
+            turnignLeft = false;
+            turningRight = false;
+            reset = false; // Turn off again
+        }
     }
 }

@@ -10,14 +10,19 @@ using System.IO;
 
 public class ExperimentController : MonoBehaviour{
     // Public static vars
-    public static float triggerSend_timeStamp; 
+    public static float runStartTime; 
 
 	// reference to the UXF Session 
     public Session session; 
 
+    // End screen
+    public GameObject endScreen;
+
     // reference to camera (for SkyBox) & to background to activate & deactivate on control trials
     public Camera mainCam;
     public GameObject background;
+    public GameObject mainSun;
+    public GameObject controlSun;
 
 	// Public vars
 	public List<GameObject> objects;
@@ -38,7 +43,7 @@ public class ExperimentController : MonoBehaviour{
 	private int trialNum;
 	private int blockNum;
 	private GameObject arrow;
-	private Trial trial;
+    private Trial trial;
     private Vector2 endPosition;  // Where did the player end?
     private Vector2 targetPosition; // Where was the target object?
     private bool buttonPressed = false;
@@ -69,7 +74,14 @@ public class ExperimentController : MonoBehaviour{
     private int messageToDisplay; // Should a message be displayed after the current trial (-1 = no). If yes, then value
     // is > 0 and can be used as an index for blockMessage
     private bool displayingBackground = true; // Is the background (including skybox) currenly displayed?
-    
+    private bool runActive = false; // Only if this is not true, we change runStartTime 
+    private float confirmButtonTime = float.NaN; 
+    private bool startEndCountDown; // If true it starts the end countdown
+    private float endCountDown = 60; // End countdown if zero, application closes. 
+    private Text endScreenText; // Text component of the end screen
+    private string endMessage_eng; // String for the english end message
+    private string endMessage_cn; // String for the chinese end message
+    private string endMessage; // String for the end message that is used.
 
     // Private language vars
     private string language;
@@ -83,52 +95,21 @@ public class ExperimentController : MonoBehaviour{
         }
     }
 
-
     // Update is called once per frame
     void Update(){
-    	// Start first trial if not in trial already, session started and when the experiment is not started yet
-    	// These conditions are important so that the programm doesn't attempt to start the experiment at the wrong time
+    	// Start first trial if not in trial already, the session is started and when the experiment is not started yet
+    	// These conditions are important so that the programm doesn't attempt to start the experiment at the wrong time.
         if(Input.GetKey(startButton) & !session.InTrial & sessionStarted & !experimentStarted){
-            // Log entry
-            Debug.Log("Start message send");
-
-            // Start experiment and log time
-            triggerSend_timeStamp = Time.time; 
-
-            // Set experiment started to true
-            experimentStarted = true;
-
-            // Begin first trial
-        	session.BeginNextTrial(); 
+        	startExperiment();
         }
 
-        // Only allow this in second block and only during a trial
-        // Also only for standard trial
-        if(Input.GetKey(confirmButton) & blockNum > 1 & session.InTrial & !buttonPressed & trialType == "retrieval"){
-            // Log entry
-            Debug.Log("Confirm button pressed: trial" + trialNum);
-
-            // Flip the button so it can only be pressed once
-            buttonPressed = !buttonPressed; 
-
-        	// Show object as feedback
-        	currentObject.SetActive(true);
-
-            // Get position of object
-            arrow.SetActive(true);
-
-            // Create Vector2 for player position
-            endPosition = new Vector2(player.transform.position.x, player.transform.position.z);
-
-            // Create vector2 for target position
-            targetPosition = new Vector2(currentObject.transform.position.x, currentObject.transform.position.z);
-
-            // Calculate Euclidean distance
-            distance = Vector2.Distance(endPosition, targetPosition); 
+        // Only run the function if a) the confirm button is pressed, b) the experiment is in trial and 
+        // the trial type is "retrieval"
+        if(Input.GetKey(confirmButton) & session.InTrial & !buttonPressed & trialType == "retrieval"){
+        	locationRetrieved();
         }
 
-
-        // Wait for space bar press
+        // Wait for space bar press to move to message screen
 		if(Input.GetKeyDown(KeyCode.Space) & !closeMessage1 & trialEnded){
         		closeMessage1 = !closeMessage1;
         		Debug.Log("Experimenter pressed space bar.");
@@ -145,7 +126,7 @@ public class ExperimentController : MonoBehaviour{
         // Stop Experiment
         if(Input.GetKey(KeyCode.Escape)){
             // Log entry
-            Debug.Log("The end");
+            Debug.Log("Session end time " + System.DateTime.Now);
 
             // Close application
             TheEnd();
@@ -153,28 +134,112 @@ public class ExperimentController : MonoBehaviour{
 
         // Log entry for each startButton pressed after the experiment started
         if(Input.GetKeyDown(startButton) & experimentStarted){
-        	Debug.Log("trigger was send");
+        	logTrigger();
+        }
 
-        	// Log time
-            triggerSend_timeStamp = Time.time; 
+        // End countdown
+        if(startEndCountDown){
+            endCountDown -= Time.deltaTime;
+            endScreenText.text = endMessage + Mathf.Round(endCountDown);
+
+            // Quit if end count down over
+            if(endCountDown <= 0){
+                Application.Quit();
+            }
         }
     }
 
-    // Starting the session
+    /// <summary>
+    /// Method to start the experiment, which is mainly waiting for the S (i.e. the trigger from the scanner) to arrive. 
+    /// </summary>
+    void startExperiment(){
+            // Log entry
+            Debug.Log("Start message send");
+
+            // Start experiment and log time
+            runStartTime = Time.time; 
+            Debug.Log("Run start " + System.DateTime.Now + " runStartTime: " + runStartTime);
+
+            // Set experiment started to true
+            experimentStarted = true;
+
+            // Begin first trial
+        	session.BeginNextTrial(); 
+    }
+
+    /// <summary>
+    /// Method to retrieve the location when the correct button was pressed.  
+    /// </summary>
+    void locationRetrieved(){
+        // Log entry
+        Debug.Log("Confirm button pressed: trial" + trialNum);
+
+        // Get time point
+        confirmButtonTime = Time.time;
+
+        // Flip the button so it can only be pressed once
+        buttonPressed = !buttonPressed; 
+
+    	// Show object as feedback
+    	currentObject.SetActive(true);
+
+        // Get position of object
+        arrow.SetActive(true);
+
+        // Create Vector2 for player position
+        endPosition = new Vector2(player.transform.position.x, player.transform.position.z);
+
+        // Create vector2 for target position
+        targetPosition = new Vector2(currentObject.transform.position.x, currentObject.transform.position.z);
+
+        // Calculate Euclidean distance
+        distance = Vector2.Distance(endPosition, targetPosition); 
+    }
+
+    /// <summary>
+    /// Method to log everytime an S arrives (i.e. a trigger from the scanner).
+    /// If approbriate it will also reset the run start time.   
+    /// </summary>
+    void logTrigger(){
+        // Log every trigger 
+    	Debug.Log("A trigger was send " + System.DateTime.Now + " Run time: " + Time.time);
+
+    	// Change runStartTime only when run is not active
+        if(!runActive){
+            // Record new time
+            runStartTime = Time.time; 
+            Debug.Log("Run start " + System.DateTime.Now + " runStartTime: " + runStartTime);
+
+            // Set run active to true
+            runActive = true;
+        }
+    }
+
+    /// <summary>
+    /// Method to start the session. This needs to be attached to the On Session Begin Event of the UXF Rig.
+    // This a) logs the screen resoltion & b) locks the target frame rate to that is provided by the .json file. 
+    /// </summary>
     public void sessionStart(){
+        // Log entry
+        Debug.Log("Session start time " + System.DateTime.Now);
+        // Screen resolution
+        Debug.Log(Screen.currentResolution);
+
     	// Set bool to true
         sessionStarted = true;
 
         // Set frame rate to maximum
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = session.settings.GetInt("targetFrameRate");
+
+        // Get endCountDown
+        endCountDown = session.settings.GetFloat("endCountDown");
+
+        // Log which platform
+        whichPlatform();
     }
 
-    // Setting up trial
-    public void SetUpTrial(){
-        // Initialise the button press so it can be pressed. 
-        buttonPressed = false;
-
+    void getSettingsForCurrentTrial(){
     	// Get current trial and block number
     	trialNum =  session.currentTrialNum; 
 		blockNum =  session.currentBlockNum;
@@ -202,6 +267,55 @@ public class ExperimentController : MonoBehaviour{
 		// Get object positions
 		object_x = trial.settings.GetFloat("object_x");
 		object_z = trial.settings.GetFloat("object_z");
+    }
+
+    /// <summary>
+    /// Method to spawn the object. It is set inactive immediately and later set active.
+    /// </summary>
+    void spawnObject(){
+		// Instantiate object
+        currentObject = Instantiate(objects[target - 1]);
+        currentObject.SetActive(false);
+        currentObject.name = "Object" + target;
+		currentObject.transform.position = new Vector3(object_x, currentObject.transform.position.y, object_z);
+    }
+
+    /// <summary>
+    /// Method to check if a message has to be displayed.
+    /// </summary>
+    void checkIfMessageNeedsToBeDisplayed(){
+        // Check if message should be drawn after the trial.
+        // by checking if messageToDisplay is above -1. If not, it means not message.
+        if(messageToDisplay >= 0){
+            // Set 2 true
+            drawMessageNextTrial = true;
+
+            // Select the correct message
+            if(WelcomeScript.language == "chinese"){
+                message2draw = blockMessage_cn[messageToDisplay];
+            } else {
+                message2draw = blockMessage_eng[messageToDisplay];
+            } 
+        } else {
+            drawMessageNextTrial = false;
+        }
+    }
+
+    /// <summary>
+    /// Method to set up a trial. This needs to be attached to the On Trial Begin Event of the UXF Rig.
+    /// </summary>
+    public void SetUpTrial(){
+        // Set run active
+        runActive = true;
+
+        // Set confirm button press
+        confirmButtonTime = float.NaN;
+
+        // Initialise the button press so it can be pressed. 
+        buttonPressed = false;
+
+        // Get all necessary information for setting up current trial
+        getSettingsForCurrentTrial();
 
 		// Set up background 
 		if(trialType == "control" & displayingBackground){
@@ -209,19 +323,19 @@ public class ExperimentController : MonoBehaviour{
 			mainCam.GetComponent<Skybox>().enabled = false;
 			background.SetActive(false);
 			displayingBackground = false;
+            mainSun.SetActive(false);
+            controlSun.SetActive(true);
 		} else if (trialType != "control" & !displayingBackground){
 			// For normal encoding & retrieval trials
 			mainCam.GetComponent<Skybox>().enabled = true;
 			background.SetActive(true);
 			displayingBackground = true;
+            mainSun.SetActive(true);
+            controlSun.SetActive(false);
 		}
 
-
-		// Instantiate object
-        currentObject = Instantiate(objects[target - 1]);
-        currentObject.SetActive(false);
-        currentObject.name = "Object" + target;
-		currentObject.transform.position = new Vector3(object_x, currentObject.transform.position.y, object_z);
+		// Spawn the object & set inactive at first
+		spawnObject();
 
 		// Reset movement so that player is stationary at the beginning
         ThreeButtonMovement.reset = true;
@@ -241,8 +355,8 @@ public class ExperimentController : MonoBehaviour{
         arrow = Instantiate(arrowPrefab);
         arrow.transform.position = new Vector3(objPos.x, arrow.transform.position.y, objPos.z);
 
-        // For blocks over 1 that are standard
-        if(blockNum > 1 & trialType == "retrieval"){
+        // For trials that retrieval
+        if(trialType == "retrieval"){
             arrow.SetActive(false);
         }
 
@@ -250,29 +364,34 @@ public class ExperimentController : MonoBehaviour{
 		player.transform.position = new Vector3(start_x, 1.0f, start_z);
 		player.transform.rotation = Quaternion.Euler(0, start_yRotation, 0);
 
-        // Check if message should be drawn after the trial.
-        // by checking if messageToDisplay is above -1. If not, it means not message.
-        if(messageToDisplay >= 0){
-            // Set 2 true
-            drawMessageNextTrial = true;
-
-            // Select the correct message
-            if(WelcomeScript.language == "chinese"){
-                message2draw = blockMessage_cn[messageToDisplay];
-            } else {
-                message2draw = blockMessage_eng[messageToDisplay];
-            } 
-        } else {
-            drawMessageNextTrial = false;
-        }
+		// Check if a message needs to be displayed at the end of the trial
+		checkIfMessageNeedsToBeDisplayed();
 
         // Set trial ended to false
         trialEnded = false;
     }
 
+    /// <summary>
+    /// Method that saves the results at the end of the trial.
+    /// </summary>
+    void saveResults(){
+        // Save that information for this trial
+        session.CurrentTrial.result["end_x"] = endPosition.x;
+        session.CurrentTrial.result["end_z"] = endPosition.y; // Note it's y because it comes from Vector2
+        session.CurrentTrial.result["euclideanDistance"] = distance; 
+        session.CurrentTrial.result["objectName"] = objectNames_eng[target - 1];
+        session.CurrentTrial.result["objectNumber"] = target;
+        session.CurrentTrial.result["navStartTime"] = navStartTime;
+        session.CurrentTrial.result["navEndTime"] = navEndTime;
+        session.CurrentTrial.result["navTime"] = navEndTime - navStartTime;
+        session.CurrentTrial.result["runStartTime"] = runStartTime;
+        session.CurrentTrial.result["timesObjectPresented"] = timesObjectPresented[target - 1];
+        session.CurrentTrial.result["confirmButtonTime"] = confirmButtonTime;
+    }
 
-    ////////////////////////////////
-    // Function that handles everything at the end of trial
+    /// <summary>
+    /// Method that handles everything that need to happen at the end of trial.
+    /// </summary>
     public void EndTrial(){
         // Log entry
         Debug.Log("End of trial " + trialNum);
@@ -283,9 +402,8 @@ public class ExperimentController : MonoBehaviour{
         // Set the object inactive
 		currentObject.SetActive(false);
 
-
         // Calculate distance
-        if(blockNum == 1 | trialType == "control"){
+        if(trialType == "encoding" | trialType == "control"){
             // Create Vector2 for player position
             endPosition = new Vector2(player.transform.position.x, player.transform.position.z);
 
@@ -298,18 +416,9 @@ public class ExperimentController : MonoBehaviour{
 
         // Update timesObjectPresented 
         timesObjectPresented[target - 1] += 1;
-		
-        // Save that information for this trial
-        session.CurrentTrial.result["end_x"] = endPosition.x;
-        session.CurrentTrial.result["end_z"] = endPosition.y; // Note it's y because it comes from Vector2
-        session.CurrentTrial.result["euclideanDistance"] = distance; 
-        session.CurrentTrial.result["objectName"] = objectNames_eng[target - 1];
-        session.CurrentTrial.result["objectNumber"] = target;
-        session.CurrentTrial.result["navStartTime"] = navStartTime;
-        session.CurrentTrial.result["navEndTime"] = navEndTime;
-        session.CurrentTrial.result["navTime"] = navEndTime - navStartTime;
-        session.CurrentTrial.result["triggerSend_timeStamp"] = triggerSend_timeStamp;
-        session.CurrentTrial.result["timesObjectPresented"] = timesObjectPresented[target - 1];
+
+        // Save results
+        saveResults();
 
         // Destroy arrow
         Destroy(arrow);
@@ -324,19 +433,23 @@ public class ExperimentController : MonoBehaviour{
 		trialEnded = true;
     }
 
-    ////////////////////////////////
-    // The function should be added to the UXF rig event 
-    ///at the beginning of the session. 
+    /// <summary>
+    /// Method that handles everything related to language.
+    // This needs to be attached to the On Session Begin Event of the UXF Rig.
+    /// </summary>
     public void LanguageInformation(){
         objectNames_eng = session.settings.GetStringList("objectNames_eng");
         blockMessage_eng = session.settings.GetStringList("blockMessage_eng");
         blockMessage_cn = session.settings.GetStringList("blockMessage_cn");
         waitForExperimenter_eng = session.settings.GetString("waitForExperimenter_eng");
         waitForExperimenter_cn = session.settings.GetString("waitForExperimenter_cn");
+        endMessage_eng = session.settings.GetString("endMessage_eng");
+        endMessage_cn = session.settings.GetString("endMessage_cn");
     }
 
-    ////////////////////////////////
-    // IEnumerator that handels the time the cue is presented
+    /// <summary>
+    /// IEnumerator that handels the time the cue is presented
+    /// </summary>
     IEnumerator ShowCue(float cueTime){
         // Log entry
         Debug.Log("Cue start of trial " + trialNum);
@@ -365,8 +478,9 @@ public class ExperimentController : MonoBehaviour{
 		StartCoroutine(Delay());
     }
 
-    ////////////////////////////////
-    // IEnumerator that handels the delay between cue and movement start
+    /// <summary>
+    /// IEnumerator that handels the delay between cue and movement start
+    /// </summary>
     IEnumerator Delay(){
         // Log entry
         Debug.Log("Start of delay period of trial " + trialNum);
@@ -380,7 +494,8 @@ public class ExperimentController : MonoBehaviour{
     	// Hide the background panel again
     	panel.SetActive(false);
 
-        // Enable movement
+        // Enable & reset movement
+        ThreeButtonMovement.reset = true;
         ThreeButtonMovement.movementAllowed = true;
 
         // Start of navigation period
@@ -390,91 +505,139 @@ public class ExperimentController : MonoBehaviour{
         Debug.Log("End of delay period of trial " + trialNum);
     }
 
+    /// <summary>
+    /// IEnumerator that handels drawing the first message that has to be ended by space bar and the second message
+    /// that is ended by trigger/S press. 
+    /// </summary>
+    IEnumerator drawMessage(){
+        // Present message first
+        // Log entry
+        Debug.Log("Waiting for experimenter to press space.");
 
-    ////////////////////////////////
-    // IEnumerator that handels the ITI countdown and the message draw
+        // Activate panel and change text to message
+        panel.SetActive(true);
+
+        // Select the correct message and display
+        if(WelcomeScript.language == "chinese"){
+            blockMessage.text = waitForExperimenter_cn;
+        } else {
+            blockMessage.text = waitForExperimenter_eng;
+        } 
+
+        // Wait until Space key is pressed or send
+        yield return new WaitUntil(() => closeMessage1);
+
+        // Set run inactive
+        runActive = false;
+
+        // Display message
+        blockMessage.text = message2draw;
+
+        // Hide fixationMarker
+        fixationMarker.SetActive(false);
+
+        // Flip messageDrawn so that only then pressing foward
+        // will close the message
+        messageDrawn = ! messageDrawn;
+
+        // Wait until S key is pressed or send
+        yield return new WaitUntil(() => closeMessage2);
+
+        // Deactivate panel and change text to message back to empty
+        panel.SetActive(false);
+        blockMessage.text = "";
+
+        // Flip closeMessage
+        closeMessage1 = !closeMessage1;
+        closeMessage2 = !closeMessage2;
+
+        // Flip messageDrawn back
+        messageDrawn = ! messageDrawn;
+
+        // Log entry
+        Debug.Log("Stopped presenting message");
+
+        // Start new trial
+        session.EndIfLastTrial(trial);
+        if(session.hasInitialised){
+            session.BeginNextTrialSafe();
+        }
+    }
+
+    /// <summary>
+    /// IEnumerator that handels the ITI countdown and the message draw
+    /// </summary>
     IEnumerator countdownITI(){
         // Log entry
         Debug.Log("Start of ITI period of trial" + trialNum);
 
+        // Disable movement
+        ThreeButtonMovement.reset = true;
+        ThreeButtonMovement.movementAllowed = false;
+
     	// Wait ITI then start new trial
     	yield return new WaitForSeconds(ITI);
-
-    	// Disable movement
-    	ThreeButtonMovement.movementAllowed = false;
 
         // Log entry
         Debug.Log("End of ITI period of trial" + trialNum);
 
         // If statement to handle if a message should be drawn at the end
         if(drawMessageNextTrial){
-            // Present message first
-            // Log entry
-            Debug.Log("Waiting for experimenter to press space.");
-
-            // Activate panel and change text to message
-            panel.SetActive(true);
-
-            // Select the correct message and display
-            if(WelcomeScript.language == "chinese"){
-                blockMessage.text = waitForExperimenter_cn;
-            } else {
-                blockMessage.text = waitForExperimenter_eng;
-            } 
-
-            // Wait until S key is pressed or send
-            yield return new WaitUntil(() => closeMessage1);
-
-            // Display message
-            blockMessage.text = message2draw;
-
-            // Hide fixationMarker
-            fixationMarker.SetActive(false);
-
-            // Flip messageDrawn so that only then pressing foward
-            // will close the message
-            messageDrawn = ! messageDrawn;
-
-            // Wait until S key is pressed or send
-            yield return new WaitUntil(() => closeMessage2);
-
-            // Deactivate panel and change text to message back to empty
-            panel.SetActive(false);
-            blockMessage.text = "";
-
-            // Flip closeMessage
-            closeMessage1 = !closeMessage1;
-            closeMessage2 = !closeMessage2;
-
-            // Flip messageDrawn back
-            messageDrawn = ! messageDrawn;
-
-            // Log entry
-            Debug.Log("Stopped presenting message");
-
-            // Start new trial
-            session.BeginNextTrial(); 
+            StartCoroutine(drawMessage());
         } else {
             // Start new trial
-            session.BeginNextTrial(); 
+            session.EndIfLastTrial(trial);
+            if(session.hasInitialised){
+                session.BeginNextTrialSafe();
+            }
         }
     }
 
-    ////////////////////////////////
-    // Function to strat the ITI countdown
+    /// <summary>
+    /// Function to strat the ITI countdown. This needs to be attached to the On Trial End Event of the UXF Rig.
+    /// </summary>
     public void BeingCountdownITI(){
     	StartCoroutine(countdownITI());
     }
 
-    ////////////////////////////////
-    // Function to end application
+    /// <summary>
+    /// Function to end application. This needs to be attached to the On Session End Event of the UXF Rig.
+    /// </summary>
     public void TheEnd(){
-        Application.Quit();
+        // Set end screen active
+        endScreen.SetActive(true);
+
+        // Start end countdown
+        startEndCountDown = true;
+
+        // Select the correct end message
+        if(WelcomeScript.language == "chinese"){
+            endMessage = endMessage_cn;
+        } else {
+            endMessage = endMessage_eng;
+        } 
+
+        // Get text
+        endScreenText = endScreen.transform.GetChild(0).gameObject.GetComponent<UnityEngine.UI.Text>();
     }
 
-    ////////////////////////////////
-    // Function to deactivate cursor
+    /// <summary>
+    /// Function to deactivate the cursor. This needs to be attached to the On Session Begin Event of the UXF Rig.
+    /// </summary>
     public void HideCursor(){
         Cursor.visible = false;
+    }
+
+    /// <summary>
+    /// Method to log which platform is used. # More info here https://docs.unity3d.com/Manual/PlatformDependentCompilation.html
+    /// </summary>
+    void whichPlatform(){
+        #if UNITY_EDITOR
+            Debug.Log("Platform used is UNITY_EDITOR");
+        #elif UNITY_STANDALONE_OSX
+            Debug.Log("Platform used is UNITY_STANDALONE_OSX");
+        #elif UNITY_STANDALONE_WIN
+            Debug.Log("Platform used is UNITY_STANDALONE_WIN");
+        #endif
     }
 }

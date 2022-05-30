@@ -1,0 +1,13 @@
+{
+    "chromeBar": "OLM (version 1.2)",
+    "instructionsPanelContent1": "You do not need to complete this part.",
+    "instructionsPanelContent2": "Dear participant, you don not have to complete this practice. Please only complete the main task. If you ended up here by accident, you can simply close the application by pressing ESCAPE & then restart it.",
+    "expSettingsprofile": "Experiment settings profile",
+    "localPathElement": "Local data save directory",
+    "localPathElement_placeHolder": "Press browse button to select...",
+    "participantID": "Participant ID",
+    "participantID_placeholder": "Enter text...",
+    "sessionNumber": "Session number",
+    "termsAndConditions": "Please tick if you understand the instructions and agree for your data to be collected and used for research purposes.<color=red>*</color>",
+    "beginButton": "Begin session"
+}

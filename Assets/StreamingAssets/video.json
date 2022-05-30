@@ -1,0 +1,12 @@
+{
+    "targetFrameRate": 60,
+    "endCountDown": 1,
+    "trial_specification_name": "video.csv",
+    "waitForExperimenter_eng": "Please press the space bar",
+    "waitForExperimenter_cn": "等。。。",
+    "endMessage_eng": "Thank you for completing the task.\n\nPlease wait shortly before you close the application.\n\nSeconds remaining: ",
+    "endMessage_cn" : "bla",
+    "objectNames_eng": ["barrel", "basketball", "cake", "cone", "dice", "donut", "drum", "football", "gift", "lamp", "pawn", "pineapple", "vase", "teddy"],
+    "blockMessage_eng": ["Before you see the object, you have to go to the location, where you think the object is and press L. After that the object will appear you collect it and move on to the next trial. Press S to start.", "Short pause. Please press S to start."],
+    "blockMessage_cn": ["bla1", "bla2"],
+}

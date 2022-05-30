@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5928850472724213565}
   - component: {fileID: 5928850472724213562}
   - component: {fileID: 5928850472724213563}
-  - component: {fileID: 5928850472724213564}
   m_Layer: 0
   m_Name: Experiment
   m_TagString: Untagged
@@ -47,6 +46,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   session: {fileID: 0}
+  mainCam: {fileID: 0}
+  background: {fileID: 0}
+  mainSun: {fileID: 0}
+  controlSun: {fileID: 0}
   objects:
   - {fileID: 8690098749714790803, guid: 5521c63e96f43ea458888a706fd2d0d4, type: 3}
   - {fileID: 4427293153960942987, guid: 634867761b12cf84abf78097e35024ce, type: 3}
@@ -78,7 +81,6 @@ MonoBehaviour:
   arrowPrefab: {fileID: 6595882047472115543, guid: fcd20074f4f913d4f93eda754c58345d, type: 3}
   startButton: 115
   confirmButton: 101
-  forwardKey: 119
   target: 0
   cueImage: {fileID: 0}
   blockMessage: {fileID: 0}
@@ -101,19 +103,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   csvFileKey: trial_specification_name
   copyToResults: 1
---- !u!114 &5928850472724213564
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5928850472724213567}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5031b372eb9b25644b78584d39ad996a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startUp: {fileID: 0}
-  instructions1: {fileID: 0}
-  instructions2: {fileID: 0}
-  fileNameForInstructions: instructions.json

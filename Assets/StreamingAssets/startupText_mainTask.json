@@ -1,0 +1,13 @@
+{
+    "chromeBar": "OLM (version 1.2)",
+    "instructionsPanelContent1": "Welcome to the xth part of the experiment!",
+    "instructionsPanelContent2": "Your task will be to learn the locations of six objects (barrel, football, pawn, traffice cone, vase & donut) in an arena. The movement control works the same as in the previous part.\nA trial ends when you found the object and picked it up by walking over it. When you successfully picked the object up, you will hear a sound. For the first block, we will always show you the correct object location from the beginning but with Block 2 you will have to indicate where the object is before you can see and collect by pressing L.\n\nAfter filling out the from by providing your participant ID, press “Begin session”. The experiment starts after you have pressed S on your keyboard. \nThe task has 3 blocks and will take XX minutes to complete.",
+    "expSettingsprofile": "Experiment settings profile",
+    "localPathElement": "Local data save directory",
+    "localPathElement_placeHolder": "Press browse button to select...",
+    "participantID": "Participant ID",
+    "participantID_placeholder": "Enter text...",
+    "sessionNumber": "Session number",
+    "termsAndConditions": "Please tick if you understand the instructions and agree for your data to be collected and used for research purposes.<color=red>*</color>",
+    "beginButton": "Begin session"
+}
