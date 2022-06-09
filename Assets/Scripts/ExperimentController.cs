@@ -15,6 +15,10 @@ public class ExperimentController : MonoBehaviour{
 	// reference to the UXF Session 
     public Session session; 
 
+    // HTTPpost script
+    public UXF.HTTPPost HTTPPostScript;
+
+
     // End screen
     public GameObject endScreen;
 
@@ -82,6 +86,7 @@ public class ExperimentController : MonoBehaviour{
     private string endMessage_eng; // String for the english end message
     private string endMessage_cn; // String for the chinese end message
     private string endMessage; // String for the end message that is used.
+    private bool useHTTPPost = false; // Is HTTPPost to be used? If so it needs input from the .json
 
     // Private language vars
     private string language;
@@ -235,8 +240,47 @@ public class ExperimentController : MonoBehaviour{
         // Get endCountDown
         endCountDown = session.settings.GetFloat("endCountDown");
 
+        // Check if the keys have to be changed
+        bool changeKeys = session.settings.GetBool("changeKeys");
+        if(changeKeys){
+            changeKeyboardKeys();
+        }
+
+        // Check if HTTPPost needs to be set.
+        useHTTPPost = session.settings.GetBool("useHTTPPost");
+        if(useHTTPPost){
+            configureHTTPPost();
+        }
+
         // Log which platform
         whichPlatform();
+    }
+
+    /// <summary>
+    /// Method to change keys 
+    /// </summary>  
+    public void changeKeyboardKeys(){
+        // Get List of string from .json
+        List<string> newKeys = session.settings.GetStringList("keys");
+        ThreeButtonMovement.leftTurn = (KeyCode) System.Enum.Parse(typeof(KeyCode), newKeys[0]);
+        ThreeButtonMovement.forwardKey = (KeyCode) System.Enum.Parse(typeof(KeyCode), newKeys[1]);
+        ThreeButtonMovement.rightTurn = (KeyCode) System.Enum.Parse(typeof(KeyCode), newKeys[2]);
+        confirmButton = (KeyCode) System.Enum.Parse(typeof(KeyCode), newKeys[3]);
+    }
+
+    /// <summary>
+    /// Method to configure the HTTPPost script. Needs public UXF.HTTPPost HTTPPostScript;
+    /// </summary>
+    public void configureHTTPPost(){
+        string url = session.settings.GetString("url");
+        string username = session.settings.GetString("username");
+        string password = session.settings.GetString("password");
+
+        // Set the variables
+        HTTPPostScript.url = url;
+        HTTPPostScript.username = username;
+        HTTPPostScript.password = password;
+        HTTPPostScript.active = true;
     }
 
     void getSettingsForCurrentTrial(){
@@ -604,6 +648,23 @@ public class ExperimentController : MonoBehaviour{
     /// Function to end application. This needs to be attached to the On Session End Event of the UXF Rig.
     /// </summary>
     public void TheEnd(){
+        // If useHTTPPost not used than quit immediately
+        if(!useHTTPPost){
+            Debug.Log("Application closed now.");
+            Application.Quit();
+        }
+
+        // End session/trial if necessary
+        if(session.InTrial){
+            // End the trial
+            session.EndCurrentTrial();  
+        }
+        if(!session.isEnding){
+            // End the session
+            session.End();
+        }
+
+        
         // Set end screen active
         endScreen.SetActive(true);
 
