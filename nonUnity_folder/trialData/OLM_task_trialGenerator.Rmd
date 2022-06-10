@@ -1,5 +1,5 @@
 ---
-title: 'Trial Generation: Code & reasoning'
+title: 'Trial Generation for fMRI version of OLM task: Code & reasoning'
 author: "Joern Alexander Quent"
 date: "12/04/2022"
 output: html_document
@@ -46,7 +46,7 @@ ggplot(circle, aes(x = x, y = y)) +
 ```
  
 
-We get the angle $\theta$ simply by using the inverse of $tan()$, which is $atan()$, which can be done like tihis: 
+We get the angle $\theta$ simply by using the inverse of $tan()$, which is $atan()$, which can be done like this: 
 
 ```{r calc_exmaple_degree}
 theta_radians <- atan(circle[10, 2]/circle[10, 1]) # Will result in angle in radians
@@ -84,7 +84,7 @@ ggplot(object_df, aes(x = x, y = z)) +
 ```
 
 
-In the task, it is planned that one set of starting locations of the participant are other object locations themselves. So each participants will go from  each object to every other object. Similarly, participants will go from each start location to every object location but the one that is closest, which gives an extra coverage of angles.To visualise this, let's get the angles of every possible path when the location of object 1 serves as the starting point. For simplicity, I  shifted every point so that Object 1 ends up at (0, 0), and then use same approach as above. 
+In the task, it is planned that one set of starting locations of the participant are other object locations themselves. So each participants will go from  each object to every other object. Similarly, participants will go from each start location to every object location but the one that is closest, which gives an extra coverage of angles. To visualise this, let's get the angles of every possible path when the location of object 1 serves as the starting point. For simplicity, I  shifted every point so that Object 1 ends up at (0, 0), and then use same approach as above. 
 
 First we need to calculate the angles,
 ```{r calculate_angles}
@@ -334,7 +334,7 @@ spawnRadius <- 60 # Radius of the circle for spawning the object in the environm
 
 ## Practice II (Desert square)
 ### Experimental Design
-1 run of encoding task (6 objects x 2 trial ~ 3 min), 1 run of retrieval task with 1 task block (6 objects x 2 trials ~ 5 min) = 10 minutes in total. The participant starts from one of the other object locations during this part of the experiment. Each object serves as a starting location twice in total. 
+1 run of encoding task (6 objects x 2 trial ~ 3 min), 1 run of retrieval task with 1 task block (6 objects x 2 trials ~ 5 min) = 10 minutes in total. The participant starts from one of the other object locations during this part of the experiment. In addition, there will also be control trials. Each object serves as a starting location twice in total. 
 
 ```{r practice2_input}
 startDegree <- 15 # Generate object coordinates (360/(number of objects) degree offset starting at 15 degree)
@@ -507,8 +507,7 @@ For __retrieval__, each object will be cued 5 times, corresponding to 5 routes (
 
 There will be as many control trials as there will be retrieval trials, which will be interleaved so that there are always 15 trials of one type in a row. 
 
-The experiment will start with 30 encoding trials, followed by the retrieval + control trials and the end there will be an additional 30 'encoding' trials so that we can examine whether the memory task is crucial for the grid-signal to arise but at the same time we didn't want to overtrain the subjects. 
-
+The experiment will start with 30 encoding trials, followed by the 15 retrieval + 14 control trials, an additional 30 'encoding' trials as well as another run of retrieval & control trials so that we can examine whether the memory task is crucial for the grid-signal to arise but at the same time we didn't want to overtrain the subjects. 
 
 ```{r mainTask_input}
 startDegree <- 60 # Generate object coordinates (360/(number of objects) degree offset starting at 60 degree)
@@ -584,6 +583,9 @@ mainTask_locations$z <- spawnRadius * sin(mainTask_locations$anglesRadians)
 # Assign the object to these locations
 mainTask_locations$targets <- mainTaskObjects$Number
 
+# Save 
+mainTask_locations_offset <- mainTask_locations
+
 # Copy the sequence of targets from run 1
 encodingPhase_run2 <- encodingPhase_run1 
 
@@ -650,7 +652,7 @@ retrievalPhase$ITI   <- sample(rep(ITIPeriods, each = 10))
 ### Crate & insert the control trials into the retrieval block
 Cue, delay, and ITI durations will be identical to the experimental trials. There will be a total of 30 control trials corresponding to 6 object locations and 5 routes. 
 
-```{r control_trials}
+```{r control_trials1}
 # Get the control objects
 controlObject <- tab1[tab1$Version == 'control', 'Number']
 
@@ -685,13 +687,64 @@ controlTrials$run <- 1
 
 # Replace targets with the control task time
 controlTrials$targets <- controlObject
+
+# Save in controlTrials1
+controlTrials1 <- controlTrials
+```
+
+And now I repeat this with the $15^\circ$ offset locations.
+
+```{r control_trials2}
+# Get the control objects
+controlObject <- tab1[tab1$Version == 'control', 'Number']
+
+# Get the object location from run 1 
+objectLocations <- ddply(encodingPhase_run1, c('targets'), summarise, x = x[1], z = z[1])
+
+
+# Repeat control trial x times
+controlTrials <- do.call("rbind", replicate(repetitionPerObject, objectLocations, simplify = FALSE)) # Repeat each object x times
+
+# Now repeat the same process that was used for the encoding trials
+# Create the columns
+controlTrials$start_x <- NA
+controlTrials$start_z <- NA
+
+# Loop through all indexObjects 
+for(i in indexObjects){
+  otherObjects <- indexObjects[!(indexObjects %in% i)] # Get all objects that are not the target
+  controlTrials[controlTrials$targets == i, 'start_x'] <- mainTask_locations_offset[mainTask_locations_offset$targets %in% otherObjects, 'x']
+  controlTrials[controlTrials$targets == i, 'start_z'] <- mainTask_locations_offset[mainTask_locations_offset$targets %in% otherObjects, 'z']
+}
+
+# Add timings
+controlTrials$cue   <- cuePeriod
+controlTrials$delay <- sample(rep(delayPeriods, each = 5))
+controlTrials$ITI   <- sample(rep(ITIPeriods, each = 5))
+
+# Shuffle
+controlTrials <- controlTrials[sample(1:nrow(controlTrials)),]
+
+# Add run
+controlTrials$run <- 2
+
+# Replace targets with the control task time
+controlTrials$targets <- controlObject
+
+# Remove unnecessary
+controlTrials$anglesDegrees <- NULL
+controlTrials$anglesRadians <- NULL
+
+# Save in controlTrials2 & bind together
+controlTrials2 <- controlTrials
+controlTrials  <- rbind(controlTrials1, controlTrials2)
 ```
 
 ### Create the .csv file
 ```{r mainTask_csv_file}
 # Encoding run 1
 tempVar <- encodingPhase[encodingPhase$run == 1, ]
-begining <- data.frame(block_num = c(rep(1, nrow(tempVar))),
+encoding1 <- data.frame(block_num = c(rep(1, nrow(tempVar))),
                        run = c(tempVar$run),
                        targets = c(tempVar$targets),
                        start_x = c(tempVar$start_x),
@@ -706,40 +759,9 @@ begining <- data.frame(block_num = c(rep(1, nrow(tempVar))),
                        rotationSpeed = rotationSpeed,
                        messageToDisplay = -1)
 
-# Retrieval & control trials
-middle1 <- data.frame(block_num = c(rep(2, nrow(retrievalPhase))),
-                      run = c(retrievalPhase$run),
-                      targets = c(retrievalPhase$targets),
-                      start_x = c(retrievalPhase$start_x),
-                      start_z = c(retrievalPhase$start_z),
-                      object_x = c(retrievalPhase$x),
-                      object_z = c(retrievalPhase$z),
-                      cue = c(retrievalPhase$cue),
-                      delay = c(retrievalPhase$delay),
-                      ITI = c(retrievalPhase$ITI),
-                      trialType = c(rep('retrieval', nrow(retrievalPhase))),
-                      speedForward = speedForward,
-                      rotationSpeed = rotationSpeed,
-                      messageToDisplay = -1)
-
-middle2 <- data.frame(block_num = c(rep(2, nrow(controlTrials))),
-                      run = c(controlTrials$run),
-                      targets = c(controlTrials$targets),
-                      start_x = c(controlTrials$start_x),
-                      start_z = c(controlTrials$start_z),
-                      object_x = c(controlTrials$x),
-                      object_z = c(controlTrials$z),
-                      cue = c(controlTrials$cue),
-                      delay = c(controlTrials$delay),
-                      ITI = c(controlTrials$ITI),
-                      trialType = c(rep('control', nrow(controlTrials))),
-                      speedForward = speedForward,
-                      rotationSpeed = rotationSpeed,
-                      messageToDisplay = -1)
-
 # Encoding run 2
 tempVar <- encodingPhase[encodingPhase$run == 2, ]
-end <- data.frame(block_num = c(rep(3, nrow(tempVar))),
+encoding2 <- data.frame(block_num = c(rep(3, nrow(tempVar))),
                   run = c(tempVar$run),
                   targets = c(tempVar$targets),
                   start_x = c(tempVar$start_x),
@@ -754,36 +776,100 @@ end <- data.frame(block_num = c(rep(3, nrow(tempVar))),
                   rotationSpeed = rotationSpeed,
                   messageToDisplay = -1)
 
+# Retrieval 1
+tempVar <- retrievalPhase[retrievalPhase$run == 1, ]
+retrieval1 <- data.frame(block_num = c(rep(1, nrow(tempVar))),
+                       run = c(tempVar$run),
+                       targets = c(tempVar$targets),
+                       start_x = c(tempVar$start_x),
+                       start_z = c(tempVar$start_z),
+                       object_x = c(tempVar$x),
+                       object_z = c(tempVar$z),
+                       cue = c(tempVar$cue),
+                       delay = c(tempVar$delay),
+                       ITI = c(tempVar$ITI),
+                       trialType = c(rep('retrieval', nrow(tempVar))),
+                       speedForward = speedForward,
+                       rotationSpeed = rotationSpeed,
+                       messageToDisplay = -1)
+
+# Retrieval 2
+tempVar <- retrievalPhase[retrievalPhase$run == 2, ]
+retrieval2 <- data.frame(block_num = c(rep(1, nrow(tempVar))),
+                       run = c(tempVar$run),
+                       targets = c(tempVar$targets),
+                       start_x = c(tempVar$start_x),
+                       start_z = c(tempVar$start_z),
+                       object_x = c(tempVar$x),
+                       object_z = c(tempVar$z),
+                       cue = c(tempVar$cue),
+                       delay = c(tempVar$delay),
+                       ITI = c(tempVar$ITI),
+                       trialType = c(rep('retrieval', nrow(tempVar))),
+                       speedForward = speedForward,
+                       rotationSpeed = rotationSpeed,
+                       messageToDisplay = -1)
+
+# Control 1
+tempVar <- controlTrials[controlTrials$run == 1, ]
+control1 <- data.frame(block_num = c(rep(1, nrow(tempVar))),
+                       run = c(tempVar$run),
+                       targets = c(tempVar$targets),
+                       start_x = c(tempVar$start_x),
+                       start_z = c(tempVar$start_z),
+                       object_x = c(tempVar$x),
+                       object_z = c(tempVar$z),
+                       cue = c(tempVar$cue),
+                       delay = c(tempVar$delay),
+                       ITI = c(tempVar$ITI),
+                       trialType = c(rep('control', nrow(tempVar))),
+                       speedForward = speedForward,
+                       rotationSpeed = rotationSpeed,
+                       messageToDisplay = -1)
+# Control 2
+tempVar <- controlTrials[controlTrials$run == 2, ]
+control2 <- data.frame(block_num = c(rep(1, nrow(tempVar))),
+                       run = c(tempVar$run),
+                       targets = c(tempVar$targets),
+                       start_x = c(tempVar$start_x),
+                       start_z = c(tempVar$start_z),
+                       object_x = c(tempVar$x),
+                       object_z = c(tempVar$z),
+                       cue = c(tempVar$cue),
+                       delay = c(tempVar$delay),
+                       ITI = c(tempVar$ITI),
+                       trialType = c(rep('control', nrow(tempVar))),
+                       speedForward = speedForward,
+                       rotationSpeed = rotationSpeed,
+                       messageToDisplay = -1)
+
 # Add to on df called mainTask
-mainTask <- rbind(begining,
-                  middle1[1:15, ], # retrieval run 1.1
-                  middle2[1:15, ], # control half 1
-                  middle1[16:30, ], # retrieval run 1.2
-                  middle2[16:30, ], # control half 2
-                  middle1[31:45, ], # retrieval run 2.1
-                  middle2[sample(1:15),], # control half 1 but shuffled
-                  middle1[46:60, ], # retrieval run 2.2
-                  middle2[sample(16:30),],
-                  end) # control half 2 but shuffled
+mainTask <- rbind(encoding1, # Encoding 1
+                  retrieval1[1:15, ], # retrieval run 1.1
+                  control1[1:15, ], # control half 1.1
+                  retrieval1[16:30, ], # retrieval run 1.2
+                  control1[16:30, ], # control half 1.2
+                  encoding2, # Encoding 2
+                  retrieval2[1:15, ], # retrieval run 2.1
+                  control2[1:15,], # control half 2.1
+                  retrieval2[16:30, ], # retrieval run 2.2
+                  control2[16:30,]) # control half 2.2
 
 # Sample start locations from uniform distribution
 mainTask$start_yRotation <- runif(n = nrow(mainTask), min = 0, max = 360)
 
 
-# Add a messages after the runs and in front of the first gift trial
-mainTask[30, 'messageToDisplay']  <- 1 # Before retrieval
-mainTask[60, 'messageToDisplay']  <- 0 # Waiting message 
-mainTask[90, 'messageToDisplay']  <- 0 # Waiting message
-mainTask[120, 'messageToDisplay'] <- 0 # Waiting message
-mainTask[150, 'messageToDisplay'] <- 0 # Waiting message
+# Add a messages after the runs 
+mainTask[30, 'messageToDisplay']  <- 0 # Before retrieval/control 1
+mainTask[90, 'messageToDisplay']  <- 1 # Before encoding 2
+mainTask[120, 'messageToDisplay'] <- 0 # Before retrieval/control 2
 
 # Write .csv file
 write.csv(x = mainTask, file = 'mainTask.csv', quote = FALSE, row.names = FALSE)
 ```
 
-
-###
-```{r check_plot, fig.height = 6, fig.width = 7, echo = FALSE}
+### Checks
+```{r check_plot1, fig.height = 6, fig.width = 7, echo = FALSE}
 # Convert to factor
 mainTask$run <- as.factor(mainTask$run)
 
@@ -794,3 +880,15 @@ ggplot(mainTask, aes(x = start_x, y = start_z, colour = trialType, shape = run))
 ```
 
 Above is a quick check if the start positions are correct. Here the squares all need to be in one place, which are the object locations. This also includes the red control trials, which only go from object to object. The triangles are the offset start locations from run 2. 
+
+As second test, I check whether all paths are sampled for all three types:
+
+```{r check_plot2, fig.height = 4, fig.width = 12, echo = FALSE}
+# Plot
+ggplot(mainTask, aes(x = start_x, y = start_z, xend = object_x, yend = object_z, colour = trialType, shape = run)) + 
+  facet_wrap(.~trialType) +
+  geom_segment() +
+  labs(title = "Were the correct path used?", x = '', y = '')
+```
+
+That is case as the patterns created by the paths are the same for all three trial types. 
