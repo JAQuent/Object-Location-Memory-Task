@@ -1,2 +1,3 @@
 trial_num,block_num,targets,targetNames,start_x,start_z,object_x,object_z,cue,delay,ITI,trialType,speedForward,rotationSpeed,messageToDisplay,start_yRotation
-1,1,13,Vase,67.18889294,1.3410685,-23.55067053,31.86391297,2,1.5,1.5,encoding,15,50,-1,121.37664
+1,1,14,Teddy,0.0,0.02,19.46,25.9,2,1.5,1.5,encoding,15,50,0,121.37664
+2,1,14,Teddy,0.0,5,19.46,25.9,2,1.5,1.5,retrieval,15,50,-1,15

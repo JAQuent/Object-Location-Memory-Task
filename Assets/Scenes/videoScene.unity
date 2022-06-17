@@ -2720,9 +2720,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28c6d232196c6784eae720fb10d210cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forwardKey: 106
-  leftTurn: 104
-  rightTurn: 107
   actionNeedToBeEnded: 1
 --- !u!54 &1123277779
 Rigidbody:
@@ -3061,6 +3058,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1251408062}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1279902393 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1311505219725777297, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
+  m_PrefabInstance: {fileID: 242666156}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d3ef49a8abdaf40af92c99696a2caa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1285273650 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5995311870405594053, guid: 9d9407723ffbbcd488f6399b8e1f5ec8, type: 3}
@@ -4047,7 +4055,7 @@ PrefabInstance:
     - target: {fileID: 5928850472724213562, guid: a59d6f2b60113b540a9081f36377e516, type: 3}
       propertyPath: background
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 638680943}
     - target: {fileID: 5928850472724213562, guid: a59d6f2b60113b540a9081f36377e516, type: 3}
       propertyPath: controlSun
       value: 
@@ -4064,6 +4072,10 @@ PrefabInstance:
       propertyPath: confirmButton
       value: 108
       objectReference: {fileID: 0}
+    - target: {fileID: 5928850472724213562, guid: a59d6f2b60113b540a9081f36377e516, type: 3}
+      propertyPath: HTTPPostScript
+      value: 
+      objectReference: {fileID: 1279902393}
     - target: {fileID: 5928850472724213562, guid: a59d6f2b60113b540a9081f36377e516, type: 3}
       propertyPath: fixationMarker
       value: 
