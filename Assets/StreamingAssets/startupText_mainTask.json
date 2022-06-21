@@ -1,13 +1,13 @@
 {
-    "chromeBar": "OLM (version 1.2)",
-    "instructionsPanelContent1": "Welcome to the xth part of the experiment!",
-    "instructionsPanelContent2": "Your task will be to learn the locations of six objects (barrel, football, pawn, traffice cone, vase & donut) in an arena. The movement control works the same as in the previous part.\nA trial ends when you found the object and picked it up by walking over it. When you successfully picked the object up, you will hear a sound. For the first block, we will always show you the correct object location from the beginning but with Block 2 you will have to indicate where the object is before you can see and collect by pressing L.\n\nAfter filling out the from by providing your participant ID, press “Begin session”. The experiment starts after you have pressed S on your keyboard. \nThe task has 3 blocks and will take XX minutes to complete.",
-    "expSettingsprofile": "Experiment settings profile",
-    "localPathElement": "Local data save directory",
-    "localPathElement_placeHolder": "Press browse button to select...",
-    "participantID": "Participant ID",
-    "participantID_placeholder": "Enter text...",
+    "chromeBar": "OLM (version 1.3)",
+    "instructionsPanelContent1": "欢迎参加本研究的第四部分",
+    "instructionsPanelContent2": "您的任务是了解竞技场中六个物体（水桶、足球、棋子、锥形路标、花瓶和甜甜圈）的位置。移动控制的操作与上一部分相同。\n每当您找到对象，并通过走过它来捡起时，试验结束。当你成功捡起物体时，会有声音提示。对于第一部分，我们将始终从一开始就向您显示目标的正确位置。但在第二个区块，您必须先指出目标所在的位置，然后才能按“L”键收集。\n\n点击“开始阶段”后，只要您按下键盘上的“S”键，实验就会开始。 \n这部分需要 XX 分钟来完成。",
+    "expSettingsprofile": "实验配置参数",
+    "localPathElement": "本地数据存储路径",
+    "localPathElement_placeHolder": "请按”浏览“键进行选择。。。",
+    "participantID": "参与者编号（ID)",
+    "participantID_placeholder": "输入文本。。。",
     "sessionNumber": "Session number",
-    "termsAndConditions": "Please tick if you understand the instructions and agree for your data to be collected and used for research purposes.<color=red>*</color>",
-    "beginButton": "Begin session"
+    "termsAndConditions": "如果您已理解实验指示并同意收集您的数据将其用于研究目的，请打勾。<color=red>*</color>",
+    "beginButton": "开始阶段"
 }

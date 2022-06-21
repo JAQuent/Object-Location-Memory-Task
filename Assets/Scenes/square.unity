@@ -2684,6 +2684,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114916036141644208, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
+      propertyPath: endAfterLastTrial
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114916036141644208, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
       propertyPath: customHeaders.Array.size
       value: 13
       objectReference: {fileID: 0}
@@ -5267,9 +5271,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28c6d232196c6784eae720fb10d210cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forwardKey: 106
-  leftTurn: 104
-  rightTurn: 107
   actionNeedToBeEnded: 1
 --- !u!54 &1123277779
 Rigidbody:
