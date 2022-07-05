@@ -29,6 +29,15 @@ public class ThreeButtonMovement : MonoBehaviour{
 
     // Update is called once per frame
     void Update(){
+    	// Rest to no movement
+        if(reset){
+            movingForward = false;
+            turnignLeft = false;
+            turningRight = false;
+            reset = false; // Turn of again
+        }
+
+        // Movement control
         if(movementAllowed){
             if(actionNeedToBeEnded){
                 // Player need to end current action before switching.
@@ -82,14 +91,6 @@ public class ThreeButtonMovement : MonoBehaviour{
                     transform.Rotate(new Vector3(0, 1, 0) * Time.deltaTime * rotationSpeed);
                     Debug.Log("rightTurn was pressed.");
                 }
-            }
-
-            // Rest to no movement
-            if(reset){
-                movingForward = false;
-                turnignLeft = false;
-                turningRight = false;
-                reset = false; // Turn of again
             }
         }
     }
