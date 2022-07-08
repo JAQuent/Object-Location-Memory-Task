@@ -3,6 +3,7 @@
     "trial_specification_name": "mainTask_behavioural.csv",
     "waitForExperimenter_eng": "Please press the space bar",
     "waitForExperimenter_cn": "请按”空格“键。",
+    "continuousMode": true,
     "endCountDown" : 60,
     "endMessage_eng": "Thank you for completing the task.\n\nPlease wait briefly before you close the application.\n\nSeconds remaining: ",
     "endMessage_cn" : "谢谢你完成本任务！\n\n请在您关闭应用前稍等片刻。\n\n剩余秒数： ",

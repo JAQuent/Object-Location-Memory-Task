@@ -18,7 +18,6 @@ public class ExperimentController : MonoBehaviour{
     // HTTPpost script
     public UXF.HTTPPost HTTPPostScript;
 
-
     // End screen
     public GameObject endScreen;
 
@@ -87,6 +86,7 @@ public class ExperimentController : MonoBehaviour{
     private string endMessage_cn; // String for the chinese end message
     private string endMessage; // String for the end message that is used.
     private bool useHTTPPost = false; // Is HTTPPost to be used? If so it needs input from the .json
+    private bool continuousMode = false;
 
     // Private language vars
     private string language;
@@ -236,6 +236,9 @@ public class ExperimentController : MonoBehaviour{
         // Set frame rate to maximum
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = session.settings.GetInt("targetFrameRate");
+
+        // Check if it is continuous mode
+        continuousMode = session.settings.GetBool("continuousMode");;
 
         // Get endCountDown
         endCountDown = session.settings.GetFloat("endCountDown");
@@ -404,9 +407,13 @@ public class ExperimentController : MonoBehaviour{
             arrow.SetActive(false);
         }
 
-		// Set player position and rotation
-		player.transform.position = new Vector3(start_x, 1.0f, start_z);
-		player.transform.rotation = Quaternion.Euler(0, start_yRotation, 0);
+        // Set player position/rotation only if it is not the continuous mode or trial 1 where even if it is this mode
+        // the player position/rotation has to be set.
+        if(!continuousMode | trialNum == 1){
+        		// Set player position and rotation
+				player.transform.position = new Vector3(start_x, 1.0f, start_z);
+				player.transform.rotation = Quaternion.Euler(0, start_yRotation, 0);
+        }
 
 		// Check if a message needs to be displayed at the end of the trial
 		checkIfMessageNeedsToBeDisplayed();
@@ -495,25 +502,29 @@ public class ExperimentController : MonoBehaviour{
     /// IEnumerator that handels the time the cue is presented
     /// </summary>
     IEnumerator ShowCue(float cueTime){
-        // Log entry
-        Debug.Log("Cue start of trial " + trialNum);
+    	// Only if not continuous mode or during retrieval
+    	if(!continuousMode | trialType == "retrieval"){
+	    	// Log entry
+	        Debug.Log("Cue start of trial " + trialNum);
 
-        // Hide the fixation marker so the image can be displayed
-        fixationMarker.SetActive(false);
+	        // Hide the fixation marker so the image can be displayed
+	        fixationMarker.SetActive(false);
 
-    	// Show cueImage
-        panel.SetActive(true);
-        cueImage.sprite = objectsImages[target - 1];
-    	cueImage.enabled = true;
+	    	// Show cueImage
+	        panel.SetActive(true);
+	        cueImage.sprite = objectsImages[target - 1];
+	    	cueImage.enabled = true;
 
-    	// Disable movement
-    	ThreeButtonMovement.movementAllowed = false;
 
-    	// Wait until cue time is over 
-        yield return new WaitForSeconds(cueTime);
+	    	// Disable movement
+	    	ThreeButtonMovement.movementAllowed = false;
 
-        // Log entry
-        Debug.Log("Cue end of trial " + trialNum);
+	    	// Wait until cue time is over 
+	        yield return new WaitForSeconds(cueTime);	
+
+	        // Log entry
+        	Debug.Log("Cue end of trial " + trialNum);
+    	}
 
         // Reset cue
     	cueImage.enabled = false;
@@ -526,17 +537,23 @@ public class ExperimentController : MonoBehaviour{
     /// IEnumerator that handels the delay between cue and movement start
     /// </summary>
     IEnumerator Delay(){
-        // Log entry
-        Debug.Log("Start of delay period of trial " + trialNum);
+    	// Only if not continuous mode or during retrieval
+    	if(!continuousMode | trialType == "retrieval"){
+	        // Log entry
+	        Debug.Log("Start of delay period of trial " + trialNum);
 
-    	// Show fixationMarker
-    	fixationMarker.SetActive(true);
+	    	// Show fixationMarker
+	    	fixationMarker.SetActive(true);
 
-    	// Wait delay then start new trial
-    	yield return new WaitForSeconds(delay);
+	    	// Wait delay then start new trial
+	    	yield return new WaitForSeconds(delay);
 
-    	// Hide the background panel again
-    	panel.SetActive(false);
+	    	// Hide the background panel again
+	    	panel.SetActive(false);
+
+	    	// Log entry
+	        Debug.Log("End of delay period of trial " + trialNum);
+    	}
 
         // Enable & reset movement
         ThreeButtonMovement.reset = true;
@@ -544,9 +561,6 @@ public class ExperimentController : MonoBehaviour{
 
         // Start of navigation period
         navStartTime = Time.time;
-
-        // Log entry
-        Debug.Log("End of delay period of trial " + trialNum);
     }
 
     /// <summary>

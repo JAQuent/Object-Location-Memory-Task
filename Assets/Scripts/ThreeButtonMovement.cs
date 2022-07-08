@@ -2,7 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Explanation how to use this script. 
+// Attach this script to the game object that you want to move. There are two modes, 
+// which are controlled by the boolean variable actionNeedToBeEnded. If true, then each 
+// action has be started & ended with a button press. This is expecially for situation in
+// an MRI scanner where button press are not transmitted continuously. If false, then that 
+// is not necessary the movement happens as long as button is pressed, which is also allows
+// rotation & translation at the same time. 
+// The static variables allow you to change speed (e.g. ThreeButtonMovement.forwardSpeed = 20.0f),
+// to access whether there the character is currently moving forward. This was added so that we can
+// track which time segements include forward movement at which direction for grid-like activity studies
+// Further more, you can reset every movement and change the keys assignment
+// (e.g. ThreeButtonMovement.leftTurn = (KeyCode) System.Enum.Parse(typeof(KeyCode), newKeys[0]);). 
 
 public class ThreeButtonMovement : MonoBehaviour{
     // Static variables 
