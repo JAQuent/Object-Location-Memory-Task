@@ -41,6 +41,7 @@ public class ExperimentController : MonoBehaviour{
     public GameObject player;
     public float distance;
     public List<int> timesObjectPresented; // How often have this object been presented?
+    public GameObject warning;
 
 	// Private vars
 	private int trialNum;
@@ -86,7 +87,12 @@ public class ExperimentController : MonoBehaviour{
     private string endMessage_cn; // String for the chinese end message
     private string endMessage; // String for the end message that is used.
     private bool useHTTPPost = false; // Is HTTPPost to be used? If so it needs input from the .json
-    private bool continuousMode = false;
+    private bool continuousMode = false; // To be parsed from the .json file. If true, it enables the mode with
+    // no cue, delay and ITI, which was created to shoot a video. 
+    public float movedDistance = float.NaN; // Variable to save the distance from the start location to the location where the
+    // confirm button was pressed.
+    private Vector2 startPosition;  // Position where the player started. 
+    private float warningCriterium = 4.0f; // If the participant moved less than this, then a warning is shown.
 
     // Private language vars
     private string language;
@@ -199,6 +205,34 @@ public class ExperimentController : MonoBehaviour{
 
         // Calculate Euclidean distance
         distance = Vector2.Distance(endPosition, targetPosition); 
+
+        // Start position as vector 2
+        movedDistance = Vector2.Distance(endPosition, startPosition); 
+
+        // Check if warning has to be distplayed
+        if(movedDistance <= warningCriterium){
+            StartCoroutine(showWarning());
+        }
+    }
+
+    /// <summary>
+    /// Present warning of a short time.
+    /// </summary>
+    IEnumerator showWarning(){
+        // Log entry
+        Debug.Log("Movement warning start. Trial " + trialNum);
+
+        // Activate warning
+        warning.SetActive(true);
+
+        // Wait until warning time is over 
+        yield return new WaitForSeconds(2.0f);   
+
+        // Activate warning
+        warning.SetActive(false);
+
+        // Log entry
+        Debug.Log("Movement warning end. Trial " + trialNum);
     }
 
     /// <summary>
@@ -242,6 +276,11 @@ public class ExperimentController : MonoBehaviour{
 
         // Get endCountDown
         endCountDown = session.settings.GetFloat("endCountDown");
+
+        // Get warningMessage and the criterium
+        string warningMessage = session.settings.GetString("warningMessage");
+        warning.transform.GetChild(0).gameObject.GetComponent<UnityEngine.UI.Text>().text = warningMessage;
+        warningCriterium = session.settings.GetFloat("warningCriterium");
 
         // Check if the keys have to be changed
         bool changeKeys = session.settings.GetBool("changeKeys");
@@ -357,6 +396,7 @@ public class ExperimentController : MonoBehaviour{
 
         // Set confirm button press
         confirmButtonTime = float.NaN;
+        movedDistance = float.NaN;
 
         // Initialise the button press so it can be pressed. 
         buttonPressed = false;
@@ -415,6 +455,9 @@ public class ExperimentController : MonoBehaviour{
 				player.transform.rotation = Quaternion.Euler(0, start_yRotation, 0);
         }
 
+        // Get start position for the trial
+        startPosition = new Vector2(player.transform.position.x, player.transform.position.z);
+
 		// Check if a message needs to be displayed at the end of the trial
 		checkIfMessageNeedsToBeDisplayed();
 
@@ -438,6 +481,7 @@ public class ExperimentController : MonoBehaviour{
         session.CurrentTrial.result["runStartTime"] = runStartTime;
         session.CurrentTrial.result["timesObjectPresented"] = timesObjectPresented[target - 1];
         session.CurrentTrial.result["confirmButtonTime"] = confirmButtonTime;
+        session.CurrentTrial.result["movedDistance"] = movedDistance;
     }
 
     /// <summary>
@@ -502,8 +546,9 @@ public class ExperimentController : MonoBehaviour{
     /// IEnumerator that handels the time the cue is presented
     /// </summary>
     IEnumerator ShowCue(float cueTime){
-    	// Only if not continuous mode or during retrieval
-    	if(!continuousMode | trialType == "retrieval"){
+    	// Only if not continuous mode or during retrieval or on trial 1
+        // which also serves as a cue to cut the video so it match with the trial
+    	if(!continuousMode | trialType == "retrieval" | trialNum == 1){
 	    	// Log entry
 	        Debug.Log("Cue start of trial " + trialNum);
 
@@ -537,8 +582,9 @@ public class ExperimentController : MonoBehaviour{
     /// IEnumerator that handels the delay between cue and movement start
     /// </summary>
     IEnumerator Delay(){
-    	// Only if not continuous mode or during retrieval
-    	if(!continuousMode | trialType == "retrieval"){
+    	// Only if not continuous mode or during retrieval or on trial 1
+        // which also serves as a cue to cut the video so it match with the trial
+    	if(!continuousMode | trialType == "retrieval" | trialNum == 1){
 	        // Log entry
 	        Debug.Log("Start of delay period of trial " + trialNum);
 
