@@ -121,7 +121,7 @@ ggplot(objLoc, aes(x = x, y = y)) +
 # Random starting locations & heading angles
 The behavioural version of the task will have 12 encoding trials (each object twice) and two blocks of retrieval trials with 30 trials each, which make the total trial number 72 trials. This means we need 72 random starting locations and heading angles. For the starting locations the constraints are that they have to be at least 20 vm away from the correct object and obviously they cannot be outside the circle. 
 
-Here I re-purpose the algorithm from above to select 72 starting locations but first I create the trial order.
+Here I re-purpose the algorithm from above to select 72 starting locations but first I create the trial order. As an added constraint, we don't want the same object to appear twice in a row. 
 
 ```{r create_trial_order}
 # Seed
@@ -131,6 +131,14 @@ set.seed(20220517)
 trialOrder <- rbind(objLoc[sample(rep(1:6, each = 2)),], 
                     objLoc[sample(rep(1:6, each = 5)),], 
                     objLoc[sample(rep(1:6, each = 5)),])
+
+# Check if there are repetitions
+while(max(rle(trialOrder$object)$length) > 1){
+  # Generate trial order
+  trialOrder <- rbind(objLoc[sample(rep(1:6, each = 2)),], 
+                      objLoc[sample(rep(1:6, each = 5)),], 
+                      objLoc[sample(rep(1:6, each = 5)),])
+}
 
 row.names(trialOrder) <- NULL
 
