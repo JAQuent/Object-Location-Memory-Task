@@ -1,0 +1,8 @@
+{
+    "button1Label": "Circular Arena",
+    "button1Show": true,
+    "button2Label": "Square Arena",
+    "button2Show": false,
+    "title": "Object Location Memory Task",
+    "billboardText": "<b>编码记忆阶段：</b>\n1. 找到目标物体，移动到其所在位置\n\n<b>记忆提取阶段：</b>\n1. 根据提示的目标，\n移动到记忆中该物体所在的位置\n\n2. 按下“L”键来对位置进行确认\n\n3. 目标物体的正确位置将出现，\n请再次移动到该正确位置"
+}

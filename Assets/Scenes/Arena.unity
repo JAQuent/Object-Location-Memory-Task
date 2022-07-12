@@ -1947,7 +1947,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 653059108743847710, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
       propertyPath: settingsSearchPattern
-      value: OLM_mainTask.json
+      value: OLM_circular.json
       objectReference: {fileID: 0}
     - target: {fileID: 1507222259595111547, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
       propertyPath: m_AnchorMax.y
@@ -15753,7 +15753,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9a781093ce8094cb117e6b49b24fea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileNameForStartUpText: startupText_mainTask.json
+  fileNameForStartUpText: startupText_circular.json
 --- !u!114 &5928850474011044441 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5928850472724213563, guid: a59d6f2b60113b540a9081f36377e516, type: 3}

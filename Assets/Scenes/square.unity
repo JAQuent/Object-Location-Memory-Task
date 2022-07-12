@@ -2993,7 +2993,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 653059108743847710, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
       propertyPath: settingsSearchPattern
-      value: OLM_practice.json
+      value: OLM_square.json
       objectReference: {fileID: 0}
     - target: {fileID: 934183183192697830, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
       propertyPath: m_AnchorMax.x
@@ -3669,7 +3669,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f9a781093ce8094cb117e6b49b24fea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileNameForStartUpText: startupText_practice.json
+  fileNameForStartUpText: startupText_square.json
 --- !u!1001 &773515825
 PrefabInstance:
   m_ObjectHideFlags: 0
