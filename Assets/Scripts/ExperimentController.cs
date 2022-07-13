@@ -93,6 +93,7 @@ public class ExperimentController : MonoBehaviour{
     // confirm button was pressed.
     private Vector2 startPosition;  // Position where the player started. 
     private float warningCriterium = 4.0f; // If the participant moved less than this, then a warning is shown.
+    private bool warningShown = false;
 
     // Private language vars
     private string language;
@@ -221,6 +222,9 @@ public class ExperimentController : MonoBehaviour{
     IEnumerator showWarning(){
         // Log entry
         Debug.Log("Movement warning start. Trial " + trialNum);
+
+        // Warning was shown
+        warningShown = true;
 
         // Activate warning
         warning.SetActive(true);
@@ -394,9 +398,10 @@ public class ExperimentController : MonoBehaviour{
         // Set run active
         runActive = true;
 
-        // Set confirm button press
+        // Reset values
         confirmButtonTime = float.NaN;
         movedDistance = float.NaN;
+        warningShown = false;
 
         // Initialise the button press so it can be pressed. 
         buttonPressed = false;
@@ -482,6 +487,7 @@ public class ExperimentController : MonoBehaviour{
         session.CurrentTrial.result["timesObjectPresented"] = timesObjectPresented[target - 1];
         session.CurrentTrial.result["confirmButtonTime"] = confirmButtonTime;
         session.CurrentTrial.result["movedDistance"] = movedDistance;
+        session.CurrentTrial.result["warningShown"] = warningShown;
     }
 
     /// <summary>
