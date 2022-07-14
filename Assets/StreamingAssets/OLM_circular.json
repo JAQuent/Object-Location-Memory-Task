@@ -1,9 +1,9 @@
 {
     "targetFrameRate": 60,
-    "trial_specification_name": "mainTask_behavioural.csv",
+    "trial_specification_name": "mainTask_naturalistic.csv",
     "waitForExperimenter_eng": "Please press the space bar",
     "waitForExperimenter_cn": "请按”空格“键。",
-    "continuousMode": false,
+    "continuousMode": true,
     "warningMessage": "Ey, move more!",
     "warningCriterium": 4.0,
     "endCountDown" : 60,

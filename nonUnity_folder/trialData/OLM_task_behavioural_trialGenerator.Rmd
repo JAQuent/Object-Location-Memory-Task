@@ -412,7 +412,7 @@ mainTask <- data.frame(trial_num = trialOrder$trial_num,
 mainTask$start_yRotation <- runif(n = nrow(mainTask), min = 0, max = 360)
 
 
-# Add a messages after the runs and in front of the first gift trial
+# Add a messages after the runs
 mainTask[12, 'messageToDisplay']  <- 0 # Before retrieval
 mainTask[42, 'messageToDisplay']  <- 1 # Waiting message 
 

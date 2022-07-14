@@ -1,0 +1,239 @@
+---
+title: 'Trial Generation for fMRI version of OLM task: the naturalistic version'
+author: "Joern Alexander Quent"
+date: "14/07/2022"
+output: html_document
+---
+
+```{r setup, include = FALSE, message = FALSE, warnings = FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+# Libs
+library(ggplot2)
+library(latex2exp)
+library(assortedRFunctions) #devtools::install_github("JAQuent/assortedRFunctions", upgrade = 'never')
+library(knitr)
+library(plyr)
+```
+
+# Aim
+The main aim of this document is to generate the .csv files for the naturalistic version of the Object-Location Memory (OLM) Task.
+
+# Generating the input .csv for the task
+
+The .csv that is need for both the practice as well as the fMRI version of task needs entries the following columns: 
+
+- _block_num_ = Number of the block (needed for UXF).
+- _targets_	= The target given as the object number from 1 - 13 (see below how these numbers correspond to the object names).
+- _start_x_	= Start location of the player.
+- _start_z_	= Start location of the player.
+- _start_yRotation_	= Start rotation of the player. 
+- _object_x_	= Object location of the target. With the exception of control trials, this must be the same for all trials with the same target. 
+- _object_z_	= Object location of the target. With the exception of control trials, this must be the same for all trials with the same target. 
+- _cue_ = Period the cue is presented in seconds.
+- _delay_	= Delay period after the cue was presented in seconds. 
+- _ITI_	= ITI in seconds. 
+- _trialType_	= Trial type i.e. standard or control trials using the gift as the object. 
+- _speedForward_	= Forward speed in vm/s. 
+- _rotationSpeed_	= Rotation speed in degrees/s.
+- _messageToDisplay_ = Integer indicating whether a messages should be displayed after the trial (yes if >= 0, no if -1). Numbers above -1 are used as the index of the message from the list. 
+
+## The objects
+```{r object_table, echo = FALSE}
+tab1 <- data.frame(Object = c("Drum", "Basketball", "Pineapple", "Dice", "Cake", "Lamp", "Barrel", "Football", "Pawn", "Traffic cone", "Donut", "Vase", "Gift"),
+                   Number = c(7, 2, 12, 5, 3, 10, 1, 8, 11, 4, 6, 13, 9),
+                   Version = c(rep(c('Practice', 'fMRI'), each = 6), 'control'))
+
+kable(tab1)
+```
+
+## The seed for this randomisation
+```{r seed}
+set.seed(20220413)
+```
+
+## General task parameters
+In the following are general parameters that are the same across all parts of the experiment. The initial orientation (i.e. heading direction) in each trial will be randomly selected from a uniform distribution from 0 to 360. 
+
+```{r general_task_param}
+speedForward  <- 15 # vm/s
+rotationSpeed <- 50 # degrees/s
+spawnRadius <- 60 # Radius of the circle for spawning the object in the environment
+``` 
+
+## Main task (grassy arena)
+### Experimental Design
+
+For __encoding__, each object will be seen 5 times, corresponding to 5 routes (6 objects x 5 trials ~ 6 min) and two runs will be provided. Starting positions will be shifted by 15 degrees between the two runs, while the object locations will remain the same. 
+
+
+```{r mainTask_input}
+startDegree <- 60 # Generate object coordinates (360/(number of objects) degree offset starting at 60 degree)
+repetitionPerObject <- 5 # How often (per run) should the object be repeated?
+```
+
+Generating the sequence and the location: 
+```{r mainTask_sequence_and_location}
+# Start with run 1
+# Get objects
+mainTaskObjects <- tab1[tab1$Version == 'fMRI', ]
+
+# Get trial numbers etc.
+numOfObjects  <- nrow(mainTaskObjects) 
+
+# Convoluted way of generating a sequence starting at startDegree then go in regular steps around a circle 
+mainTask_locations <- data.frame(anglesDegrees = 0:(numOfObjects-1)*(360/numOfObjects) + startDegree)
+
+# Convert to radians
+mainTask_locations$anglesRadians <- deg2rad(mainTask_locations$anglesDegrees)
+
+# Use radians to get x and z (because 3D so it is not y) and multiply with spawnRadius
+mainTask_locations$x <- spawnRadius * cos(mainTask_locations$anglesRadians)
+mainTask_locations$z <- spawnRadius * sin(mainTask_locations$anglesRadians)
+
+# Assign the object to these locations
+mainTask_locations$targets <- mainTaskObjects$Number
+
+# Get all possible connections excluding those where you start & end in the same spot
+uni_targets <- mainTask_locations$targets
+allPaths <- expand.grid(uni_targets, uni_targets )
+names(allPaths) <- c("start", "target")
+allPaths <- allPaths[allPaths$start != allPaths$target,]
+allPaths$unUsed <- TRUE
+allPaths$step   <- NA
+
+# Set seed
+
+# Create path finder algorithm
+findPath <- function(startLoc, allPaths, i = 1){
+  # Available targets
+  availableTargets <- allPaths[allPaths$start == startLoc & allPaths$unUsed, 'target']
+  
+  # Stop if dead end and return null
+  if(length(availableTargets) == 0){
+    return()
+  } else {
+    # Pick one unused location with the current starting location
+    if(length(availableTargets) == 1){
+      pickedTarget = availableTargets 
+    } else {
+      pickedTarget <- sample(availableTargets, 1) 
+    }
+  }
+
+  # Updated unUsed & step
+  allPaths[allPaths$start == startLoc & allPaths$target == pickedTarget, 'unUsed'] <- FALSE
+  allPaths[allPaths$start == startLoc & allPaths$target == pickedTarget, 'step'] <- i
+  
+  # Target is the new start loc
+  startLoc <- pickedTarget
+  
+  # Print step & update
+  #cat(paste("\rStep", i))
+  i <- i + 1
+  
+  # Check if all paths are used, then stop 
+  if(all(!allPaths$unUsed)){
+    return(allPaths)
+  } else {
+    findPath(startLoc, allPaths, i)
+  }
+}
+
+newPaths <- findPath(8, allPaths)
+while(is.null(newPaths)){
+  newPaths <- findPath(8, allPaths)
+}
+```
+```{r arrange_trials}
+# Sort trials
+encodingPhase <- newPaths[order(newPaths$step),]
+
+# Loop through the whole thing
+for(i in 1:nrow(encodingPhase)){
+ encodingPhase$x[i] <- mainTask_locations$x[mainTask_locations$targets == encodingPhase$target[i]]
+ encodingPhase$z[i] <- mainTask_locations$z[mainTask_locations$targets == encodingPhase$target[i]]
+ encodingPhase$start_x[i] <- mainTask_locations$x[mainTask_locations$targets == encodingPhase$start[i]]
+ encodingPhase$start_z[i] <- mainTask_locations$z[mainTask_locations$targets == encodingPhase$start[i]]
+}
+
+```
+
+
+
+```{r visualise_paths, fig.height = 6, fig.width = 6}
+ggplot(encodingPhase, aes(x = x, y =z)) + geom_path() + labs(title = 'All possible paths')
+```
+
+
+#### Visualise the angles
+```{r visualise_angles}
+# Vars
+anglesDegree <- c()
+
+# Loop through all the remaining object 2 object paths
+for(j in 1:nrow(encodingPhase)){
+   x <- encodingPhase$x[j] - encodingPhase$start_x[j]
+   z <- encodingPhase$z[j] - encodingPhase$start_z[j]
+   
+   anglesDegree <- c(anglesDegree, getAngleInDegreesFromPoint(x, z))
+}
+```
+
+```{r polar_plot, fig.height = 6, fig.width = 6, echo = FALSE}
+anglesDegree[anglesDegree == 450] <- 90
+angle_df <- data.frame(anglesDegree = anglesDegree)
+
+ggplot(angle_df, aes(x = anglesDegree)) +
+  geom_histogram(binwidth = 7.5, boundary = -7.5, colour = "black", size = .25) +
+  scale_x_continuous(limits = c(0,360),
+                     breaks = seq(0, 360, by = 60),
+                     minor_breaks = seq(0, 360, by = 15))  +
+  coord_polar() +
+  labs(title = 'Distribution of angles',
+       y = 'Count',
+       x = '')
+```
+
+### Timings
+The timings are the same as in during the practice with the exception that I use more jittering (i.e. more steps).
+
+```{r mainTask_timings}
+cuePeriod    <- 0
+delayPeriods <- 0
+ITIPeriods   <- 0
+
+# Now shuffle and these timings to the data frame.
+# Encoding
+encodingPhase$cue   <- cuePeriod
+encodingPhase$delay <- sample(rep(delayPeriods, each = 10))
+encodingPhase$ITI   <- sample(rep(ITIPeriods, each = 10))
+```
+
+### Create the .csv file
+```{r mainTask_csv_file}
+#Create DF
+mainTask <- data.frame(block_num = c(rep(1, nrow(encodingPhase))),
+                       targets = c(encodingPhase$target),
+                       start_x = c(encodingPhase$start_x),
+                       start_z = c(encodingPhase$start_z),
+                       object_x = c(encodingPhase$x),
+                       object_z = c(encodingPhase$z),
+                       cue = c(encodingPhase$cue),
+                       delay = c(encodingPhase$delay),
+                       ITI = c(encodingPhase$ITI),
+                       trialType = c(rep('encoding', nrow(encodingPhase))),
+                       speedForward = speedForward,
+                       rotationSpeed = rotationSpeed,
+                       messageToDisplay = -1)
+
+
+# Add first orientation & other values
+mainTask$start_yRotation    <- 0 # Unity will complain if this is set to NA
+mainTask$start_yRotation[1] <- runif(1, 0, 360)
+mainTask$cue[1]             <- 1
+mainTask$delay[1]           <- 1
+
+# Write .csv file
+write.csv(x = mainTask, file = 'mainTask_naturalistic.csv', quote = FALSE, row.names = FALSE)
+```

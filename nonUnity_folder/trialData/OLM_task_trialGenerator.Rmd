@@ -635,8 +635,8 @@ The timings are the same as in during the practice with the exception that I use
 
 ```{r mainTask_timings}
 cuePeriod    <- 2 # seconds
-delayPeriods <- seq(from = 1, to = 2, length.out = 6) # 1 1.5 & 2
-ITIPeriods   <- seq(from = 1, to = 2, length.out = 6) # 1 1.5 & 2
+delayPeriods <- seq(from = 1, to = 2, length.out = 6) 
+ITIPeriods   <- seq(from = 1, to = 2, length.out = 6) 
 
 # Now shuffle and these timings to the data frame.
 # Encoding

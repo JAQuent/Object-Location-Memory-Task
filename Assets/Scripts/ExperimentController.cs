@@ -678,19 +678,22 @@ public class ExperimentController : MonoBehaviour{
     /// IEnumerator that handels the ITI countdown and the message draw
     /// </summary>
     IEnumerator countdownITI(){
-        // Log entry
-        Debug.Log("Start of ITI period of trial" + trialNum);
+        if(!continuousMode | trialType == "retrieval" | trialNum == 1){
+            // Log entry
+            Debug.Log("Start of ITI period of trial" + trialNum);
 
-        // Disable movement
-        ThreeButtonMovement.reset = true;
-        ThreeButtonMovement.movementAllowed = false;
+            // Disable movement
+            ThreeButtonMovement.reset = true;
+            ThreeButtonMovement.movementAllowed = false;
 
-    	// Wait ITI then start new trial
-    	yield return new WaitForSeconds(ITI);
 
-        // Log entry
-        Debug.Log("End of ITI period of trial" + trialNum);
+            // Wait ITI then start new trial
+            yield return new WaitForSeconds(ITI);
 
+            // Log entry
+            Debug.Log("End of ITI period of trial" + trialNum);
+        }
+        
         // If statement to handle if a message should be drawn at the end
         if(drawMessageNextTrial){
             StartCoroutine(drawMessage());
