@@ -7,7 +7,6 @@ using System.IO;
 
 public class WelcomeScript : MonoBehaviour{
 	// public vars
-	public Toggle m_Toggle;
     public string fileName = "welcome.json";
     public GameObject button1;
     public Text button1Text;
@@ -38,12 +37,6 @@ public class WelcomeScript : MonoBehaviour{
     void Start(){
         // Get the information from the JSON file
         GetDataFromJSON(fileName);
-        Debug.Log(JSONData.button1Label);
-        Debug.Log(JSONData.button1Show);
-        Debug.Log(JSONData.button2Label);
-        Debug.Log(JSONData.button2Show);
-        Debug.Log(JSONData.title);
-        Debug.Log(JSONData.billboardText);
 
         // Change texts
         button1Text.text = JSONData.button1Label;
@@ -54,14 +47,6 @@ public class WelcomeScript : MonoBehaviour{
         // De/activate buttons
         button1.SetActive(JSONData.button1Show);
         button2.SetActive(JSONData.button2Show);
-
-        //Add listener for when the state of the Toggle changes, and output the state
-        m_Toggle.onValueChanged.AddListener(delegate {
-            ToggleValueChanged(m_Toggle);
-        });
-
-        //Initialize the Text to say whether the Toggle is in a positive or negative state
-        language = "chinese";
     }
 
     void Update(){
@@ -70,19 +55,6 @@ public class WelcomeScript : MonoBehaviour{
             Debug.Log("Super secret mode");
             SceneManager.LoadScene("videoScene");
         }
-    }
-
-    /// <summary>
-    /// Output the new state of the Toggle into Text when the user uses the Toggle
-    /// </summary>
-    void ToggleValueChanged(Toggle change){
-    	if(m_Toggle.isOn){
-    		Debug.Log("Language set to Chinese.");
-    		language = "chinese";
-    	} else {
-    		Debug.Log("Language set to English.");
-    		language = "english";
-    	}
     }
 
     /// <summary>

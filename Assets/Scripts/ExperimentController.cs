@@ -37,7 +37,7 @@ public class ExperimentController : MonoBehaviour{
 	public KeyCode confirmButton = KeyCode.E;
     public int target;
     public Image cueImage;
-    public Text blockMessage;
+    public Text blockMessageText;
     public GameObject panel;
     public GameObject fixationMarker;
     public GameObject player;
@@ -66,10 +66,8 @@ public class ExperimentController : MonoBehaviour{
     private bool messageDrawn = false; // Was the message drawn yet?
     private bool sessionStarted = false; // Has the session started yet?
     private string message2draw; // Should a message be drawn after this trial?
-    private List<string> blockMessage_eng; // List with the block messages displayed after each block. 
-    private List<string> blockMessage_cn; // List with the block messages displayed after each block. 
-    private string waitForExperimenter_eng; // String for screen that will be presented for each block message. 
-    private string waitForExperimenter_cn; // String for screen that will be presented for each block message.
+    private List<string> blockMessage; // List with the block messages displayed after each block. 
+    private string waitForExperimenter; // String for screen that will be presented for each block message. 
     private float start_x; // Start position of the player
     private float start_z; // Start position of the player 
     private float start_yRotation; // Start rotation of the player
@@ -85,8 +83,6 @@ public class ExperimentController : MonoBehaviour{
     private bool startEndCountDown; // If true it starts the end countdown
     private float endCountDown = 60; // End countdown if zero, application closes. 
     private Text endScreenText; // Text component of the end screen
-    private string endMessage_eng; // String for the english end message
-    private string endMessage_cn; // String for the chinese end message
     private string endMessage; // String for the end message that is used.
     private bool useHTTPPost = false; // Is HTTPPost to be used? If so it needs input from the .json
     private bool continuousMode = false; // To be parsed from the .json file. If true, it enables the mode with
@@ -96,10 +92,7 @@ public class ExperimentController : MonoBehaviour{
     private Vector2 startPosition;  // Position where the player started. 
     private float warningCriterium = 4.0f; // If the participant moved less than this, then a warning is shown.
     private bool warningShown = false;
-
-    // Private language vars
-    private string language;
-    private List<string> objectNames_eng; // English object names
+    private List<string> objectNames; // Object names
 
     // Excuted at the beginging
     void Start(){
@@ -389,11 +382,8 @@ public class ExperimentController : MonoBehaviour{
             drawMessageNextTrial = true;
 
             // Select the correct message
-            if(WelcomeScript.language == "chinese"){
-                message2draw = blockMessage_cn[messageToDisplay];
-            } else {
-                message2draw = blockMessage_eng[messageToDisplay];
-            } 
+            message2draw = blockMessage[messageToDisplay];
+
         } else {
             drawMessageNextTrial = false;
         }
@@ -486,7 +476,7 @@ public class ExperimentController : MonoBehaviour{
         session.CurrentTrial.result["end_x"] = endPosition.x;
         session.CurrentTrial.result["end_z"] = endPosition.y; // Note it's y because it comes from Vector2
         session.CurrentTrial.result["euclideanDistance"] = distance; 
-        session.CurrentTrial.result["objectName"] = objectNames_eng[target - 1];
+        session.CurrentTrial.result["objectName"] = objectNames[target - 1];
         session.CurrentTrial.result["objectNumber"] = target;
         session.CurrentTrial.result["navStartTime"] = navStartTime;
         session.CurrentTrial.result["navEndTime"] = navEndTime;
@@ -543,17 +533,14 @@ public class ExperimentController : MonoBehaviour{
     }
 
     /// <summary>
-    /// Method that handles everything related to language.
+    /// Method that handles everything related to text input.
     // This needs to be attached to the On Session Begin Event of the UXF Rig.
     /// </summary>
-    public void LanguageInformation(){
-        objectNames_eng = session.settings.GetStringList("objectNames_eng");
-        blockMessage_eng = session.settings.GetStringList("blockMessage_eng");
-        blockMessage_cn = session.settings.GetStringList("blockMessage_cn");
-        waitForExperimenter_eng = session.settings.GetString("waitForExperimenter_eng");
-        waitForExperimenter_cn = session.settings.GetString("waitForExperimenter_cn");
-        endMessage_eng = session.settings.GetString("endMessage_eng");
-        endMessage_cn = session.settings.GetString("endMessage_cn");
+    public void TextInformation(){
+        objectNames = session.settings.GetStringList("objectNames");
+        blockMessage = session.settings.GetStringList("blockMessage");
+        waitForExperimenter = session.settings.GetString("waitForExperimenter");
+        endMessage = session.settings.GetString("endMessage");
     }
 
     /// <summary>
@@ -636,11 +623,7 @@ public class ExperimentController : MonoBehaviour{
         panel.SetActive(true);
 
         // Select the correct message and display
-        if(WelcomeScript.language == "chinese"){
-            blockMessage.text = waitForExperimenter_cn;
-        } else {
-            blockMessage.text = waitForExperimenter_eng;
-        } 
+        blockMessageText.text = waitForExperimenter;
 
         // Wait until Space key is pressed or send
         yield return new WaitUntil(() => closeMessage1);
@@ -649,7 +632,7 @@ public class ExperimentController : MonoBehaviour{
         runActive = false;
 
         // Display message
-        blockMessage.text = message2draw;
+        blockMessageText.text = message2draw;
 
         // Hide fixationMarker
         fixationMarker.SetActive(false);
@@ -663,7 +646,7 @@ public class ExperimentController : MonoBehaviour{
 
         // Deactivate panel and change text to message back to empty
         panel.SetActive(false);
-        blockMessage.text = "";
+        blockMessageText.text = "";
 
         // Flip closeMessage
         closeMessage1 = !closeMessage1;
@@ -747,13 +730,6 @@ public class ExperimentController : MonoBehaviour{
 
         // Start end countdown
         startEndCountDown = true;
-
-        // Select the correct end message
-        if(WelcomeScript.language == "chinese"){
-            endMessage = endMessage_cn;
-        } else {
-            endMessage = endMessage_eng;
-        } 
 
         // Get text
         endScreenText = endScreen.transform.GetChild(0).gameObject.GetComponent<UnityEngine.UI.Text>();
