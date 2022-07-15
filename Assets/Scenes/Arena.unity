@@ -15669,6 +15669,10 @@ PrefabInstance:
       propertyPath: fixationMarker
       value: 
       objectReference: {fileID: 965465852}
+    - target: {fileID: 5928850472724213562, guid: a59d6f2b60113b540a9081f36377e516, type: 3}
+      propertyPath: responsePixxScript
+      value: 
+      objectReference: {fileID: 5928850474011044444}
     - target: {fileID: 5928850472724213563, guid: a59d6f2b60113b540a9081f36377e516, type: 3}
       propertyPath: csvFileKey
       value: trial_specification_name
@@ -15784,6 +15788,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aaa7ee407267b794ba563e53216dad85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5928850474011044444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5928850474011044439}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ea6e03d9c07494a8f539e7b3f7f6c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debugMode: 0
+  fileName: responsePixx.json
 --- !u!1001 &5995311871688635383
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -34,8 +34,8 @@ public class ThreeButtonMovement : MonoBehaviour{
     // Private vars
     // Bools for actionNeedToBeEnded functinality
     public static bool  movingForward = false; // So it can be used by the tracker
-    private bool turnignLeft = false;
-    private bool turningRight = false;
+    public static bool turnignLeft = false;
+    public static bool turningRight = false;
 
     // Update is called once per frame
     void Update(){

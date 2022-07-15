@@ -11,12 +11,14 @@ using System.IO;
 public class ExperimentController : MonoBehaviour{
     // Public static vars
     public static float runStartTime; 
+    public static bool confirm = false;
 
 	// reference to the UXF Session 
     public Session session; 
 
     // HTTPpost script
     public UXF.HTTPPost HTTPPostScript;
+    public ResponsePixxInterface responsePixxScript;
 
     // End screen
     public GameObject endScreen;
@@ -117,8 +119,9 @@ public class ExperimentController : MonoBehaviour{
 
         // Only run the function if a) the confirm button is pressed, b) the experiment is in trial and 
         // the trial type is "retrieval"
-        if(Input.GetKey(confirmButton) & session.InTrial & !buttonPressed & trialType == "retrieval"){
+        if((Input.GetKey(confirmButton) | confirm) & session.InTrial & !buttonPressed & trialType == "retrieval"){
         	locationRetrieved();
+            confirm = false; // reset confirm if this was set by different script. 
         }
 
         // Wait for space bar press to move to message screen
@@ -127,7 +130,7 @@ public class ExperimentController : MonoBehaviour{
         		Debug.Log("Experimenter pressed space bar.");
         }
 
-        // Close message if it is drawn and the confirmButton is pressed. 
+        // Close message if it is drawn and the startButton is pressed. 
         if(drawMessageNextTrial & messageDrawn){
             if(Input.GetKeyDown(startButton)){
                 closeMessage2 = !closeMessage2;
@@ -296,6 +299,11 @@ public class ExperimentController : MonoBehaviour{
         useHTTPPost = session.settings.GetBool("useHTTPPost");
         if(useHTTPPost){
             configureHTTPPost();
+        }
+
+        // Check if responsePixx should be used
+        if(session.settings.GetBool("useResponsePixx")){
+            responsePixxScript.enabled = true;
         }
 
         // Log which platform
