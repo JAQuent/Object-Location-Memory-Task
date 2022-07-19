@@ -1687,6 +1687,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 653429041}
     - target: {fileID: 5928850472724213562, guid: a59d6f2b60113b540a9081f36377e516, type: 3}
+      propertyPath: warning
+      value: 
+      objectReference: {fileID: 894229985}
+    - target: {fileID: 5928850472724213562, guid: a59d6f2b60113b540a9081f36377e516, type: 3}
       propertyPath: cueImage
       value: 
       objectReference: {fileID: 1195267722}
@@ -1722,6 +1726,10 @@ PrefabInstance:
       propertyPath: blockMessageText
       value: 
       objectReference: {fileID: 1283073819}
+    - target: {fileID: 5928850472724213562, guid: a59d6f2b60113b540a9081f36377e516, type: 3}
+      propertyPath: responsePixxScript
+      value: 
+      objectReference: {fileID: 761039299}
     - target: {fileID: 5928850472724213563, guid: a59d6f2b60113b540a9081f36377e516, type: 3}
       propertyPath: csvFileKey
       value: trial_specification_name
@@ -3678,6 +3686,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileNameForStartUpText: startupText_square.json
+--- !u!114 &761039299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 761039295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15ea6e03d9c07494a8f539e7b3f7f6c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debugMode: 0
+  fileName: responsePixx.json
 --- !u!1001 &773515825
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4330,6 +4352,11 @@ PrefabInstance:
 --- !u!1 &894229984 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2004254158560780567, guid: 9d9407723ffbbcd488f6399b8e1f5ec8, type: 3}
+  m_PrefabInstance: {fileID: 894229983}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &894229985 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4538303994419791133, guid: 9d9407723ffbbcd488f6399b8e1f5ec8, type: 3}
   m_PrefabInstance: {fileID: 894229983}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &907189177 stripped
