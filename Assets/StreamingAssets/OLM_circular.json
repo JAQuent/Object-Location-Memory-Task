@@ -3,7 +3,7 @@
     "trial_specification_name": "mainTask_behavioural.csv",
     "waitForExperimenter": "请按”空格“键。",
     "continuousMode": false,
-    "useResponsePixx": false,
+    "useResponsePixx": true,
     "warningMessage": "Ey, move more!",
     "soundMode": 1,
     "warningCriterium": 4.0,

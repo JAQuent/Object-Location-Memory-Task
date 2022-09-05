@@ -16,8 +16,8 @@ public class ResponsePixxInterface : MonoBehaviour{
     public string fileName = "responsePixx.json";
 
     // private vars sthat can be configured.
-    private uint dinBuffAddr = 0x800000;
-    private uint dinBuffSize = 0x400000;
+    private uint dinBuffAddr = 12000000; // Default according to Danny Michaud-Landry from VPixx
+    private uint dinBuffSize = 1000; // Danny Michaud-Landry from VPixx: It is possible that you might want to look at more than 10 bytes of data, for example if there is more than 1 button press in the log.
     private int deviceType = 2; // Default see below. 
     // Legend of codes:
     /* 1   DATAPixx
@@ -34,7 +34,7 @@ public class ResponsePixxInterface : MonoBehaviour{
     private int greenCode = -65525;
 
     // private vars hard-coded
-    private ushort[] rxBuff;          // response buffer
+    private ushort[] rxBuff;          // Big enough for 1 timetagged keyboard event
     private int err = -99;            // error code
     private int deviceDetected = -99; // deviced detected
     private int opened;               // Was a connection opened?
@@ -126,26 +126,28 @@ public class ResponsePixxInterface : MonoBehaviour{
         // Debouncing reports a button transition immediately, but will then ignore any further transitions during the next 30 ms.
         dp.DPxEnableDinStabilize();
         dp.DPxEnableDinDebounce();
-
+        
         // The digital input subsystem can use a normal schedule to capture the DIN port at regular intervals;
         // however, for our purposes, we will use a "logging" mode which only records transitions on the DIN port.
         dp.DPxEnableDinLogTimetags();
         dp.DPxEnableDinLogEvents();
 
         // Set the location of the RAM buffer to which the digital input subsystem should log the button transitions.
-        // We'll arbitrarily place the start of the buffer at DATAPixx address 8 MB, and specify a buffer size of 4 MB.
-        // DIN logging with timestamps stores the data as a 64-bit nanosecond timetag, followed by a 16-bit DIN datum.
-        // One reason that we selected DIN bits 23:16 as the button outputs, is that only bits 15:0 recorded during logging.
         dp.DPxSetDinBuff(dinBuffAddr, dinBuffSize);
 
+        dp.DPxSetDebug(1);     // Enable printing of libdpx API debugging messages
+        dp.DPxStopAllScheds();
+        
         //Let's push these commands to the device register, and record the time this occurred
         dp.DPxUpdateRegCache();
     }
 
     // Update is called once per frame
     void Update(){
-        dp.DPxSetDinBuff(dinBuffAddr, dinBuffSize);
+        // Update the register
         dp.DPxUpdateRegCache();
+
+        // Check if write address is different from base address
         if(dp.DPxGetDinBuffWriteAddr() != dinBuffAddr){
             // Key press check which one
             // Read the keydown from memory
@@ -165,8 +167,13 @@ public class ResponsePixxInterface : MonoBehaviour{
             } else if(keyDown == greenCode){
             	greenMethod();
             } else {
-            	Debug.Log("Datapixx: Unknown code.");
+                if(keyDown != -1){
+                    Debug.Log("Datapixx: Unknown code.");
+                }
             }
+
+            // Reset address to base address
+            dp.DPxSetDinBuff(dinBuffAddr, dinBuffSize);
         }
     }
 
