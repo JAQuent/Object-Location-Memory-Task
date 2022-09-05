@@ -12,22 +12,26 @@ public class ExperimentController : MonoBehaviour{
     // Public static vars
     public static float runStartTime; 
     public static bool confirm = false;
+    public static int soundMode = 1; // Controls which sounds are played. This is parsed from the settings .json file
+    // 1 = all (object & message sound) 
+    // 2 = message only
+    // 3 = none 
 
 	// reference to the UXF Session 
     public Session session; 
 
     // HTTPpost script
-    public UXF.HTTPPost HTTPPostScript;
-    public ResponsePixxInterface responsePixxScript;
+    public UXF.HTTPPost HTTPPostScript; // Add the HTTPPostScript from the [UXF_DataHandling] object. 
+    public ResponsePixxInterface responsePixxScript; // Add the responsePixxScript. This is also attached to the Experiment game object.  
 
     // End screen
-    public GameObject endScreen;
+    public GameObject endScreen; // The game object the controls the end screen. 
 
     // reference to camera (for SkyBox) & to background to activate & deactivate on control trials
-    public Camera mainCam;
-    public GameObject background;
-    public GameObject mainSun;
-    public GameObject controlSun;
+    public Camera mainCam; // Main camera
+    public GameObject background; // All objects that are part of the background so they can be easily disabled. 
+    public GameObject mainSun;    // Main sun that changes from an angle used during encoding/retrieval trials.
+    public GameObject controlSun; // Sun that is used during control trials shines orthogonal to the plane to avoid spatial cues. 
 
 	// Public vars
 	public List<GameObject> objects;
@@ -44,11 +48,12 @@ public class ExperimentController : MonoBehaviour{
     public float distance;
     public List<int> timesObjectPresented; // How often have this object been presented?
     public GameObject warning;
+    public AudioClip endSound; // Sound played when a message is played. This can for instance indicate the end of a block/run. 
 
 	// Private vars
 	private int trialNum;
 	private int blockNum;
-	private GameObject arrow;
+	private GameObject arrow; // The arrow that bounces over the object. 
     private Trial trial;
     private Vector2 endPosition;  // Where did the player end?
     private Vector2 targetPosition; // Where was the target object?
@@ -87,7 +92,7 @@ public class ExperimentController : MonoBehaviour{
     private bool useHTTPPost = false; // Is HTTPPost to be used? If so it needs input from the .json
     private bool continuousMode = false; // To be parsed from the .json file. If true, it enables the mode with
     // no cue, delay and ITI, which was created to shoot a video. 
-    public float movedDistance = float.NaN; // Variable to save the distance from the start location to the location where the
+    private float movedDistance = float.NaN; // Variable to save the distance from the start location to the location where the
     // confirm button was pressed.
     private Vector2 startPosition;  // Position where the player started. 
     private float warningCriterium = 4.0f; // If the participant moved less than this, then a warning is shown.
@@ -301,6 +306,9 @@ public class ExperimentController : MonoBehaviour{
 
         // Log which platform
         whichPlatform();
+
+        // Get which sound mode should be used.
+        soundMode = session.settings.GetInt("soundMode");
     }
 
     /// <summary>
@@ -617,7 +625,12 @@ public class ExperimentController : MonoBehaviour{
     IEnumerator drawMessage(){
         // Present message first
         // Log entry
-        Debug.Log("Waiting for experimenter to press space.");
+        Debug.Log("Waiting for someone to press space.");
+
+        // Play end sound at player position
+        if(soundMode < 3){
+            AudioSource.PlayClipAtPoint(endSound, player.transform.position, 1.0f);
+        }
 
         // Activate panel and change text to message
         panel.SetActive(true);

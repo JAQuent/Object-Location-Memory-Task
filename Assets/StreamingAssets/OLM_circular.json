@@ -5,6 +5,7 @@
     "continuousMode": false,
     "useResponsePixx": false,
     "warningMessage": "Ey, move more!",
+    "soundMode": 1,
     "warningCriterium": 4.0,
     "endCountDown" : 60,
     "endMessage" : "谢谢你完成本任务！\n\n请在您关闭应用前稍等片刻。\n\n剩余秒数： ",

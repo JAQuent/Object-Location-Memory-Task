@@ -21,8 +21,10 @@ public class objectScript : MonoBehaviour{
     		// Logging
     		Debug.Log("Object Picked Up!");
 
-    		// Play sound
-    		AudioSource.PlayClipAtPoint(collectSound, gameObject.transform.position, 1.0f);
+    		// Play sound but only if sound mode is set 1. 
+            if(ExperimentController.soundMode == 1){
+                AudioSource.PlayClipAtPoint(collectSound, gameObject.transform.position, 1.0f);
+            }
 
     		// Get Experiment GameObject
     		GameObject Experiment = GameObject.Find("Experiment");

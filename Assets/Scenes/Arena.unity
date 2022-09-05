@@ -15638,6 +15638,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 305237032}
     - target: {fileID: 5928850472724213562, guid: a59d6f2b60113b540a9081f36377e516, type: 3}
+      propertyPath: endSound
+      value: 
+      objectReference: {fileID: 8300000, guid: 0744cab203f5e32498875bb64309d3b1, type: 3}
+    - target: {fileID: 5928850472724213562, guid: a59d6f2b60113b540a9081f36377e516, type: 3}
       propertyPath: endScreen
       value: 
       objectReference: {fileID: 5995311871688635384}
