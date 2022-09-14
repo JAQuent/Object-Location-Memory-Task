@@ -4,9 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UXF; 
 using System.IO;
+using UnityEngine.SceneManagement;
 
-// Description of this script:
-// Cue (2s) -> delay (4s) -> replace, feedback, collect (7s), ITI (6s). 
+// Description of this task phases:
+// Encoding & control: Cue -> delay -> collect -> ITI. 
+// Retrieval: Cue -> delay -> place, feedback, collect -> ITI. 
 
 public class ExperimentController : MonoBehaviour{
     // Public static vars
@@ -268,6 +270,8 @@ public class ExperimentController : MonoBehaviour{
         Debug.Log("Session start time " + System.DateTime.Now);
         // Screen resolution
         Debug.Log(Screen.currentResolution);
+        // Scene name
+        Debug.Log("The scene used: " + SceneManager.GetActiveScene().name);
 
     	// Set bool to true
         sessionStarted = true;
@@ -684,7 +688,7 @@ public class ExperimentController : MonoBehaviour{
     IEnumerator countdownITI(){
         if(!continuousMode | trialType == "retrieval" | trialNum == 1){
             // Log entry
-            Debug.Log("Start of ITI period of trial" + trialNum);
+            Debug.Log("Start of ITI period of trial " + trialNum);
 
             // Disable movement
             ThreeButtonMovement.reset = true;
@@ -695,7 +699,7 @@ public class ExperimentController : MonoBehaviour{
             yield return new WaitForSeconds(ITI);
 
             // Log entry
-            Debug.Log("End of ITI period of trial" + trialNum);
+            Debug.Log("End of ITI period of trial " + trialNum);
         }
         
         // If statement to handle if a message should be drawn at the end
