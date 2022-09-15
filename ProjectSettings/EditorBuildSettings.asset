@@ -15,6 +15,6 @@ EditorBuildSettings:
     path: Assets/Scenes/arena.unity
     guid: c3b5877d73944254aa3de14dd1ebc0d5
   - enabled: 1
-    path: Assets/Scenes/videoScene.unity
+    path: Assets/Scenes/practiceEnvironment.unity
     guid: d1be0d4bbf22f7340843ad0b5cc02cb4
   m_configObjects: {}

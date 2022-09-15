@@ -272,6 +272,8 @@ public class ExperimentController : MonoBehaviour{
         Debug.Log(Screen.currentResolution);
         // Scene name
         Debug.Log("The scene used: " + SceneManager.GetActiveScene().name);
+        // Version of the task
+        Debug.Log("Application Version : " + Application.version);
 
     	// Set bool to true
         sessionStarted = true;

@@ -12,6 +12,8 @@ public class WelcomeScript : MonoBehaviour{
     public Text button1Text;
     public GameObject button2;
     public Text button2Text;
+    public GameObject button3;
+    public Text button3Text;
     public Text billboard;
     public Text title;
 
@@ -26,6 +28,8 @@ public class WelcomeScript : MonoBehaviour{
         public bool button1Show;
         public string button2Label;
         public bool button2Show;
+        public string button3Label;
+        public bool button3Show;
         public string title;
         public string billboardText;
     }
@@ -41,12 +45,14 @@ public class WelcomeScript : MonoBehaviour{
         // Change texts
         button1Text.text = JSONData.button1Label;
         button2Text.text = JSONData.button2Label;
+        button3Text.text = JSONData.button3Label;
         title.text = JSONData.title;
         billboard.text = JSONData.billboardText;
 
         // De/activate buttons
         button1.SetActive(JSONData.button1Show);
         button2.SetActive(JSONData.button2Show);
+        button3.SetActive(JSONData.button2Show);
     }
 
     void Update(){
@@ -58,19 +64,27 @@ public class WelcomeScript : MonoBehaviour{
     }
 
     /// <summary>
-    /// Method to load practice scene
+    /// Method to load desert arena
     /// </summary>
-    public void LoadPracticeVersion(){
-    	Debug.Log("Load square scene.");
+    public void LoadDesertArena(){
+    	Debug.Log("Load desert arena.");
     	SceneManager.LoadScene("square");
     }
 
     /// <summary>
-    /// Method to load main task scene
+    /// Method to load grassy arena
     /// </summary>
-    public void LoadfMRIVersion(){
-    	Debug.Log("Load arena scene.");
+    public void LoadGrassyArena(){
+    	Debug.Log("Load grassy arena.");
     	SceneManager.LoadScene("arena");
+    }
+
+    /// <summary>
+    /// Method to load practice arena
+    /// </summary>
+    public void LoadPracticeArena(){
+        Debug.Log("Load practice arena.");
+        SceneManager.LoadScene("practiceEnvironment");
     }
 
     /// <summary>
