@@ -1,3 +1,0 @@
-experiment,ppid,session_num,trial_num,block_num,trial_num_in_block,start_time,end_time,run,targets,start_x,start_z,start_yRotation,object_x,object_z,cue,delay,ITI,trialType,speedForward,rotationSpeed,messageToDisplay,end_z,euclideanDistance,objectName,triggerSend_timeStamp,objectNumber,navStartTime,navEndTime,navTime,timesObjectPresented,end_x,player_movement_location_0
-OLM_fMRI,test,1,1,1,1,5.939733,18.36,1,8,60,-1.47E-14,300,-30,51.96152423,2,2,1,encoding,15,50,0,50.76183,2.399314,football,5.939733,8,9.956341,18.36,8.403658,1,-27.92215,OLM_fMRI/test/S001/trackers/player_movement_T001.csv
-OLM_fMRI,test,1,2,1,2,23.95905,30.94883,1,13,-30,-51.96152423,360,60,-1.47E-14,2,1.8,2,encoding,15,50,-1,,,,,,,,,,,OLM_fMRI/test/S001/trackers/player_movement_T002.csv
