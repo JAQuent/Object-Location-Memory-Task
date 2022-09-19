@@ -1,5 +1,5 @@
 <p align="center">
-		<img src="Assets/otherImages/logo.png" width="100" height="100">
+        <img src="nonUnity_folder/images/banner.png" width="960" height="180">
 </p>
 
 # What is the Object Location Memory Task?
@@ -14,7 +14,7 @@ In standard mode, each trial starts with a cue period during which the target ob
 
 If specified, a message (e.g. with further instructions) can be displayed after a trial. However, before the actual message is displayed, a standard pause display is presented that is closed by pressing the space bar. The actual message is closed soon as the letter S is pressed or an MRI scanner sends an S to the task computer (more on this below). 
 
-In order for the task to begin after filling out the UXF start up menu, the program is also waiting for an  "S". 
+In order for the task to begin after filling out the UXF start up menu, the program is also waiting for an "S". 
 
 ## Trial types
 ### Encoding
@@ -29,7 +29,9 @@ In contrast to the two other trial types, the object is not visible from the beg
 ## The environments
 The OLM task comprises two main environments that are meant for experiments plus an additional simple environment that is meant to teach participants how this task works. The main environments have been optimised to run even on slightly weaker hardware including on laptop using integrated GPUs. 
 
-IMAGE OF THE THREE ENVIRONMENTS
+<p align="center">
+        <img src="nonUnity_folder/images/bird_view.png" width="1016" height="317">
+</p>
 
 |             | Grassy Arena | Practice Arena | Desert Arena |
 | ----------- | ----------- | ----------- | ----------- |
@@ -123,7 +125,11 @@ In the main .json file several things can and have to be configured in order for
 ### The start up menu .json file
 The .json files needed to control the start menus are called: `startupText_grassy.json`, `startupText_practice.json` and `startupText_desert.json`.
 
-The here is an IMMMMMMMMMMMMMMMMMMMMMMMMAGGGGGGGGGGGE and the corresponding file as there is not much else to explain:
+<p align="center">
+        <img src="nonUnity_folder/images/example_menu.PNG" width="960" height="540">
+</p>
+
+The here is an image and the corresponding file as there is not much else to explain:
 
 ```
 {
