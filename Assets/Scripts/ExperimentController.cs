@@ -100,8 +100,9 @@ public class ExperimentController : MonoBehaviour{
     private float warningCriterium = 4.0f; // If the participant moved less than this, then a warning is shown.
     private bool warningShown = false;
     private List<string> objectNames; // Object names
-    private GameObject FPS_Counter;
-    private bool foundFPS_Counter = false;
+    private GameObject FPS_Counter; // Game object for FPS counter
+    private bool foundFPS_Counter = false; // Has the FPS counter been found?
+    private bool inCueOrDelayPeriod = false; // Is the task curerntly in the cue delay period? This is used to ignore the confirm button press.
 
     // Excuted at the beginging
     void Start(){
@@ -123,8 +124,8 @@ public class ExperimentController : MonoBehaviour{
         }
 
         // Only run the function if a) the confirm button is pressed, b) the experiment is in trial and 
-        // the trial type is "retrieval"
-        if((Input.GetKey(confirmButton) | confirm) & session.InTrial & !buttonPressed & trialType == "retrieval"){
+        // the trial type is "retrieval" & not during cue and delay.
+        if((Input.GetKey(confirmButton) | confirm) & session.InTrial & !buttonPressed & trialType == "retrieval" & !inCueOrDelayPeriod){
         	locationRetrieved();
             confirm = false; // reset confirm if this was set by different script. 
         }
@@ -584,6 +585,9 @@ public class ExperimentController : MonoBehaviour{
     /// IEnumerator that handels the time the cue is presented
     /// </summary>
     IEnumerator ShowCue(float cueTime){
+    	// Set inCueOrDelayPeriod to true so that the confirm button press is ignored
+    	inCueOrDelayPeriod = true;
+
     	// Only if not continuous mode or during retrieval or on trial 1
         // which also serves as a cue to cut the video so it match with the trial
     	if(!continuousMode | trialType == "retrieval" | trialNum == 1){
@@ -639,9 +643,10 @@ public class ExperimentController : MonoBehaviour{
 	        Debug.Log("End of delay period of trial " + trialNum);
     	}
 
-        // Enable & reset movement
+        // Enable & reset movement & reset inCueOrDelayPeriod
         ThreeButtonMovement.reset = true;
         ThreeButtonMovement.movementAllowed = true;
+        inCueOrDelayPeriod = false;
 
         // Start of navigation period
         navStartTime = Time.time;
