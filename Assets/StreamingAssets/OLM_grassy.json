@@ -1,5 +1,5 @@
 {
-    "targetFrameRate": 60,
+    "targetFrameRate": 999,
     "trial_specification_name": "example.csv",
     "waitForExperimenter": "Press space bar",
     "showFPS": true,

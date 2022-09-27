@@ -210,7 +210,6 @@ GameObject:
   - component: {fileID: 9201276669664072075}
   - component: {fileID: 5279756154882213699}
   - component: {fileID: 6001326427194821659}
-  - component: {fileID: 6715394939061044881}
   m_Layer: 0
   m_Name: gift
   m_TagString: Untagged
@@ -262,17 +261,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: 0
   collectSound: {fileID: 8300000, guid: 73659f83c6a69164d8954e9f7417965d, type: 3}
---- !u!136 &6715394939061044881
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8429138498100579121}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 1
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
