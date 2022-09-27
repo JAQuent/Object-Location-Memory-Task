@@ -100,6 +100,8 @@ public class ExperimentController : MonoBehaviour{
     private float warningCriterium = 4.0f; // If the participant moved less than this, then a warning is shown.
     private bool warningShown = false;
     private List<string> objectNames; // Object names
+    private GameObject FPS_Counter;
+    private bool foundFPS_Counter = false;
 
     // Excuted at the beginging
     void Start(){
@@ -107,6 +109,9 @@ public class ExperimentController : MonoBehaviour{
         for(int i = 0; i < objects.Count; i++){
             timesObjectPresented.Add(0);
         }
+
+        // Deactivate FPS by default
+        activateFPS_Counter(false);
     }
 
     // Update is called once per frame
@@ -315,12 +320,15 @@ public class ExperimentController : MonoBehaviour{
 
         // Get which sound mode should be used.
         soundMode = session.settings.GetInt("soundMode");
+
+        // Activate FPS counter if configured so.
+        activateFPS_Counter(session.settings.GetBool("showFPS"));
     }
 
     /// <summary>
     /// Method to change keys 
     /// </summary>  
-    public void changeKeyboardKeys(){
+    void changeKeyboardKeys(){
         // Get List of string from .json
         List<string> newKeys = session.settings.GetStringList("keys");
         ThreeButtonMovement.leftTurn = (KeyCode) System.Enum.Parse(typeof(KeyCode), newKeys[0]);
@@ -332,7 +340,7 @@ public class ExperimentController : MonoBehaviour{
     /// <summary>
     /// Method to configure the HTTPPost script. Needs public UXF.HTTPPost HTTPPostScript;
     /// </summary>
-    public void configureHTTPPost(){
+    void configureHTTPPost(){
         string url = session.settings.GetString("url");
         string username = session.settings.GetString("username");
         string password = session.settings.GetString("password");
@@ -343,6 +351,21 @@ public class ExperimentController : MonoBehaviour{
         HTTPPostScript.password = password;
         HTTPPostScript.active = true;
     }
+
+    /// <summary>
+    /// Method to activate FPS counter
+    /// </summary>
+    void activateFPS_Counter(bool activateFPS_Recording){
+        // Find the game object
+        if(!foundFPS_Counter){
+            FPS_Counter = GameObject.Find("FPS_Counter");
+            foundFPS_Counter = true; // Found the game object
+        }
+
+        // Set in/active
+        FPS_Counter.SetActive(activateFPS_Recording);
+    }
+
 
     void getSettingsForCurrentTrial(){
     	// Get current trial and block number
