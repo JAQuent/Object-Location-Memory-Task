@@ -1,0 +1,10 @@
+{
+    "button1Label": "Grassy Arena",
+    "button1Show": true,
+    "button2Label": "Practice Arena",
+    "button2Show": true,
+    "button3Label": "Desert Arena",
+    "button3Show": true,
+    "title": "Object Location Memory Task",
+    "billboardText": "billboardText"
+}
