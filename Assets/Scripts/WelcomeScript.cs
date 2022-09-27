@@ -52,7 +52,7 @@ public class WelcomeScript : MonoBehaviour{
         // De/activate buttons
         button1.SetActive(JSONData.button1Show);
         button2.SetActive(JSONData.button2Show);
-        button3.SetActive(JSONData.button2Show);
+        button3.SetActive(JSONData.button3Show);
     }
 
     /// <summary>
