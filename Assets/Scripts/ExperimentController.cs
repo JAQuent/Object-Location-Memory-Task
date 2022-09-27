@@ -419,7 +419,7 @@ public class ExperimentController : MonoBehaviour{
             drawMessageNextTrial = true;
 
             // Select the correct message
-            message2draw = blockMessage[messageToDisplay];
+            message2draw = blockMessages[messageToDisplay];
 
         } else {
             drawMessageNextTrial = false;
@@ -575,7 +575,7 @@ public class ExperimentController : MonoBehaviour{
     /// </summary>
     public void TextInformation(){
         objectNames = session.settings.GetStringList("objectNames");
-        blockMessage = session.settings.GetStringList("blockMessage");
+        blockMessages = session.settings.GetStringList("blockMessages");
         waitForExperimenter = session.settings.GetString("waitForExperimenter");
         endMessage = session.settings.GetString("endMessage");
     }
@@ -665,7 +665,7 @@ public class ExperimentController : MonoBehaviour{
         panel.SetActive(true);
 
         // Select the correct message and display
-        blockMessageText.text = waitForExperimenter;
+        blockMessagesText.text = waitForExperimenter;
 
         // Wait until Space key is pressed or send
         yield return new WaitUntil(() => closeMessage1);

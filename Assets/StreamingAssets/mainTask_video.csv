@@ -1,5 +1,0 @@
-block_num,run,targets,start_x,start_z,object_x,object_z,cue,delay,ITI,trialType,speedForward,rotationSpeed,messageToDisplay,start_yRotation
-1,1,14,0,0,10,10,2,1.6,1.8,encoding,15,50,0,119.349642153829
-1,1,14,0,0,10,10,2,1,1.4,retrieval,15,50,-1,292.415143372491
-1,1,14,0,0,10,10,2,1.2,1.8,control,15,50,-1,330.904746931046
-1,1,14,0,0,10,10,2,2,1,encoding,15,50,-1,183.331915475428
