@@ -55,20 +55,12 @@ public class WelcomeScript : MonoBehaviour{
         button3.SetActive(JSONData.button2Show);
     }
 
-    void Update(){
-        // Check if secret button is pressed. 
-        if(Input.GetKeyDown(KeyCode.LeftBracket)){
-            Debug.Log("Super secret mode");
-            SceneManager.LoadScene("videoScene");
-        }
-    }
-
     /// <summary>
     /// Method to load desert arena
     /// </summary>
     public void LoadDesertArena(){
     	Debug.Log("Load desert arena.");
-    	SceneManager.LoadScene("square");
+    	SceneManager.LoadScene("desert");
     }
 
     /// <summary>
@@ -76,7 +68,7 @@ public class WelcomeScript : MonoBehaviour{
     /// </summary>
     public void LoadGrassyArena(){
     	Debug.Log("Load grassy arena.");
-    	SceneManager.LoadScene("arena");
+    	SceneManager.LoadScene("grassy");
     }
 
     /// <summary>
@@ -84,7 +76,7 @@ public class WelcomeScript : MonoBehaviour{
     /// </summary>
     public void LoadPracticeArena(){
         Debug.Log("Load practice arena.");
-        SceneManager.LoadScene("practiceEnvironment");
+        SceneManager.LoadScene("practice");
     }
 
     /// <summary>

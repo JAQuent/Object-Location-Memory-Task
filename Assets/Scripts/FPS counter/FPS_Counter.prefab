@@ -172,9 +172,9 @@ GameObject:
   - component: {fileID: 7349370613498367426}
   - component: {fileID: 7349370613498367425}
   - component: {fileID: 7349370613498367424}
-  - component: {fileID: 7349370613498367423}
+  - component: {fileID: 6967652287279318538}
   m_Layer: 5
-  m_Name: FPS counter
+  m_Name: FPS_Counter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -263,7 +263,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &7349370613498367423
+--- !u!114 &6967652287279318538
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -280,5 +280,6 @@ MonoBehaviour:
   samples: 0
   displayTextCurrent: {fileID: 7349370612012116891}
   displayTextAverage: {fileID: 7349370612237320646}
-  index: 0
-  temporaryStorageCapacity: 2000
+  index1: 0
+  refreshRate: 0.2
+  temporaryStorageCapacity: 500

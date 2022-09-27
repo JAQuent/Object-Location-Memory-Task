@@ -4,7 +4,7 @@
     using System.Linq;
     // Inspired by https://forum.unity.com/threads/fps-counter.505495/ 
 
-    public class FPS_counter : MonoBehaviour{
+    public class FPS_counter: MonoBehaviour{
         public int currentFrameRate;
         public double avgFrameRate;
         public int samples;

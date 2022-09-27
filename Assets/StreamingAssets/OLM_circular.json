@@ -1,6 +1,7 @@
 {
     "targetFrameRate": 60,
     "trial_specification_name": "mainTask_behavioural.csv",
+    "showFPS": true,
     "continuousMode": false,
     "soundMode": 1,
     "warningCriterium": 4.0,
