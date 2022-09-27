@@ -73,7 +73,7 @@ public class ExperimentController : MonoBehaviour{
     private bool messageDrawn = false; // Was the message drawn yet?
     private bool sessionStarted = false; // Has the session started yet?
     private string message2draw; // Should a message be drawn after this trial?
-    private List<string> blockMessage; // List with the block messages displayed after each block. 
+    private List<string> blockMessages; // List with the block messages displayed after each block. 
     private string waitForExperimenter; // String for screen that will be presented for each block message. 
     private float start_x; // Start position of the player
     private float start_z; // Start position of the player 
@@ -192,7 +192,7 @@ public class ExperimentController : MonoBehaviour{
     /// </summary>
     void locationRetrieved(){
         // Log entry
-        Debug.Log("Confirm button pressed: trial" + trialNum);
+        Debug.Log("Confirm button pressed: trial " + trialNum);
 
         // Get time point
         confirmButtonTime = Time.time;
@@ -665,7 +665,7 @@ public class ExperimentController : MonoBehaviour{
         panel.SetActive(true);
 
         // Select the correct message and display
-        blockMessagesText.text = waitForExperimenter;
+        blockMessageText.text = waitForExperimenter;
 
         // Wait until Space key is pressed or send
         yield return new WaitUntil(() => closeMessage1);
