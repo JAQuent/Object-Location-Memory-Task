@@ -7,6 +7,8 @@ UXF
 
 unitypixx
 
+Unity Mesh Simplifier
+
 # Free resources used in this project
 ## Unity assets
 
