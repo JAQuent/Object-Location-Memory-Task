@@ -34,6 +34,7 @@ public class ExperimentController : MonoBehaviour{
     public GameObject background; // All objects that are part of the background so they can be easily disabled. 
     public GameObject mainSun;    // Main sun that changes from an angle used during encoding/retrieval trials.
     public GameObject controlSun; // Sun that is used during control trials shines orthogonal to the plane to avoid spatial cues. 
+    public Material[] skyboxes; // First is the main skybox and the second is the skybox for control trials
 
 	// Public vars
 	public List<GameObject> objects;
@@ -448,17 +449,19 @@ public class ExperimentController : MonoBehaviour{
 		// Set up background 
 		if(trialType == "control" & displayingBackground){
 			// For control trials
-			mainCam.GetComponent<Skybox>().enabled = false;
+			RenderSettings.skybox = skyboxes[1];
 			background.SetActive(false);
 			displayingBackground = false;
             mainSun.SetActive(false);
             controlSun.SetActive(true);
+            RenderSettings.sun = controlSun.GetComponent<UnityEngine.Light>();
 		} else if (trialType != "control" & !displayingBackground){
 			// For normal encoding & retrieval trials
-			mainCam.GetComponent<Skybox>().enabled = true;
+			RenderSettings.skybox = skyboxes[0];
 			background.SetActive(true);
 			displayingBackground = true;
             mainSun.SetActive(true);
+            RenderSettings.sun = mainSun.GetComponent<UnityEngine.Light>();
             controlSun.SetActive(false);
 		}
 
@@ -559,6 +562,7 @@ public class ExperimentController : MonoBehaviour{
 
         // Destroy arrow
         Destroy(arrow);
+        Destroy(currentObject);
 
         // Reset movement so that player is stationary
     	ThreeButtonMovement.reset = true;
