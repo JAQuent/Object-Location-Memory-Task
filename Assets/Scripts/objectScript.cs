@@ -18,9 +18,6 @@ public class objectScript : MonoBehaviour{
     /// </summary>
     void OnTriggerEnter(Collider other){
     	if (other.name == "Player"){
-    		// Logging
-    		Debug.Log("Object Picked Up!");
-
     		// Play sound but only if sound mode is set 1. 
             if(ExperimentController.soundMode == 1){
                 AudioSource.PlayClipAtPoint(collectSound, gameObject.transform.position, 1.0f);

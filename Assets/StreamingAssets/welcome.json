@@ -6,5 +6,5 @@
     "button3Label": "Desert Arena",
     "button3Show": true,
     "title": "Object Location Memory Task",
-    "billboardText": "billboardText"
+    "billboardText": "<b>编码记忆阶段：</b>\n\n1. 找到目标物体，移动到其所在位置\n<b>记忆提取阶段：</b>\n1. 根据提示的目标，移动到记忆中该物体所在的位置\n\n2. 按下“L”键来对位置进行确认\n\n3. 目标物体的正确位置将出现，请再次移动到该正确位置"
 }

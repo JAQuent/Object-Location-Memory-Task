@@ -224,6 +224,7 @@ Everything else is saved in the `log.csv` file. Some of the things saved in the 
 - Wait for experimenter: E.g. "Waiting for experimenter to press space."
 - Experimenter pressed space: E.g. "Experimenter pressed space bar."
 - The participant hit the wall and had to be rightened: E.g. "Attempting to righten the player."
+- Movement: "forwardKey was pressed.", "leftTurn was pressed." and "rightTurn was pressed."
 
 ## How to analyse the data?
 TBA

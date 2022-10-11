@@ -16,10 +16,7 @@ public class WelcomeScript : MonoBehaviour{
     public Text button3Text;
     public Text billboard;
     public Text title;
-
-	// Static
-	public static string language;
-
+    
     // You need to set-up all variables that you want to get from the .json file.
     // The variable names have to correspond to the input names in that file. 
     [System.Serializable]

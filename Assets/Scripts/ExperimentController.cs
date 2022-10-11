@@ -29,12 +29,12 @@ public class ExperimentController : MonoBehaviour{
     // End screen
     public GameObject endScreen; // The game object the controls the end screen. 
 
-    // reference to camera (for SkyBox) & to background to activate & deactivate on control trials
-    public Camera mainCam; // Main camera
+    // reference objects that are needed to implement control trials
     public GameObject background; // All objects that are part of the background so they can be easily disabled. 
     public GameObject mainSun;    // Main sun that changes from an angle used during encoding/retrieval trials.
     public GameObject controlSun; // Sun that is used during control trials shines orthogonal to the plane to avoid spatial cues. 
     public Material[] skyboxes; // First is the main skybox and the second is the skybox for control trials
+    public GameObject reflectionProbe; // Since the reflection probes are baked now, they have to be disabled on control trials. 
 
 	// Public vars
 	public List<GameObject> objects;
@@ -454,6 +454,7 @@ public class ExperimentController : MonoBehaviour{
 			displayingBackground = false;
             mainSun.SetActive(false);
             controlSun.SetActive(true);
+            reflectionProbe.SetActive(false);
             RenderSettings.sun = controlSun.GetComponent<UnityEngine.Light>();
 		} else if (trialType != "control" & !displayingBackground){
 			// For normal encoding & retrieval trials
@@ -463,6 +464,7 @@ public class ExperimentController : MonoBehaviour{
             mainSun.SetActive(true);
             RenderSettings.sun = mainSun.GetComponent<UnityEngine.Light>();
             controlSun.SetActive(false);
+            reflectionProbe.SetActive(true);
 		}
 
 		// Spawn the object & set inactive at first
