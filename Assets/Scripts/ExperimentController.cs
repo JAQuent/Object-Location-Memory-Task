@@ -15,6 +15,7 @@ public class ExperimentController : MonoBehaviour{
     public static float runStartTime; 
     public static bool confirm = false;
     public static int soundMode = 1; // Controls which sounds are played. This is parsed from the settings .json file
+    public static bool sessionStarted = false; // Has the session started yet?
     // 1 = all (object & message sound) 
     // 2 = message only
     // 3 = none 
@@ -72,7 +73,6 @@ public class ExperimentController : MonoBehaviour{
     private bool closeMessage2 = false; // Will switch to true if the letter S is pressed or the scanner sends and S. 
     private bool trialEnded = true;
     private bool messageDrawn = false; // Was the message drawn yet?
-    private bool sessionStarted = false; // Has the session started yet?
     private string message2draw; // Should a message be drawn after this trial?
     private List<string> blockMessages; // List with the block messages displayed after each block. 
     private string waitForExperimenter; // String for screen that will be presented for each block message. 

@@ -7,6 +7,12 @@ The object location memory (OLM) task was designed to investigate grid-like acti
 
 The task is programmed using the wonderful _Unity Experiment Framework (UXF)_ package. More documentation can be found on their [website](https://immersivecognition.com/unity-experiment-framework/), their [wiki](https://github.com/immersivecognition/unity-experiment-framework/wiki) and in their corresponding paper [Brookes et al. (2020)](https://link.springer.com/article/10.3758/s13428-019-01242-0). 
 
+To do
+
+- banner
+- Add description of manual rotation
+- add description of AudioTrialCounter
+
 # Documentation
 The idea of the task is participants, who complete it, learn where a number of objects are located within environments during the _encoding_ trials. Learning & performance is assessed on _retrieval_ trials. As an additional condition, we have added _control_ trials, where all spatial cues apart from the ground and the walls are removed in order to provide an appropriate condition that can be used as a control as it features translation without spatial cues necessary for navigation  and orientation (i.e. landmarks). 
 

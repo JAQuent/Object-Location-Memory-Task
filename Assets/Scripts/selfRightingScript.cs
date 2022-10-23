@@ -40,6 +40,18 @@ public class selfRightingScript : MonoBehaviour{
 
     		// Set player rotation
 			gameObject.transform.rotation = Quaternion.Euler(0, y_rot, 0);
-    	}       
+    	}
+
+        // Check if the R button is clicked for manual reset
+        if(Input.GetKeyDown(KeyCode.R) & ExperimentController.sessionStarted){
+            // Log
+            Debug.Log("The experimenter pressed R to manually rotated the participant by 180 degrees.");
+
+            // Reset movement
+            ThreeButtonMovement.reset = true;
+
+            // Rotate by 180 degrees
+            gameObject.transform.rotation *= Quaternion.AngleAxis(180, Vector3.up);
+        }       
     }
 }
