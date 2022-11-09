@@ -14,6 +14,7 @@ public class ExperimentController : MonoBehaviour{
     // Public static vars
     public static float runStartTime; 
     public static bool confirm = false;
+    public static bool ready2confirm = false;
     public static int soundMode = 1; // Controls which sounds are played. This is parsed from the settings .json file
     public static bool sessionStarted = false; // Has the session started yet?
     // 1 = all (object & message sound) 
@@ -124,11 +125,12 @@ public class ExperimentController : MonoBehaviour{
         	startExperiment();
         }
 
-        // Only run the function if a) the confirm button is pressed, b) the experiment is in trial and 
-        // the trial type is "retrieval" & not during cue and delay.
-        if((Input.GetKey(confirmButton) | confirm) & session.InTrial & !buttonPressed & trialType == "retrieval" & !inCueOrDelayPeriod){
+        // Only run the function if a) the confirm button is pressed or confirm is true (e.g. set by other script), 
+        // b) the experiment is in trial and the button hasn't been pressed already and the trial type is "retrieval" & 
+        // not during cue and delay.
+        ready2confirm = session.InTrial & !buttonPressed & trialType == "retrieval" & !inCueOrDelayPeriod;
+        if((Input.GetKey(confirmButton) | confirm) & ready2confirm){
         	locationRetrieved();
-            confirm = false; // reset confirm if this was set by different script. 
         }
 
         // Wait for space bar press to move to message screen
@@ -199,8 +201,8 @@ public class ExperimentController : MonoBehaviour{
         // Get time point
         confirmButtonTime = Time.time;
 
-        // Flip the button so it can only be pressed once
-        buttonPressed = !buttonPressed; 
+        // Change button to true so this function won't be called again (see conditions above).
+        buttonPressed = true; 
 
     	// Show object as feedback
     	currentObject.SetActive(true);
@@ -224,6 +226,9 @@ public class ExperimentController : MonoBehaviour{
         if(movedDistance <= warningCriterium){
             StartCoroutine(showWarning());
         }
+
+        // Reset at the end
+        confirm = false; // reset confirm if this was set by different script. 
     }
 
     /// <summary>
@@ -439,6 +444,7 @@ public class ExperimentController : MonoBehaviour{
         confirmButtonTime = float.NaN;
         movedDistance = float.NaN;
         warningShown = false;
+        confirm = false; 
 
         // Initialise the button press so it can be pressed. 
         buttonPressed = false;

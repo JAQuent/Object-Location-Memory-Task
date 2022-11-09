@@ -12,7 +12,6 @@ using System.IO;
 
 public class ResponsePixxInterface : MonoBehaviour{
 	// public vars
-    public bool debugMode = false;
     public string fileName = "responsePixx.json";
 
     // private vars sthat can be configured.
@@ -153,9 +152,6 @@ public class ResponsePixxInterface : MonoBehaviour{
             // Read the keydown from memory
             rxBuff = dp.DPxReadRam(dinBuffAddr, 10);
             var keyDown = ~rxBuff[4];
-            if(debugMode){
-                Debug.Log(keyDown);
-            }
 
             // Check which key was pressed
             if(keyDown == yellowCode){
@@ -168,7 +164,7 @@ public class ResponsePixxInterface : MonoBehaviour{
             	greenMethod();
             } else {
                 if(keyDown != -1){
-                    Debug.Log("Datapixx: Unknown code.");
+                    Debug.Log("Datapixx: Unknown code: " + keyDown);
                 }
             }
 
@@ -182,33 +178,40 @@ public class ResponsePixxInterface : MonoBehaviour{
     /// </summary>
     void yellowMethod(){
     	Debug.Log("Datapixx: Yellow!");
-        ThreeButtonMovement.turnignLeft = false;
-        ThreeButtonMovement.movingForward = !ThreeButtonMovement.movingForward;
-        ThreeButtonMovement.turningRight = false;
+        // Only do something if not turning left or right
+        if(!ThreeButtonMovement.turnignLeft  & !ThreeButtonMovement.turningRight){
+            ThreeButtonMovement.movingForward = !ThreeButtonMovement.movingForward;
+        }
     }
     /// <summary>
     /// Red method set-up to turn right.
     /// </summary>
     void redMethod(){
     	Debug.Log("Datapixx: Red!");
-        ThreeButtonMovement.turnignLeft = false;
-        ThreeButtonMovement.movingForward = false;
-        ThreeButtonMovement.turningRight = !ThreeButtonMovement.turningRight;
+        // Only do something if not moving forward or turning left
+        if(!ThreeButtonMovement.turnignLeft  & !ThreeButtonMovement.movingForward){
+            ThreeButtonMovement.turningRight = !ThreeButtonMovement.turningRight;
+        }
     }
     /// <summary>
     /// Red method to act as confirm button.
     /// </summary>
     void blueMethod(){
     	Debug.Log("Datapixx: Blue!");
-        ExperimentController.confirm = true;
+        // Only allow confirmation if ready
+        if(ExperimentController.ready2confirm){
+            Debug.Log("Datapixx: confirm set to true");
+            ExperimentController.confirm = true; // Will be reset in ExperimentController
+        }
     }
     /// <summary>
     /// Red method set-up to turn left.
     /// </summary>
     void greenMethod(){
     	Debug.Log("Datapixx: Green!");
-        ThreeButtonMovement.turnignLeft = !ThreeButtonMovement.turnignLeft;
-        ThreeButtonMovement.movingForward = false;
-        ThreeButtonMovement.turningRight = false;
+        // Only do something if not moving forward or turning right
+        if(!ThreeButtonMovement.turningRight  & !ThreeButtonMovement.movingForward){
+            ThreeButtonMovement.turnignLeft = !ThreeButtonMovement.turnignLeft;
+        }
     }
 }

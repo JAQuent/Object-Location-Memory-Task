@@ -3,7 +3,7 @@
     "redCode": -65522,
     "blueCode": -65529,
     "greenCode": -65525,
-    "deviceType": 2,
+    "deviceType": 5,
     "dinBuffAddr": 12000000,
     "dinBuffSize": 1000
 }
