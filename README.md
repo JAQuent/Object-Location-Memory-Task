@@ -112,7 +112,7 @@ In the main .json file several things can and have to be configured in order for
 - _targetFrameRate_ = An integer that can cap the frames per second (FPS) at which the task is presented. If no cap is wished, simply choose a very high value (e.g. 9999). 
 - _tria\_specification\_name_ = The file name of the .csv file (see above). This is a UXF field that is needed. 
 - _continuousMode_ = Specification whether or not to use continuous (see below). Possible values: false/true. 
-- _soundMode_ = This controls the sound in the experiment. Possible values: 1 = all sounds (collection & message sound), 2 = only plays sound when messages are displayed and 3 = no sound. soundMode = 2 can for instance be useful if MRI-operators wishe to be notified when run/block is over.  
+- _soundMode_ = This controls the sound in the experiment. Possible values: 1 = all sounds (collection & message sound), 2 = only plays sound when messages are displayed and 3 = no sound. soundMode = 2 can for instance be useful if MRI-operators wish to be notified when run/block is over.  
 - _warningCriterium_ = The minimum distance a participant should move before pressing the confirmation button. 
 - _warningMessage_ = The warning message that will be displayed if the participant moves less than the criterium before pressing the confirmation button. This is relative to the starting position not absolute moved distance.
 - _waitForExperimenter_ = The pause message that is presented before the actual messages. This is mainly meant for fMRI data collection where the MRI operator wants to reset the recording. This message is skipped by pressing space bar. 
