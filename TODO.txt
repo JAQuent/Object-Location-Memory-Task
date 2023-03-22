@@ -1,0 +1,3 @@
+- version on screen
+- find problem with leaving the arena
+- add another button where participant are put back in the arena or automatic based on distance from centre
