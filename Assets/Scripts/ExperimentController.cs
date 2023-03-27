@@ -105,6 +105,7 @@ public class ExperimentController : MonoBehaviour{
     private GameObject FPS_Counter; // Game object for FPS counter
     private bool foundFPS_Counter = false; // Has the FPS counter been found?
     private bool inCueOrDelayPeriod = false; // Is the task curerntly in the cue delay period? This is used to ignore the confirm button press.
+    private float objectRotationSpeed = 0;
 
     // Excuted at the beginging
     void Start(){
@@ -330,6 +331,35 @@ public class ExperimentController : MonoBehaviour{
 
         // Activate FPS counter if configured so.
         activateFPS_Counter(session.settings.GetBool("showFPS"));
+
+        // Newly added features that if not specified in the .json file get a default value.
+        string tempKey = "objectRotationSpeed";
+        if(containsThisKeyInSessionSettings(tempKey)){
+            objectRotationSpeed = session.settings.GetFloat(tempKey);
+        } else {
+            objectRotationSpeed = 0.0f;
+        }
+        // Set value 
+        objectScript.rotationSpeed = objectRotationSpeed;
+    }
+
+    /// <summary>
+    /// Method to check if a certain key can be found in the settings heirarchy
+    /// </summary>  
+    bool containsThisKeyInSessionSettings(string targetKey){
+        // Initialise result
+        bool contained = false;
+
+        // Loop through all keys in settings
+        foreach(var key in session.settings.Keys){
+            if(key == targetKey){
+                contained = true;
+                break;
+            }
+        }
+
+        // Retun the value
+        return(contained);
     }
 
     /// <summary>

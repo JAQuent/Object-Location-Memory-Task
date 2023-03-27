@@ -16,6 +16,7 @@ public class WelcomeScript : MonoBehaviour{
     public Text button3Text;
     public Text billboard;
     public Text title;
+    public Text versionNumber;
     
     // You need to set-up all variables that you want to get from the .json file.
     // The variable names have to correspond to the input names in that file. 
@@ -36,6 +37,9 @@ public class WelcomeScript : MonoBehaviour{
 
     // Start is called before the first frame update
     void Start(){
+        // Add version number to screen
+         versionNumber.text = "Version: " + Application.version;
+
         // Get the information from the JSON file
         GetDataFromJSON(fileName);
 
