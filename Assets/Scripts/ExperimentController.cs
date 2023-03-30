@@ -17,6 +17,7 @@ public class ExperimentController : MonoBehaviour{
     public static bool ready2confirm = false;
     public static int soundMode = 1; // Controls which sounds are played. This is parsed from the settings .json file
     public static bool sessionStarted = false; // Has the session started yet?
+    // Sound mode explanation:
     // 1 = all (object & message sound) 
     // 2 = message only
     // 3 = none 
@@ -52,8 +53,10 @@ public class ExperimentController : MonoBehaviour{
     public GameObject player;
     public float distance;
     public List<int> timesObjectPresented; // How often have this object been presented?
-    public GameObject warning;
+    public GameObject warning; // Warning game object
     public AudioClip endSound; // Sound played when a message is played. This can for instance indicate the end of a block/run. 
+    public Image feedbackImage;
+    public List<Sprite> feedbackIcons;
 
 	// Private vars
 	private int trialNum;
@@ -105,7 +108,9 @@ public class ExperimentController : MonoBehaviour{
     private GameObject FPS_Counter; // Game object for FPS counter
     private bool foundFPS_Counter = false; // Has the FPS counter been found?
     private bool inCueOrDelayPeriod = false; // Is the task curerntly in the cue delay period? This is used to ignore the confirm button press.
-    private float objectRotationSpeed = 0;
+    private float objectRotationSpeed = 0; // Speed with which the object should rotated around the y-axis
+    private List<float> feedbackCriteria; // The criteria used to display feedback (parsed from the .json)
+    private bool feedbackEnabled = false; // Boolean that decides if feedback should be shown
 
     // Excuted at the beginging
     void Start(){
@@ -114,8 +119,8 @@ public class ExperimentController : MonoBehaviour{
             timesObjectPresented.Add(0);
         }
 
-        // Deactivate FPS by default
-        activateFPS_Counter(false);
+        // Activate FPS by default
+        activateFPS_Counter(true);
     }
 
     // Update is called once per frame
@@ -228,6 +233,17 @@ public class ExperimentController : MonoBehaviour{
             StartCoroutine(showWarning());
         }
 
+        // Provide feedback if enabled
+        if(feedbackEnabled){
+            if(distance <= feedbackCriteria[0]){
+                StartCoroutine(showFeedback(2));
+            } else if(distance > feedbackCriteria[0] & distance <= feedbackCriteria[1]){
+                StartCoroutine(showFeedback(1));
+            } else if(distance > feedbackCriteria[1]){
+                StartCoroutine(showFeedback(0));
+            }
+        }
+
         // Reset at the end
         confirm = false; // reset confirm if this was set by different script. 
     }
@@ -254,6 +270,33 @@ public class ExperimentController : MonoBehaviour{
         // Log entry
         Debug.Log("Movement warning end. Trial " + trialNum);
     }
+
+
+    /// <summary>
+    /// Method to show feedback on the centre of the screen.
+    /// </summary>
+    IEnumerator showFeedback(int feedbackLevel){
+        if(feedbackLevel == 0){
+            Debug.Log("Negative feedback given.");
+        } else if(feedbackLevel == 1){
+            Debug.Log("Neutral feedback given.");
+        } else if(feedbackLevel == 2){
+            Debug.Log("Positive feedback given.");
+        } else {
+            Debug.Log("Error: unknown feedback");
+        }
+
+        // Change sprite and enable
+        feedbackImage.sprite = feedbackIcons[feedbackLevel];
+        feedbackImage.enabled = true;
+
+        // Wait until the time is over 
+        yield return new WaitForSeconds(2.0f);   
+
+        // Disable sprite
+        feedbackImage.enabled = false;
+    }
+
 
     /// <summary>
     /// Method to log everytime an S arrives (i.e. a trigger from the scanner).
@@ -333,6 +376,7 @@ public class ExperimentController : MonoBehaviour{
         activateFPS_Counter(session.settings.GetBool("showFPS"));
 
         // Newly added features that if not specified in the .json file get a default value.
+        // Check for objectRotationSpeed
         string tempKey = "objectRotationSpeed";
         if(containsThisKeyInSessionSettings(tempKey)){
             objectRotationSpeed = session.settings.GetFloat(tempKey);
@@ -341,7 +385,17 @@ public class ExperimentController : MonoBehaviour{
         }
         // Set value 
         objectScript.rotationSpeed = objectRotationSpeed;
+
+        // Check if feedbackvalues are provided
+        tempKey = "feedbackCriteria";
+        if(containsThisKeyInSessionSettings(tempKey)){
+            feedbackCriteria = session.settings.GetFloatList(tempKey);
+            feedbackEnabled = true;
+        } else {
+            feedbackEnabled = false;
+        }
     }
+
 
     /// <summary>
     /// Method to check if a certain key can be found in the settings heirarchy

@@ -17,5 +17,6 @@
     "username": "bla",
     "password": "bla",
     "changeKeys": true,
-    "keys" : ["H", "J", "K", "L"]
+    "keys" : ["H", "J", "K", "L"],
+    "feedbackCriteria": [10, 15]
 }
