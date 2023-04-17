@@ -47,26 +47,61 @@ The OLM task comprises two main environments that are meant for experiments plus
 ## The objects available
 Objects were chosen based on being relatively symmetric along their vertical axes to avoid view-dependent confounds and sourced from the internet from various websites. Because at far distance, objects are still difficult to see, we added a large glowing-red arrow that rotates and jumps up and down above the objects whenever the object is visible. There are 14 objects in total a two sets of six meant for the two main environments plus an object for control trials and another object for practicing and explaining the task. 
 
-|Object name | Object number | Meant for |
-| ----------- | ----------- | ----------- |
-| Drum | 7 | Desert arena |
-| Basketball | 2 | Desert arena  |
-| Pineapple | 12| Desert arena  | 
-| Dice | 5 | Desert arena  |
-| Cake | 3 | Desert arena |
-| Lamp | 10 | Desert arena  |
-| Barrel | 1 | Grassy Arena |
-| Football | 8 | Grassy Arena |
-| Pawn | 11 | Grassy Arena |
-| Traffic cone | 4 | Grassy Arena |
-| Donut | 6  | Grassy Arena |
-| Vase | 13 | Grassy Arena |
-| Gift | 9 | Control trials |
-| Teddy bear | 14 | Only available in the practice arena|
+|Object name        | Object number|Meant for environment                                         |To be used for |Category            |Version |
+|:------------------|-------------:|:-------------------------------------------------------------|:--------------|:-------------------|:-------|
+|Barrel             |             1|Grassy Arena                                                  |Classical      |                    |v2.1.1  |
+|Basketball         |             2|Desert arena                                                  |Classical      |                    |v2.1.1  |
+|Cake               |             3|Desert arena                                                  |Classical      |                    |v2.1.1  |
+|Traffic cone       |             4|Grassy Arena                                                  |Classical      |                    |v2.1.1  |
+|Dice               |             5|Desert arena                                                  |Classical      |                    |v2.1.1  |
+|Donut              |             6|Grassy Arena                                                  |Classical      |                    |v2.1.1  |
+|Drum               |             7|Desert arena                                                  |Classical      |Musical instruments |v2.1.1  |
+|Football           |             8|Grassy Arena                                                  |Classical      |                    |v2.1.1  |
+|Gift               |             9|Control trials                                                |Classical      |                    |v2.1.1  |
+|Lamp               |            10|Desert arena                                                  |Classical      |                    |v2.1.1  |
+|Pawn               |            11|Grassy Arena                                                  |Classical      |                    |v2.1.1  |
+|Pineapple          |            12|Desert arena                                                  |Classical      |Fruits              |v2.1.1  |
+|Vase               |            13|Grassy Arena                                                  |Classical      |                    |v2.1.1  |
+|Teddy bear         |            14|Practice but also available in other environments (> v3.0.0). |Practice       |                    |v2.1.1  |
+|Apple              |            15|                                                              |Categorical    |Fruits              |v3.0.0  |
+|Banana             |            16|                                                              |Categorical    |Fruits              |v3.0.0  |
+|Chimpanzee         |            17|                                                              |Categorical    |Animals             |v3.0.0  |
+|Clarinet           |            18|                                                              |Categorical    |Musical instruments |v3.0.0  |
+|Cutter knife       |            19|                                                              |Categorical    |Tools               |v3.0.0  |
+|Deer               |            20|                                                              |Categorical    |Animals             |v3.0.0  |
+|Dog                |            21|                                                              |Categorical    |Animals             |v3.0.0  |
+|Drill              |            22|                                                              |Categorical    |Tools               |v3.0.0  |
+|Elephant           |            23|                                                              |Categorical    |Animals             |v3.0.0  |
+|Guitar             |            24|                                                              |Categorical    |Musical instruments |v3.0.0  |
+|Hammer             |            25|                                                              |Categorical    |Tools               |v3.0.0  |
+|Harmonica          |            26|                                                              |Categorical    |Musical instruments |v3.0.0  |
+|Hippo              |            27|                                                              |Categorical    |Animals             |v3.0.0  |
+|Insulating tape    |            28|                                                              |Categorical    |Tools               |v3.0.0  |
+|Kangaroo           |            29|                                                              |Categorical    |Animals             |v3.0.0  |
+|Keyboard for music |            30|                                                              |Categorical    |Musical instruments |v3.0.0  |
+|Lemon              |            31|                                                              |Categorical    |Fruits              |v3.0.0  |
+|Measurement tape   |            32|                                                              |Categorical    |Tools               |v3.0.0  |
+|Orange             |            33|                                                              |Categorical    |Fruits              |v3.0.0  |
+|Pear               |            34|                                                              |Categorical    |Fruits              |v3.0.0  |
+|Piano              |            35|                                                              |Categorical    |Musical instruments |v3.0.0  |
+|Pliers             |            36|                                                              |Categorical    |Tools               |v3.0.0  |
+|Polar bear         |            37|                                                              |Categorical    |Animals             |v3.0.0  |
+|Pomegranate        |            38|                                                              |Categorical    |Fruits              |v3.0.0  |
+|Saw                |            39|                                                              |Categorical    |Tools               |v3.0.0  |
+|Saxophone          |            40|                                                              |Categorical    |Musical instruments |v3.0.0  |
+|Strawberry         |            41|                                                              |Categorical    |Fruits              |v3.0.0  |
+|Tiger              |            42|                                                              |Categorical    |Animals             |v3.0.0  |
+|Trumpet            |            43|                                                              |Categorical    |Musical instruments |v3.0.0  |
+|Turnscrew          |            44|                                                              |Categorical    |Tools               |v3.0.0  |
+|Violin             |            45|                                                              |Categorical    |Musical instruments |v3.0.0  |
+|Watermelon         |            46|                                                              |Categorical    |Fruits              |v3.0.0  |
+|Wrench             |            47|                                                              |Categorical    |Tools               |v3.0.0  |
+|Zebra              |            48|                                                              |Categorical    |Animals             |v3.0.0  |
+
 
 All objects are available in all environments with the exception that the teddy is only available in the practice arena. You therefore do not have to stick to our object-environment assignment. 
 
-Again: Note these objects have not been created by us and do not fall under our licensing terms. Please check out the credits to see where they can be found.  HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRRRRRRRRREEEEEEEEEEEEEEEe
+Again: Note that these objects have not been created by us and do not fall under our licensing terms. Please check out the credits to see where they can be found.  HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERRRRRRRRRRRRRRRRRRRRRRRREEEEEEEEEEEEEEEe
 
 ## Movement & keys
 Because this task was primarily designed to be used inside an MRI scanner, movement might be relatively unintuitive. That is in order to move forward, the participants have to press the forward key. The forward movement then continued until the forward key is pressed again. Many video game applications require a continued button press for continued forward movement. Furthermore, before a new action can be started (e.g. turning to the left or to the right), the ongoing action has to be stopped. The rationale for this is that a) the use of MRI button boxes can not register prolonged button presses and b) we wanted movement only to be possible in straight lines. The speed of forward translation and rotation are set to a constant value that can be changed trial-by-trial. 
