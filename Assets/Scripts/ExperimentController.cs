@@ -16,11 +16,12 @@ public class ExperimentController : MonoBehaviour{
     public static bool confirm = false;
     public static bool ready2confirm = false;
     public static int soundMode = 1; // Controls which sounds are played. This is parsed from the settings .json file
-    public static bool sessionStarted = false; // Has the session started yet?
     // Sound mode explanation:
     // 1 = all (object & message sound) 
     // 2 = message only
     // 3 = none 
+    public static bool sessionStarted = false; // Has the session started yet?
+    public static string measuredFPS;
 
 	// reference to the UXF Session 
     public Session session; 
@@ -47,6 +48,7 @@ public class ExperimentController : MonoBehaviour{
 	public KeyCode confirmButton = KeyCode.E;
     public int target;
     public Image cueImage;
+    public Image constantCueImage;
     public Text blockMessageText;
     public GameObject panel;
     public GameObject fixationMarker;
@@ -108,9 +110,11 @@ public class ExperimentController : MonoBehaviour{
     private GameObject FPS_Counter; // Game object for FPS counter
     private bool foundFPS_Counter = false; // Has the FPS counter been found?
     private bool inCueOrDelayPeriod = false; // Is the task curerntly in the cue delay period? This is used to ignore the confirm button press.
-    private float objectRotationSpeed = 0; // Speed with which the object should rotated around the y-axis
-    private List<float> feedbackCriteria; // The criteria used to display feedback (parsed from the .json)
-    private bool feedbackEnabled = false; // Boolean that decides if feedback should be shown
+    private float objectRotationSpeed = 0; // Speed with which the object should rotated around the y-axis.
+    private bool feedbackEnabled = false; // Boolean that decides if feedback should be shown (parsed from .json).
+    private float feedback_critVal1; // The criteria used to display feedback (parsed from .csv).
+    private float feedback_critVal2; // The criteria used to display feedback (parsed from .csv).
+    private bool showConstantCue = false; // Boolen that decied if a constant cue is presented during the trial (parsed from .json).
 
     // Excuted at the beginging
     void Start(){
@@ -235,11 +239,15 @@ public class ExperimentController : MonoBehaviour{
 
         // Provide feedback if enabled
         if(feedbackEnabled){
-            if(distance <= feedbackCriteria[0]){
+            // Get current feedback values
+            feedback_critVal1 = trial.settings.GetFloat("feedback_critVal1");
+            feedback_critVal2 = trial.settings.GetFloat("feedback_critVal2");
+
+            if(distance <= feedback_critVal1){
                 StartCoroutine(showFeedback(2));
-            } else if(distance > feedbackCriteria[0] & distance <= feedbackCriteria[1]){
+            } else if(distance > feedback_critVal1 & distance <= feedback_critVal2){
                 StartCoroutine(showFeedback(1));
-            } else if(distance > feedbackCriteria[1]){
+            } else if(distance > feedback_critVal2){
                 StartCoroutine(showFeedback(0));
             }
         }
@@ -330,6 +338,8 @@ public class ExperimentController : MonoBehaviour{
         Debug.Log("The scene used: " + SceneManager.GetActiveScene().name);
         // Version of the task
         Debug.Log("Application Version : " + Application.version);
+        // measuredFPS
+        Debug.Log("The measured FPS was: "+ measuredFPS);
 
     	// Set bool to true
         sessionStarted = true;
@@ -375,6 +385,7 @@ public class ExperimentController : MonoBehaviour{
         // Activate FPS counter if configured so.
         activateFPS_Counter(session.settings.GetBool("showFPS"));
 
+        ////////////////////////////////////////////////////////////////////////////////////
         // Newly added features that if not specified in the .json file get a default value.
         // Check for objectRotationSpeed
         string tempKey = "objectRotationSpeed";
@@ -383,16 +394,21 @@ public class ExperimentController : MonoBehaviour{
         } else {
             objectRotationSpeed = 0.0f;
         }
-        // Set value 
-        objectScript.rotationSpeed = objectRotationSpeed;
 
         // Check if feedbackvalues are provided
-        tempKey = "feedbackCriteria";
+        tempKey = "showFeedback";
         if(containsThisKeyInSessionSettings(tempKey)){
-            feedbackCriteria = session.settings.GetFloatList(tempKey);
-            feedbackEnabled = true;
+            feedbackEnabled = session.settings.GetBool(tempKey);
         } else {
             feedbackEnabled = false;
+        }
+
+        // Check if feedbackvalues are provided
+        tempKey = "showConstantCue";
+        if(containsThisKeyInSessionSettings(tempKey)){
+            showConstantCue = session.settings.GetBool(tempKey);
+        } else {
+            showConstantCue = false;
         }
     }
 
@@ -497,6 +513,10 @@ public class ExperimentController : MonoBehaviour{
         currentObject.SetActive(false);
         currentObject.name = "Object" + target;
 		currentObject.transform.position = new Vector3(object_x, currentObject.transform.position.y, object_z);
+
+        // Set rotation value
+        //currentObject.GetComponent<objectScript>().rotationSpeed = objectRotationSpeed;
+        objectScript.rotationSpeed = objectRotationSpeed;
     }
 
     /// <summary>
@@ -656,6 +676,11 @@ public class ExperimentController : MonoBehaviour{
         Destroy(arrow);
         Destroy(currentObject);
 
+        // If enabled, disable constant cue image
+        if(showConstantCue){
+            constantCueImage.enabled = false;
+        }
+
         // Reset movement so that player is stationary
     	ThreeButtonMovement.reset = true;
 
@@ -734,6 +759,12 @@ public class ExperimentController : MonoBehaviour{
 
 	    	// Hide the background panel again
 	    	panel.SetActive(false);
+
+            // If constant cue is enabled display that
+            if(showConstantCue){
+                constantCueImage.sprite = objectsImages[target - 1];
+                constantCueImage.enabled = true;
+            }
 
 	    	// Log entry
 	        Debug.Log("End of delay period of trial " + trialNum);
@@ -851,6 +882,12 @@ public class ExperimentController : MonoBehaviour{
     /// Function to end application. This needs to be attached to the On Session End Event of the UXF Rig.
     /// </summary>
     public void TheEnd(){
+        // In case the constant cue is active when ending, disable
+        if(showConstantCue){
+            constantCueImage.enabled = false;
+        }
+
+
         // If useHTTPPost not used than quit immediately
         if(!useHTTPPost){
             Debug.Log("Application closed now.");

@@ -1,6 +1,6 @@
 {
     "targetFrameRate": 999,
-    "trial_specification_name": "example.csv",
+    "trial_specification_name": "OLM_category_exp1.csv",
     "waitForExperimenter": "Press space bar",
     "showFPS": true,
     "continuousMode": false,
@@ -10,7 +10,7 @@
     "warningCriterium": 4.0,
     "endCountDown" : 60,
     "endMessage" : "End countdown： ",
-    "objectNames": ["barrel", "basketball", "cake", "cone", "dice", "donut", "drum", "football", "gift", "lamp", "pawn", "pineapple", "vase", "teddy"],
+    "objectNames": ["Barrel", "Basketball", "Cake", "Traffic cone", "Dice", "Donut", "Drum", "Football", "Gift", "Lamp", "Pawn", "Pineapple", "Vase", "Teddy bear", "Apple", "Banana", "Chimpanzee", "Clarinet", "Cutter knife", "Deer", "Dog", "Drill", "Elephant", "Guitar", "Hammer", "Harmonica", "Hippo", "Insulating tape", "Kangaroo", "Keyboard for music ", "Lemon", "Measurement tape", "Orange", "Pear", "Piano", "Pliers", "Polar bear", "Pomegranate", "Saw", "Saxophone", "Strawberry", "Tiger", "Trumpet", "Turnscrew", "Violin", "Watermelon", "Wrench", "Zebra"],
     "blockMessages": ["Press S."],
     "useHTTPPost": false,
     "url": "http://bla/form",
@@ -18,5 +18,9 @@
     "password": "bla",
     "changeKeys": true,
     "keys" : ["H", "J", "K", "L"],
-    "feedbackCriteria": [10, 15]
+    "objectRotationSpeed": 50,
+    "showFeedback": true,
+    "showConstantCue": true
 }
+
+

@@ -5,7 +5,7 @@ using UXF;
 
 public class objectScript : MonoBehaviour{
 	// Public vars
-    public static float rotationSpeed = 50.0f;
+    public static float rotationSpeed = 0.0f;
     public AudioClip collectSound; 
 
     // Update is called once per frame

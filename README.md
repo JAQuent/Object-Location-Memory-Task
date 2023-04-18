@@ -12,6 +12,7 @@ To do
 - banner
 - Add description of manual rotation
 - add description of AudioTrialCounter
+- New features
 
 # Documentation
 The idea of the task is participants, who complete it, learn where a number of objects are located within environments during the _encoding_ trials. Learning & performance is assessed on _retrieval_ trials. As an additional condition, we have added _control_ trials, where all spatial cues apart from the ground and the walls are removed in order to provide an appropriate condition that can be used as a control as it features translation without spatial cues necessary for navigation  and orientation (i.e. landmarks). 

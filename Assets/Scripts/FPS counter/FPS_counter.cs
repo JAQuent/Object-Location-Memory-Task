@@ -14,12 +14,16 @@ public class FPS_counter: MonoBehaviour{
     public Text displayTextAverage;
     public float refreshRate = 0.2f;
     public int temporaryStorageCapacity = 500; 
+    public float FPSCriterium = 30.0f;
     private float timer;
     private int index1 = 0;
     private List<int> temporaryFrameRateStorage = new List<int>();
     private List<double> permanentStorage = new List<double>();
-    private float FPSCriterium = 30.0f;
     private GameObject UXF_UI;
+    private float measurementLength = 20.0f;
+    private string[] lowFPS_message = {"Your average FPS is only", "This is not enough to complete the task. Please contact the experimenter for further instructions."};
+    private string[] waitingMessage = {"Please wait while we measure your frames per second (FPS)."};
+    private bool measuring = false;
 
     void Start(){
         // Find the UXF UI and disable it for the test
@@ -29,6 +33,37 @@ public class FPS_counter: MonoBehaviour{
         // Set timer to refresh rate
         timer = refreshRate;
 
+        // Look for FPS criterium
+        string path2file = Application.streamingAssetsPath + "/FPSCriterium.txt";
+        bool fileExists = System.IO.File.Exists(path2file);
+        if (fileExists){
+            Debug.Log("File exists at path: " + path2file + ". Provided value will be choosen. ");
+            string[] input_FPSCriterium = readText(path2file); 
+            FPSCriterium = float.Parse(input_FPSCriterium[0]);
+        } else {
+            Debug.Log("File does not exist at path: " + path2file + ". Default value will be choosen. This is " + FPSCriterium + " FPS.");
+        }
+
+        // Look for the FPS message
+        path2file = Application.streamingAssetsPath + "/lowFPS_message.txt";
+        fileExists = System.IO.File.Exists(path2file);
+        if (fileExists){
+            Debug.Log("File exists at path: " + path2file + ". Provided values will be choosen. ");
+            lowFPS_message = readText(path2file); 
+        } else {
+            Debug.Log("File does not exist at path: " + path2file + ". Default values will be choosen.");
+        }
+
+        // Look for waiting message
+        path2file = Application.streamingAssetsPath + "/waitingMessage.txt";
+        fileExists = System.IO.File.Exists(path2file);
+        if (fileExists){
+            Debug.Log("File exists at path: " + path2file + ". Provided values will be choosen. ");
+            waitingMessage = readText(path2file); 
+        } else {
+            Debug.Log("File does not exist at path: " + path2file + ". Default value will be choosen.");
+        }
+
         // Start the FPS measurement
         StartCoroutine(startFPSMeasurement());
     }
@@ -37,17 +72,27 @@ public class FPS_counter: MonoBehaviour{
     /// IEnumerator that starts a short FPS measurement to see if the computer is able to handle the task
     /// </summary>
     IEnumerator startFPSMeasurement(){
+        // Set measuring boolean to true
+        measuring = true;
+
+        // Present waiting message
+        GameObject waitingMessage = transform.GetChild(4).gameObject;
+        waitingMessage.GetComponent<UnityEngine.UI.Text>().text = "Please wait while we measure your frames per second (FPS).";
+
         // Log the start
         Debug.Log("Start of FPS measurement...");
 
         // Wait until the measurement time is over
-        yield return new WaitForSeconds(20);
+        yield return new WaitForSeconds(measurementLength);
 
         // Save the current average
         measuredFPS = avgFrameRate;
 
         // Log the end
         Debug.Log("End of FPS measurement...");
+
+        // Deactivate the waiting message
+        waitingMessage.SetActive(false);
 
         // If FPS is okay close the screen cover so the experiment can be started.
         // If not display message to contact the experimenter.
@@ -60,11 +105,40 @@ public class FPS_counter: MonoBehaviour{
             UXF_UI.SetActive(true);
         } else {
             GameObject lowFPSMessage = transform.GetChild(3).gameObject;
-            lowFPSMessage.GetComponent<UnityEngine.UI.Text>().text = "Your average FPS is only " + measuredFPS + ". This is not enough to complete the task. Please contact the experimenter for further instructions.";
+            lowFPSMessage.GetComponent<UnityEngine.UI.Text>().text = lowFPS_message[0] + measuredFPS + lowFPS_message[1];
         }
+
+        // Change measuredFPS in ExperimentController so it can be logged.
+        ExperimentController.measuredFPS = measuredFPS.ToString();
+
+        // Set measuring boolean to false
+        measuring = false;
     }
 
     public void Update (){
+        // Check if the F1 key is pressed to abort the measurement coroutine
+        if(Input.GetKeyDown(KeyCode.F1) & measuring){
+            Debug.Log("FPS check aborted by user!");
+            StopCoroutine(startFPSMeasurement());
+
+            // Save that test was aborted for later logging
+            ExperimentController.measuredFPS = "Test was aborted by user.";
+
+            // Deactivate the message and acitvate the UXF UI
+            GameObject screenCover = transform.GetChild(0).gameObject;
+            screenCover.SetActive(false);
+            GameObject lowFPSMessage = transform.GetChild(3).gameObject;
+            lowFPSMessage.SetActive(false);
+            GameObject waitingMessage = transform.GetChild(4).gameObject;
+            waitingMessage.SetActive(false);
+
+            // Also activate the UFX menu again
+            UXF_UI.SetActive(true);
+
+            // Set measuring boolean to false
+            measuring = false;
+        }
+
         // Calculate current FPS
         float current = 0;
         current = (int)(1f / Time.unscaledDeltaTime);
@@ -92,5 +166,13 @@ public class FPS_counter: MonoBehaviour{
             index1 = 0;
             temporaryFrameRateStorage = new List<int>();
         }
+    }
+
+    // Method to read in .txt file
+    string[] readText(string fileName){
+        // Loads .txt file and split by \t and \n
+        string inputText = System.IO.File.ReadAllText(fileName);
+        string[] stringList = inputText.Split('\t', '\n'); //splits by tabs and lines
+        return stringList;
     }
 }
