@@ -115,6 +115,7 @@ public class ExperimentController : MonoBehaviour{
     private float feedback_critVal1; // The criteria used to display feedback (parsed from .csv).
     private float feedback_critVal2; // The criteria used to display feedback (parsed from .csv).
     private bool showConstantCue = false; // Boolen that decied if a constant cue is presented during the trial (parsed from .json).
+    private List<int> blocks2shuffle; // Contains the blocks that need to be shuffled
 
     // Excuted at the beginging
     void Start(){
@@ -410,6 +411,13 @@ public class ExperimentController : MonoBehaviour{
         } else {
             showConstantCue = false;
         }
+
+        // Check whether any trials in blocks need to be shuffled
+        tempKey = "shuffleBlocks";
+        if(containsThisKeyInSessionSettings(tempKey)){
+            blocks2shuffle = session.settings.GetIntList(tempKey); 
+            ShuffleBlocks(session);
+        } 
     }
 
 
@@ -933,5 +941,16 @@ public class ExperimentController : MonoBehaviour{
         #elif UNITY_STANDALONE_WIN
             Debug.Log("Platform used is UNITY_STANDALONE_WIN");
         #endif
+    }
+    
+    /// <summary>
+    /// Method to shuffle trials within a block as specified by .json file. Needs to be assigned lower down in On Session Begin
+    /// </summary>  
+    public void ShuffleBlocks(Session session){
+        int num_blocks2shuffle = blocks2shuffle.Count;
+        for(int i = 1; i <= num_blocks2shuffle; i++){
+            var currentBlock = session.GetBlock(i);
+            currentBlock.trials.Shuffle();
+        }
     }
 }
