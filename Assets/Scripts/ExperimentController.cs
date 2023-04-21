@@ -380,6 +380,9 @@ public class ExperimentController : MonoBehaviour{
         // Log which platform
         whichPlatform();
 
+        // Detect which input devices are presented
+        detectInputDevices();
+
         // Get which sound mode should be used.
         soundMode = session.settings.GetInt("soundMode");
 
@@ -944,13 +947,24 @@ public class ExperimentController : MonoBehaviour{
     }
     
     /// <summary>
-    /// Method to shuffle trials within a block as specified by .json file. Needs to be assigned lower down in On Session Begin
+    /// Method to shuffle trials within a block as specified by .json file. 
     /// </summary>  
     public void ShuffleBlocks(Session session){
         int num_blocks2shuffle = blocks2shuffle.Count;
         for(int i = 1; i <= num_blocks2shuffle; i++){
-            var currentBlock = session.GetBlock(i);
+            var currentBlock_index =  blocks2shuffle[i - 1];
+            Debug.Log("Shuffle block: " + currentBlock_index);
+            var currentBlock = session.GetBlock(currentBlock_index);
             currentBlock.trials.Shuffle();
         }
+    }
+
+    /// <summary>
+    /// Check which input devices are available
+    /// </summary>
+    void detectInputDevices(){
+        //Debug.Log("Mouse connected to computer: " + Input.mousePresent);
+        Debug.Log("Computer supports touchscreen: " + Input.touchSupported);
+        Debug.Log("Device type: " + SystemInfo.deviceType);
     }
 }

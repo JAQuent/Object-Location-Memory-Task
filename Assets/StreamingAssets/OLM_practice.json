@@ -1,5 +1,5 @@
 {
-    "targetFrameRate": 999,
+    "targetFrameRate": 60,
     "trial_specification_name": "example.csv",
     "waitForExperimenter": "Press space bar",
     "showFPS": true,
@@ -17,5 +17,9 @@
     "username": "bla",
     "password": "bla",
     "changeKeys": true,
-    "keys" : ["H", "J", "K", "L"]
+    "keys" : ["H", "J", "K", "L"],
+    "objectRotationSpeed": 50,
+    "showFeedback": true,
+    "showConstantCue": true,
+    "shuffleBlocks": [1]
 }
