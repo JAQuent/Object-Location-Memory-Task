@@ -21,5 +21,5 @@
     "objectRotationSpeed": 50,
     "showFeedback": true,
     "showConstantCue": true,
-    "shuffleBlocks": [1]
+    "shuffleBlocks": [1, 2]
 }

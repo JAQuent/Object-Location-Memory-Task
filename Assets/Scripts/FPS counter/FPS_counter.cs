@@ -22,7 +22,7 @@ public class FPS_counter: MonoBehaviour{
     private GameObject UXF_UI;
     private float measurementLength = 20.0f;
     private string[] lowFPS_message = {"Your average FPS is only", "This is not enough to complete the task. Please contact the experimenter for further instructions."};
-    private string[] waitingMessage = {"Please wait while we measure your frames per second (FPS)."};
+    private string[] waitingMessage_string = {"Please wait 20 sec while we measure your frames per second (FPS)."};
     private bool measuring = false;
 
     void Start(){
@@ -59,7 +59,7 @@ public class FPS_counter: MonoBehaviour{
         fileExists = System.IO.File.Exists(path2file);
         if (fileExists){
             Debug.Log("File exists at path: " + path2file + ". Provided values will be choosen. ");
-            waitingMessage = readText(path2file); 
+            waitingMessage_string = readText(path2file); 
         } else {
             Debug.Log("File does not exist at path: " + path2file + ". Default value will be choosen.");
         }
@@ -77,7 +77,7 @@ public class FPS_counter: MonoBehaviour{
 
         // Present waiting message
         GameObject waitingMessage = transform.GetChild(4).gameObject;
-        waitingMessage.GetComponent<UnityEngine.UI.Text>().text = "Please wait while we measure your frames per second (FPS).";
+        waitingMessage.GetComponent<UnityEngine.UI.Text>().text = waitingMessage_string[0];
 
         // Log the start
         Debug.Log("Start of FPS measurement...");

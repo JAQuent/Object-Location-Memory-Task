@@ -1,1 +1,1 @@
-Please wait while we measure your frames per second (FPS).
+Please wait 20 sec while we measure your frames per second (FPS).

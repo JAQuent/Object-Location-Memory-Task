@@ -1437,7 +1437,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1311505219725777297, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
       propertyPath: active
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1311505219725777297, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
       propertyPath: password
@@ -3407,7 +3407,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28c6d232196c6784eae720fb10d210cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionNeedToBeEnded: 1
 --- !u!54 &1123277779
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5736,7 +5735,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1023150672895496842, guid: 9d9407723ffbbcd488f6399b8e1f5ec8, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2004254158560780567, guid: 9d9407723ffbbcd488f6399b8e1f5ec8, type: 3}
       propertyPath: m_IsActive
@@ -5940,7 +5939,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6631396497360451769, guid: 9d9407723ffbbcd488f6399b8e1f5ec8, type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9d9407723ffbbcd488f6399b8e1f5ec8, type: 3}

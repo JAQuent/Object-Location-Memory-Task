@@ -25,15 +25,13 @@ public class ThreeButtonMovement : MonoBehaviour{
     public static KeyCode rightTurn = KeyCode.D;
     // Thse can be accessed by other scripts to disable movement functionality
     // For instance it can be used to change the speed etc.
-
-    // Public vars
-    public bool actionNeedToBeEnded = true; // With enabled player cannot directly switch between
+    public static bool actionNeedToBeEnded = true; // With enabled player cannot directly switch between
     // actions. Instead they have to stop the action again. Here Input.GetKeyDown is used. 
     // If false, players can move forward and rotate at the same time as Input.GetKey is used. 
 
     // Private vars
     // Bools for actionNeedToBeEnded functinality
-    public static bool  movingForward = false; // So it can be used by the tracker
+    public static bool movingForward = false; // So it can be used by the tracker
     public static bool turnignLeft = false;
     public static bool turningRight = false;
 

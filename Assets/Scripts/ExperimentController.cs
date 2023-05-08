@@ -65,6 +65,7 @@ public class ExperimentController : MonoBehaviour{
 	private int blockNum;
 	private GameObject arrow; // The arrow that bounces over the object. 
     private Trial trial;
+    private Block block;
     private Vector2 endPosition;  // Where did the player end?
     private Vector2 targetPosition; // Where was the target object?
     private bool buttonPressed = false;
@@ -116,6 +117,9 @@ public class ExperimentController : MonoBehaviour{
     private float feedback_critVal2; // The criteria used to display feedback (parsed from .csv).
     private bool showConstantCue = false; // Boolen that decied if a constant cue is presented during the trial (parsed from .json).
     private List<int> blocks2shuffle; // Contains the blocks that need to be shuffled
+    private bool lastTrial_inBlockMessage = false; // Determines the mode how messages are displayed. If true, then the last trial of 
+    // a block always displays a message and messageToDisplay in the .csv is ignored. If false, then the functionality is controlled by
+    // messageToDisplay in the .csv. 
 
     // Excuted at the beginging
     void Start(){
@@ -421,8 +425,18 @@ public class ExperimentController : MonoBehaviour{
             blocks2shuffle = session.settings.GetIntList(tempKey); 
             ShuffleBlocks(session);
         } 
-    }
 
+        // Check whether actionNeedToBeEnded should be controlled
+        tempKey = "actionNeedToBeEnded";
+        if(containsThisKeyInSessionSettings(tempKey)){
+            ThreeButtonMovement.actionNeedToBeEnded = session.settings.GetBool(tempKey); 
+        } 
+
+        tempKey = "lastTrial_inBlockMessage";
+        if(containsThisKeyInSessionSettings(tempKey)){
+            lastTrial_inBlockMessage = session.settings.GetBool(tempKey); 
+        } 
+    }
 
     /// <summary>
     /// Method to check if a certain key can be found in the settings heirarchy
@@ -492,6 +506,7 @@ public class ExperimentController : MonoBehaviour{
 
 		// Get current trial
 		trial = session.CurrentTrial;
+        block = session.CurrentBlock;
 
 		// Get current trial values
 		target = trial.settings.GetInt("targets");
@@ -499,7 +514,20 @@ public class ExperimentController : MonoBehaviour{
 		cueTime = trial.settings.GetFloat("cue");
 		ITI = trial.settings.GetFloat("ITI");
 		trialType = trial.settings.GetString("trialType");
-		messageToDisplay = trial.settings.GetInt("messageToDisplay");
+
+        // Ccheck if a message needs to be displayed
+        // See above for details on lastTrial_inBlockMessage
+        if(lastTrial_inBlockMessage){
+            // Check if the current trial is the last trial of the block
+            if(trial == block.lastTrial){
+                Debug.Log("This is the last trial of block " + blockNum);
+                messageToDisplay = blockNum - 1;
+            } else {
+                messageToDisplay = -1; // If it is not the last trial, don't display message. 
+            }
+        } else {
+            messageToDisplay = trial.settings.GetInt("messageToDisplay");
+        }
 
 		// Set movement param
 		ThreeButtonMovement.forwardSpeed = trial.settings.GetInt("speedForward");
