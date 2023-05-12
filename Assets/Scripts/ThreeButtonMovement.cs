@@ -86,6 +86,9 @@ public class ThreeButtonMovement : MonoBehaviour{
                 if(Input.GetKey(forwardKey)){
                     transform.Translate(Vector3.forward * forwardSpeed * Time.deltaTime);
                     Debug.Log("forwardKey was pressed.");
+                    movingForward = true;
+                } else {
+                	movingForward = false;
                 }
 
                 // If turn left key is pressed
