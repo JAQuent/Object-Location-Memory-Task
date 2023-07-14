@@ -46,8 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sphere: {fileID: 7854550197871312372, guid: 3a4edd77fec15014da4b487a7212450a, type: 3}
-  correctObject: {fileID: 8506471554729172766, guid: 964170671f7a2644fa0fda9ad78a4793, type: 3}
-  correctLocation: {x: -35.45851, y: 2.12, z: -51.71758}
+  correctObject: {fileID: 8690098749714790803, guid: 5521c63e96f43ea458888a706fd2d0d4, type: 3}
+  correctLocation: {x: -35.45851, y: 1.43, z: -51.71758}
   arrowLocation: {x: -35.45851, y: 4.59, z: -51.71758}
   arrowPrefab: {fileID: 6595882047472115543, guid: fcd20074f4f913d4f93eda754c58345d, type: 3}
   startPoints: []
