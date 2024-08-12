@@ -128,5 +128,4 @@
     - Fixed bug: that when *actionNeedToBeEnded* is enabled that the Boolean whether the participant is moving or not was not working.
 - Version 4.0.0
     - Attempting to allow WebGL builds of the task, which includes major overhauls of a lot of things. 
-        - .json for UXF need to be downloaded instead of acquired from UXF.
-    - Change bug in `ShuffleBlocks`. 
+        - Get .json from the internet & load .csv via WebRequest: .json for UXF need to be downloaded instead of acquired from UXF. Made custom changes to UXF XSVExperimentBuilder with conditional compiling so that it downloads .csv via WebRequest when built for WebGL

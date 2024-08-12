@@ -193,18 +193,25 @@ public class ExperimentController : MonoBehaviour{
     /// Method to start the experiment, which is mainly waiting for the S (i.e. the trigger from the scanner) to arrive. 
     /// </summary>
     void startExperiment(){
-            // Log entry
-            Debug.Log("Start message send");
+        // Log entry
+        Debug.Log("Start message send");
 
-            // Start experiment and log time
-            runStartTime = Time.time; 
-            Debug.Log("Run start " + System.DateTime.Now + " runStartTime: " + runStartTime);
+        // Start experiment and log time
+        runStartTime = Time.time; 
+        Debug.Log("Run start " + System.DateTime.Now + " runStartTime: " + runStartTime);
 
-            // Set experiment started to true
-            experimentStarted = true;
+        // Set experiment started to true
+        experimentStarted = true;
 
-            // Begin first trial
-        	session.BeginNextTrial(); 
+        // Check if shuffling is necessary
+        if (need2shuffle){
+            Debug.Log("Session number " + session.blocks.Count);
+            ShuffleBlocks(session);
+            need2shuffle = false; // Set to false so it is not done again.
+        }
+
+        // Begin first trial
+        session.BeginNextTrial(); 
     }
 
     /// <summary>
@@ -247,7 +254,6 @@ public class ExperimentController : MonoBehaviour{
         if(feedbackEnabled){
             // Get current feedback values
             feedback_critVal1 = trial.settings.GetFloat("feedback_critVal1");
-            Debug.Log(feedback_critVal1);
             feedback_critVal2 = trial.settings.GetFloat("feedback_critVal2");
 
             if(distance <= feedback_critVal1){
@@ -504,8 +510,8 @@ public class ExperimentController : MonoBehaviour{
 
 
     void getSettingsForCurrentTrial(){
-    	// Get current trial and block number
-    	trialNum =  session.currentTrialNum; 
+        // Get current trial and block number
+        trialNum =  session.currentTrialNum; 
 		blockNum =  session.currentBlockNum;
 
 		// Get current trial
@@ -584,12 +590,6 @@ public class ExperimentController : MonoBehaviour{
     /// Method to set up a trial. This needs to be attached to the On Trial Begin Event of the UXF Rig.
     /// </summary>
     public void SetUpTrial(){
-        // Check if shuffling is necessary
-   /*     if (need2shuffle){
-            Debug.Log("Session number " + session.blocks.Count);
-            ShuffleBlocks(session);
-            need2shuffle = false; // Set to false so it is not done again.
-        }*/
         // Set run active
         runActive = true;
 
@@ -992,9 +992,8 @@ public class ExperimentController : MonoBehaviour{
         for(int i = 1; i <= num_blocks2shuffle; i++){
             var currentBlock_index =  blocks2shuffle[i - 1];
             Debug.Log("Shuffle block: " + currentBlock_index);
-            session.blocks[0].trials.Shuffle();
-            /*Block currentBlock = session.GetBlock(1);
-            currentBlock.trials.Shuffle();*/
+            Block currentBlock = session.GetBlock(1);
+            currentBlock.trials.Shuffle();
         }
     }
 
