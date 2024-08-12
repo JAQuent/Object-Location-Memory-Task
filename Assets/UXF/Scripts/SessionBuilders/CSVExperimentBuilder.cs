@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace UXF
 {
@@ -29,17 +30,24 @@ namespace UXF
 
             // get the csv file name
             string csvName = session.settings.GetString(csvFileKey);
+            Debug.Log("csvName = " + csvName);
+            string csvPath = Path.Combine(Application.streamingAssetsPath, csvName);
 
-            // check if the file exists
-            string csvPath = Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, csvName));
-            if (!File.Exists(csvPath))
-            {
+#if UNITY_WEBGL
+            Debug.Log("Since this is a WebGL build, the .csv has to be downloaded.");
+            StartCoroutine(Web_CSVExperimentBuilder.TableFromCSV(csvPath, session, copyToResults));
+#else
+            // create the full path to the file
+            string csvPath = Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, csvName));        
+    
+            // check if file exists
+            if (!File.Exists(csvPath)){
                 throw new Exception($"CSV file at \"{csvPath}\" does not exist!");
             }
 
             // read the csv file
             string[] csvLines = File.ReadAllLines(csvPath);
-
+            
             // parse as table
             var table = UXFDataTable.FromCSV(csvLines);
 
@@ -48,7 +56,8 @@ namespace UXF
             // the trial will be created with the settings from the values from the table
             // if "block_num" is specified in the table, the trial will be added to the block with that number
             session.BuildFromTable(table, copyToResults);
+#endif
         }
     }
-
 }
+

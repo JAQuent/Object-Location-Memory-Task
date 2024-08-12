@@ -117,6 +117,7 @@ public class ExperimentController : MonoBehaviour{
     private float feedback_critVal2; // The criteria used to display feedback (parsed from .csv).
     private bool showConstantCue = false; // Boolen that decied if a constant cue is presented during the trial (parsed from .json).
     private List<int> blocks2shuffle; // Contains the blocks that need to be shuffled
+    private bool need2shuffle = false;
     private bool lastTrial_inBlockMessage = false; // Determines the mode how messages are displayed. If true, then the last trial of 
     // a block always displays a message and messageToDisplay in the .csv is ignored. If false, then the functionality is controlled by
     // messageToDisplay in the .csv. 
@@ -246,6 +247,7 @@ public class ExperimentController : MonoBehaviour{
         if(feedbackEnabled){
             // Get current feedback values
             feedback_critVal1 = trial.settings.GetFloat("feedback_critVal1");
+            Debug.Log(feedback_critVal1);
             feedback_critVal2 = trial.settings.GetFloat("feedback_critVal2");
 
             if(distance <= feedback_critVal1){
@@ -344,7 +346,7 @@ public class ExperimentController : MonoBehaviour{
         // Version of the task
         Debug.Log("Application Version : " + Application.version);
         // measuredFPS
-        Debug.Log("The measured FPS was: "+ measuredFPS);
+        Debug.Log("The measured FPS was: " + measuredFPS);
 
     	// Set bool to true
         sessionStarted = true;
@@ -422,8 +424,9 @@ public class ExperimentController : MonoBehaviour{
         // Check whether any trials in blocks need to be shuffled
         tempKey = "shuffleBlocks";
         if(containsThisKeyInSessionSettings(tempKey)){
-            blocks2shuffle = session.settings.GetIntList(tempKey); 
-            ShuffleBlocks(session);
+            blocks2shuffle = session.settings.GetIntList(tempKey);
+            Debug.Log("Number of blocks that will be shuffled: " + blocks2shuffle.Count);
+            need2shuffle = true;
         } 
 
         // Check whether actionNeedToBeEnded should be controlled
@@ -463,6 +466,7 @@ public class ExperimentController : MonoBehaviour{
     void changeKeyboardKeys(){
         // Get List of string from .json
         List<string> newKeys = session.settings.GetStringList("keys");
+        Debug.Log("Number of keys: " + newKeys.Count);
         ThreeButtonMovement.leftTurn = (KeyCode) System.Enum.Parse(typeof(KeyCode), newKeys[0]);
         ThreeButtonMovement.forwardKey = (KeyCode) System.Enum.Parse(typeof(KeyCode), newKeys[1]);
         ThreeButtonMovement.rightTurn = (KeyCode) System.Enum.Parse(typeof(KeyCode), newKeys[2]);
@@ -580,6 +584,12 @@ public class ExperimentController : MonoBehaviour{
     /// Method to set up a trial. This needs to be attached to the On Trial Begin Event of the UXF Rig.
     /// </summary>
     public void SetUpTrial(){
+        // Check if shuffling is necessary
+   /*     if (need2shuffle){
+            Debug.Log("Session number " + session.blocks.Count);
+            ShuffleBlocks(session);
+            need2shuffle = false; // Set to false so it is not done again.
+        }*/
         // Set run active
         runActive = true;
 
@@ -982,8 +992,9 @@ public class ExperimentController : MonoBehaviour{
         for(int i = 1; i <= num_blocks2shuffle; i++){
             var currentBlock_index =  blocks2shuffle[i - 1];
             Debug.Log("Shuffle block: " + currentBlock_index);
-            var currentBlock = session.GetBlock(currentBlock_index);
-            currentBlock.trials.Shuffle();
+            session.blocks[0].trials.Shuffle();
+            /*Block currentBlock = session.GetBlock(1);
+            currentBlock.trials.Shuffle();*/
         }
     }
 

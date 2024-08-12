@@ -63,7 +63,7 @@
     - Added reponsePixx functionality
     - I removed unnecessary stuff for instance extra settings for English and Chinese so that to switch between languages you just edit the .json files.
 - Version 1.8
-    - For fMRI testing add sound to notify the end of the run/block. Also add possibility to deactivate sound. Add different sound modes. 1 = all (object & message sound 2 = message only 3 = none.
+    - For fMRI testing add sound to notify the end of the run/block. Also add possibility to deactivate sound. Add different sound modes. 1 = all (object & message sound 2 = message only 3 = none.
     - Fix responsePIXX issue: While during simulation it worked flawlessly, with the responsepixx device in the lab no button press was registered. To fix this, Reset address to base address will only be done if a button was pressed.
     - Fixed welcome screen so it can handle a larger variety of aspect ratios.
     - Make messages larger so they can be read in the MRI scanner.
@@ -116,13 +116,17 @@
     - Reused from classical OLM: drum & pineapple.
     - Added the possibility to give feedback. If showFeedback is set to true in .json and will look for feedback criteria in .csv: feedback_critVal1 & feedback_critVal2.
     - Added version to welcome screen.
-    - Added a FPS check that can be aborted by pressing F1. The messages and the FPS criterium is customisable and load via normal text files. If these are not provided, defaults are chosen to make it fully backward compatible. The measured FPS is saved to the log at the beginning of the session.
+    - Added a FPS check that can be aborted by pressing F1. The messages and the FPS criterium is customisable and load via normal text files. If these are not provided, defaults are chosen to make it fully backward compatible. The measured FPS is saved to the log at the beginning of the session.
     - Added the possibility to have a constant cue image of the current object at the bottom of the screen.
     - Made small changes to the metallicness of the drum to make it less shiny.
     - Considered whether to change the original pineapple and drum or add new version for this but decided against it because all future data collection will be new projects.
     - Checked if input files for 2.1.1 are still compatible. So far it seems that is the case.
     - Added the possibility to shuffle trials in certain blocks by providing the block numbers of those blocks *shuffleBlocks* in the .json file.
     - Added the possibility to change the movement from an actions have to be stopped and an actions don’t have to be stopped for moving around. In .json it is changed by *actionNeedToBeEnded*.
-    - Added a new way to present so called block messages. One way is to set a column in the input .csv called *messageToDisplay*, which can actually present block messages even within a trial however when randomising the trial order this doesn’t work any more. Now, it can be set that the last trial of block displays the message that is provided as *blockMessages* in the .json. If *lastTrial_inBlockMessage* is true in the .json file, *messageToDisplay* is ignored.
+    - Added a new way to present so called block messages. One way is to set a column in the input .csv called *messageToDisplay*, which can actually present block messages even within a trial however when randomising the trial order this doesn’t work any more. Now, it can be set that the last trial of block displays the message that is provided as *blockMessages* in the .json. If *lastTrial_inBlockMessage* is true in the .json file, *messageToDisplay* is ignored.
 - Version 3.0.1
-    - Fixed bug: that when *actionNeedToBeEnded* is enabled that the Boolean whether the participant is moving or not was not working.
+    - Fixed bug: that when *actionNeedToBeEnded* is enabled that the Boolean whether the participant is moving or not was not working.
+- Version 4.0.0
+    - Attempting to allow WebGL builds of the task, which includes major overhauls of a lot of things. 
+        - .json for UXF need to be downloaded instead of acquired from UXF.
+    - Change bug in `ShuffleBlocks`. 
