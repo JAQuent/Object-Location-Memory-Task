@@ -130,3 +130,4 @@
     - Attempting to allow WebGL builds of the task, which includes major overhauls of a lot of things. 
         - Get .json from the internet & load .csv via WebRequest: .json for UXF need to be downloaded instead of acquired from UXF. Made custom changes to UXF CSVExperimentBuilder with conditional compiling so that it downloads .csv via WebRequest when built for WebGL.
         - Add conditional compiling for FPS counter: When using WebGL, files are downloaded via WebRequest. 
+        - Add WebGL to whichPlatform() method.

@@ -975,15 +975,17 @@ public class ExperimentController : MonoBehaviour{
     /// Method to log which platform is used. # More info here https://docs.unity3d.com/Manual/PlatformDependentCompilation.html
     /// </summary>
     void whichPlatform(){
-        #if UNITY_EDITOR
-            Debug.Log("Platform used is UNITY_EDITOR");
-        #elif UNITY_STANDALONE_OSX
+#if UNITY_EDITOR
+        Debug.Log("Platform used is UNITY_EDITOR");
+#elif UNITY_STANDALONE_OSX
             Debug.Log("Platform used is UNITY_STANDALONE_OSX");
-        #elif UNITY_STANDALONE_WIN
+#elif UNITY_STANDALONE_WIN
             Debug.Log("Platform used is UNITY_STANDALONE_WIN");
-        #endif
+#elif UNITY_WEBGL
+        Debug.Log("Platform used is UNITY_WEBGL");
+#endif
     }
-    
+
     /// <summary>
     /// Method to shuffle trials within a block as specified by .json file. 
     /// </summary>  
