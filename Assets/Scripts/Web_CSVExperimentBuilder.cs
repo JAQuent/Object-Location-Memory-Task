@@ -10,7 +10,6 @@ public class Web_CSVExperimentBuilder : MonoBehaviour{
         Debug.Log("Path: " + csvPath);
         // download file from StreamingAssets folder
         UnityWebRequest www = UnityWebRequest.Get(csvPath);
-        //UnityWebRequest www = UnityWebRequest.Get("StreamingAssets/example.csv");
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success){

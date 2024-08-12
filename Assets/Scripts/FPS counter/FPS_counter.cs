@@ -3,6 +3,9 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using UXF;
+using UnityEngine.Networking;
+using System.IO;
 // Inspired by https://forum.unity.com/threads/fps-counter.505495/ 
 
 public class FPS_counter: MonoBehaviour{
@@ -33,39 +36,11 @@ public class FPS_counter: MonoBehaviour{
         // Set timer to refresh rate
         timer = refreshRate;
 
-        // Look for FPS criterium
-        string path2file = Application.streamingAssetsPath + "/FPSCriterium.txt";
-        bool fileExists = System.IO.File.Exists(path2file);
-        if (fileExists){
-            Debug.Log("File exists at path: " + path2file + ". Provided value will be choosen. ");
-            string[] input_FPSCriterium = readText(path2file); 
-            FPSCriterium = float.Parse(input_FPSCriterium[0]);
-        } else {
-            Debug.Log("File does not exist at path: " + path2file + ". Default value will be choosen. This is " + FPSCriterium + " FPS.");
-        }
-
-        // Look for the FPS message
-        path2file = Application.streamingAssetsPath + "/lowFPS_message.txt";
-        fileExists = System.IO.File.Exists(path2file);
-        if (fileExists){
-            Debug.Log("File exists at path: " + path2file + ". Provided values will be choosen. ");
-            lowFPS_message = readText(path2file); 
-        } else {
-            Debug.Log("File does not exist at path: " + path2file + ". Default values will be choosen.");
-        }
-
-        // Look for waiting message
-        path2file = Application.streamingAssetsPath + "/waitingMessage.txt";
-        fileExists = System.IO.File.Exists(path2file);
-        if (fileExists){
-            Debug.Log("File exists at path: " + path2file + ". Provided values will be choosen. ");
-            waitingMessage_string = readText(path2file); 
-        } else {
-            Debug.Log("File does not exist at path: " + path2file + ". Default value will be choosen.");
-        }
-
-        // Start the FPS measurement
-        StartCoroutine(startFPSMeasurement());
+#if UNITY_WEBGL
+        StartCoroutine(SetUp_FPScounter_WebGL());
+#else
+        SetUp_FPScounter_standard();
+#endif
     }
  
     /// <summary>
@@ -175,4 +150,117 @@ public class FPS_counter: MonoBehaviour{
         string[] stringList = inputText.Split('\t', '\n'); //splits by tabs and lines
         return stringList;
     }
+#if UNITY_WEBGL
+    private IEnumerator SetUp_FPScounter_WebGL()
+    {
+        ////////////// FPSCriterium
+        // Set file names
+        string fileName = "FPSCriterium.txt";
+
+        // Create path/url to the file
+        string fileLocation = Path.Combine(Application.streamingAssetsPath, fileName);
+
+        // download file from StreamingAssets folder
+        UnityWebRequest www = UnityWebRequest.Get(fileLocation);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Error downloading " + fileName + " file: " + www.error);
+            yield break;
+        }
+
+        // Get the text of the file
+        string loaded_text = www.downloadHandler.text;
+
+        // Parse to variable
+        FPSCriterium = float.Parse(loaded_text);
+
+        ////////////// lowFPS_message
+        // Set file names
+        fileName = "lowFPS_message.txt";
+
+        // Create path/url to the file
+        fileLocation = Path.Combine(Application.streamingAssetsPath, fileName);
+
+        // download file from StreamingAssets folder
+        www = UnityWebRequest.Get(fileLocation);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Error downloading " + fileName + " file: " + www.error);
+            yield break;
+        }
+
+        // Get the text of the file
+        loaded_text = www.downloadHandler.text;
+
+        // Parse to variable
+        lowFPS_message = loaded_text.Split("\n");
+
+        ////////////// waitingMessage
+        // Set file names
+        fileName = "waitingMessage.txt";
+
+        // Create path/url to the file
+        fileLocation = Path.Combine(Application.streamingAssetsPath, fileName);
+
+        // download file from StreamingAssets folder
+        www = UnityWebRequest.Get(fileLocation);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success)
+        {
+            Debug.LogError("Error downloading " + fileName + " file: " + www.error);
+            yield break;
+        }
+
+        // Get the text of the file
+        loaded_text = www.downloadHandler.text;
+
+        // Parse to variable
+        waitingMessage_string = loaded_text.Split("\n");
+
+        // Start the FPS measurement
+        StartCoroutine(startFPSMeasurement());
+    }
+#else
+    private SetUp_FPScounter_standard(){
+        // Look for FPS criterium
+        string path2file = Application.streamingAssetsPath + "/FPSCriterium.txt";
+        bool fileExists = System.IO.File.Exists(path2file);
+        if (fileExists){
+            Debug.Log("File exists at path: " + path2file + ". Provided value will be choosen. ");
+            string[] input_FPSCriterium = readText(path2file); 
+            FPSCriterium = float.Parse(input_FPSCriterium[0]);
+        } else {
+            Debug.Log("File does not exist at path: " + path2file + ". Default value will be choosen. This is " + FPSCriterium + " FPS.");
+        }
+
+        // Look for the FPS message
+        path2file = Application.streamingAssetsPath + "/lowFPS_message.txt";
+        fileExists = System.IO.File.Exists(path2file);
+        if (fileExists){
+            Debug.Log("File exists at path: " + path2file + ". Provided values will be choosen. ");
+            lowFPS_message = readText(path2file); 
+        } else {
+            Debug.Log("File does not exist at path: " + path2file + ". Default values will be choosen.");
+        }
+
+        // Look for waiting message
+        path2file = Application.streamingAssetsPath + "/waitingMessage.txt";
+        fileExists = System.IO.File.Exists(path2file);
+        if (fileExists){
+            Debug.Log("File exists at path: " + path2file + ". Provided values will be choosen. ");
+            waitingMessage_string = readText(path2file); 
+        } else {
+            Debug.Log("File does not exist at path: " + path2file + ". Default value will be choosen.");
+        }
+        
+        // Start the FPS measurement
+        StartCoroutine(startFPSMeasurement());
+    }
+
+#endif
 }
