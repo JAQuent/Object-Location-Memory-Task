@@ -1,9 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.IO;
+using System;
+using System.Collections;
+using UnityEngine.Networking;
+using System.Numerics;
 
 public class WelcomeScript : MonoBehaviour{
 	// public vars
@@ -17,11 +20,18 @@ public class WelcomeScript : MonoBehaviour{
     public Text billboard;
     public Text title;
     public Text versionNumber;
-    
-    // You need to set-up all variables that you want to get from the .json file.
-    // The variable names have to correspond to the input names in that file. 
-    [System.Serializable]
-    public class JSONDataClass {
+    public GameObject backgroundImage;
+    public GameObject studyIDInstruction;
+    public GameObject studyIDTextField;
+    public GameObject studyIDSubmitButton;
+
+    // static vars
+    public static string studyID = "None";
+    public static string UXF_settings_url = "None";
+
+    // JSON Data for UI 
+    [Serializable]
+    public class UIDataClass {
         public string button1Label;
         public bool button1Show;
         public string button2Label;
@@ -32,28 +42,33 @@ public class WelcomeScript : MonoBehaviour{
         public string billboardText;
     }
 
+    // JSON Data for studyID dictionary for WebGL experiments
+    [Serializable]
+    public struct Study {
+        public string studyID;
+        public string UXF_settings_url;
+        public string scene;
+    }
+    [Serializable]
+    public class StudyDictClass {
+        public List<Study> studies;
+    }
+
     // private vars
-    private JSONDataClass JSONData;
+    private UIDataClass UIData;
+    private StudyDictClass StudyDict;
 
     // Start is called before the first frame update
     void Start(){
         // Add version number to screen
          versionNumber.text = "Version: " + Application.version;
 
-        // Get the information from the JSON file
-        GetDataFromJSON(fileName);
-
-        // Change texts
-        button1Text.text = JSONData.button1Label;
-        button2Text.text = JSONData.button2Label;
-        button3Text.text = JSONData.button3Label;
-        title.text = JSONData.title;
-        billboard.text = JSONData.billboardText;
-
-        // De/activate buttons
-        button1.SetActive(JSONData.button1Show);
-        button2.SetActive(JSONData.button2Show);
-        button3.SetActive(JSONData.button3Show);
+#if UNITY_WEBGL
+        StartCoroutine(SetUp_WebGLExperiment());
+        Debug.Log("WebGL build");
+#else
+        SetUp_LocalExperiment();
+#endif
     }
 
     /// <summary>
@@ -81,9 +96,33 @@ public class WelcomeScript : MonoBehaviour{
     }
 
     /// <summary>
-    /// Method to read in the JSON file that is placed in the StreamingAssets folder for the file that is provided
+    /// Method to submit the study ID, set static variable and load scene.
     /// </summary>
-    void GetDataFromJSON(string fileName){
+    public void SubmitStudyID(){
+        Debug.Log("The Study ID was submitted.");
+        studyID = studyIDTextField.GetComponent<InputField>().text;
+        Debug.Log("Study ID: " + studyID);
+
+        // Loop through the study dictionary to find the correct study
+        foreach (Study study in StudyDict.studies){
+            if (study.studyID == studyID){
+                UXF_settings_url = study.UXF_settings_url;
+                Debug.Log("UXF_settings_url: " + UXF_settings_url);
+                SceneManager.LoadScene(study.scene);
+                return;
+            }
+        }
+
+        // Throw error if study ID is not found
+        string msg = "Study ID not found in study dictionary. Please contact experimenter.";
+        Debug.LogError(msg);
+        studyIDInstruction.GetComponent<Text>().text = msg;
+    }
+
+    /// <summary>
+    /// Method to read in the JSON file for UI that is placed in the StreamingAssets folder for the file that is provided
+    /// </summary>
+    void GetDataFromJSON_UI(string fileName){
         // Get path
         string path2file = Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, fileName));
 
@@ -93,6 +132,82 @@ public class WelcomeScript : MonoBehaviour{
         sr.Close();
 
         // Get instruction data profile
-        JSONData = JsonUtility.FromJson<JSONDataClass>(fileContents);
+        UIData = JsonUtility.FromJson<UIDataClass>(fileContents);
+    }
+
+    /// <summary>
+    /// Method to read in the JSON file contaning the study dictionary for WebGL experiments
+    /// </summary>
+    void GetDataFromJSON_StudyDict(string fileContents){
+        // Get instruction data profile
+        StudyDict = JsonUtility.FromJson<StudyDictClass>(fileContents);
+    }
+
+    /// <summary>
+    /// Method to set up the Welcome UI for local (non-webGL) experiments
+    /// </summary>
+    void SetUp_LocalExperiment() {
+        // Get the information from the JSON file about the UI
+        GetDataFromJSON_UI(fileName);
+
+        // Change texts
+        button1Text.text = UIData.button1Label;
+        button2Text.text = UIData.button2Label;
+        button3Text.text = UIData.button3Label;
+        title.text = UIData.title;
+        billboard.text = UIData.billboardText;
+        backgroundImage.SetActive(true);
+
+        // Activate or deactivate buttons
+        button1.SetActive(UIData.button1Show);
+        button2.SetActive(UIData.button2Show);
+        button3.SetActive(UIData.button3Show);
+    }
+
+    /// <summary>
+    /// Method to set up the Welcome UI for WebGL experiments
+    /// </summary>
+    private IEnumerator SetUp_WebGLExperiment(){
+        // Show loading text
+        studyIDInstruction.SetActive(true);
+        studyIDInstruction.GetComponent<Text>().text = "Please wait for settings to load...";
+
+        //////////////////// Load URL from StreamingAssets
+        // Get the URL for the dictionary of studies
+        string StudyDictURLPath = Path.Combine(Application.streamingAssetsPath, "study_dict_url.txt");
+
+        // download file from StreamingAssets folder
+        UnityWebRequest www = UnityWebRequest.Get(StudyDictURLPath);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success){
+            Debug.LogError("Error downloading CSV file: " + www.error);
+            yield break;
+        }
+        
+        // Get the URL to download from
+        string StudyDictURL = www.downloadHandler.text;
+        Debug.Log("Downloading Study Dictionary file from: " + StudyDictURL);
+
+        //////////////////// Download the study dictionary
+        // download file from the internet
+        www = UnityWebRequest.Get(StudyDictURL);
+        yield return www.SendWebRequest();
+
+        if (www.result != UnityWebRequest.Result.Success){
+            Debug.LogError("Error downloading CSV file: " + www.error);
+            yield break;
+        }
+
+        // Get the URL to download from
+        string StudyDictContent = www.downloadHandler.text;
+
+        // Get information from the JOSN about the studies
+        GetDataFromJSON_StudyDict(StudyDictContent);
+
+        // Enable relevant UI elements at the end of participant don't submit to early.
+        studyIDInstruction.GetComponent<Text>().text = "Please type in the study ID that we gave you earlier. ";
+        studyIDTextField.SetActive(true);
+        studyIDSubmitButton.SetActive(true);
     }
 }

@@ -226,7 +226,7 @@ public class FPS_counter: MonoBehaviour{
         StartCoroutine(startFPSMeasurement());
     }
 #else
-    private SetUp_FPScounter_standard(){
+    private void SetUp_FPScounter_standard(){
         // Look for FPS criterium
         string path2file = Application.streamingAssetsPath + "/FPSCriterium.txt";
         bool fileExists = System.IO.File.Exists(path2file);

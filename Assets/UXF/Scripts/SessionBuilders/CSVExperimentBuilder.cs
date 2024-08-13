@@ -38,7 +38,7 @@ namespace UXF
             StartCoroutine(Web_CSVExperimentBuilder.TableFromCSV(csvPath, session, copyToResults));
 #else
             // create the full path to the file
-            string csvPath = Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, csvName));        
+            csvPath = Path.GetFullPath(Path.Combine(Application.streamingAssetsPath, csvName));        
     
             // check if file exists
             if (!File.Exists(csvPath)){

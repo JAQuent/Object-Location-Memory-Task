@@ -2767,7 +2767,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7839017981507438752, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
       propertyPath: m_Text
-      value: 
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7877499147840307632, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
       propertyPath: m_IsActive
@@ -2848,6 +2848,17 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa9f2505d11cc9e4aa44357b47b12905, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &241759632 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 653059108743847710, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
+  m_PrefabInstance: {fileID: 241759627}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 241759628}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 579ee9fcb925a384798cfbbee41ed284, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &247775498
@@ -20261,6 +20272,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: responsePixx.json
+--- !u!114 &5928850474011044446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5928850474011044439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 214f05c7159061c4d955f67c275c5d78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UIControllerScript: {fileID: 241759632}
 --- !u!1001 &5995311871688635383
 PrefabInstance:
   m_ObjectHideFlags: 0
