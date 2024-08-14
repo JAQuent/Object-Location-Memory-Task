@@ -22,16 +22,12 @@ public class FPS_counter: MonoBehaviour{
     private int index1 = 0;
     private List<int> temporaryFrameRateStorage = new List<int>();
     private List<double> permanentStorage = new List<double>();
-    private GameObject UXF_UI;
     private float measurementLength = 20.0f;
     private string[] lowFPS_message = {"Your average FPS is only", "This is not enough to complete the task. Please contact the experimenter for further instructions."};
     private string[] waitingMessage_string = {"Please wait 20 sec while we measure your frames per second (FPS)."};
     private bool measuring = false;
 
     void Start(){
-        // Find the UXF UI and disable it for the test
-        UXF_UI = GameObject.Find("[UXF_Rig]");
-        UXF_UI.SetActive(false);
 
         // Set timer to refresh rate
         timer = refreshRate;
@@ -76,8 +72,6 @@ public class FPS_counter: MonoBehaviour{
             screenCover.SetActive(false);
             GameObject lowFPSMessage = transform.GetChild(3).gameObject;
             lowFPSMessage.SetActive(false);
-            // Also activate the UFX menu again
-            UXF_UI.SetActive(true);
         } else {
             GameObject lowFPSMessage = transform.GetChild(3).gameObject;
             lowFPSMessage.GetComponent<UnityEngine.UI.Text>().text = lowFPS_message[0] + measuredFPS + lowFPS_message[1];
@@ -106,9 +100,6 @@ public class FPS_counter: MonoBehaviour{
             lowFPSMessage.SetActive(false);
             GameObject waitingMessage = transform.GetChild(4).gameObject;
             waitingMessage.SetActive(false);
-
-            // Also activate the UFX menu again
-            UXF_UI.SetActive(true);
 
             // Set measuring boolean to false
             measuring = false;
@@ -151,8 +142,7 @@ public class FPS_counter: MonoBehaviour{
         return stringList;
     }
 #if UNITY_WEBGL
-    private IEnumerator SetUp_FPScounter_WebGL()
-    {
+    private IEnumerator SetUp_FPScounter_WebGL(){
         ////////////// FPSCriterium
         // Set file names
         string fileName = "FPSCriterium.txt";
@@ -164,8 +154,7 @@ public class FPS_counter: MonoBehaviour{
         UnityWebRequest www = UnityWebRequest.Get(fileLocation);
         yield return www.SendWebRequest();
 
-        if (www.result != UnityWebRequest.Result.Success)
-        {
+        if (www.result != UnityWebRequest.Result.Success){
             Debug.LogError("Error downloading " + fileName + " file: " + www.error);
             yield break;
         }
@@ -187,8 +176,7 @@ public class FPS_counter: MonoBehaviour{
         www = UnityWebRequest.Get(fileLocation);
         yield return www.SendWebRequest();
 
-        if (www.result != UnityWebRequest.Result.Success)
-        {
+        if (www.result != UnityWebRequest.Result.Success){
             Debug.LogError("Error downloading " + fileName + " file: " + www.error);
             yield break;
         }
@@ -210,8 +198,7 @@ public class FPS_counter: MonoBehaviour{
         www = UnityWebRequest.Get(fileLocation);
         yield return www.SendWebRequest();
 
-        if (www.result != UnityWebRequest.Result.Success)
-        {
+        if (www.result != UnityWebRequest.Result.Success){
             Debug.LogError("Error downloading " + fileName + " file: " + www.error);
             yield break;
         }

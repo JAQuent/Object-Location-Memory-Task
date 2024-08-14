@@ -6,7 +6,6 @@ using System.IO;
 using System;
 using System.Collections;
 using UnityEngine.Networking;
-using System.Numerics;
 
 public class WelcomeScript : MonoBehaviour{
 	// public vars
@@ -28,6 +27,7 @@ public class WelcomeScript : MonoBehaviour{
     // static vars
     public static string studyID = "None";
     public static string UXF_settings_url = "None";
+    public static string fileNameForStartUpText = "None";
 
     // JSON Data for UI 
     [Serializable]
@@ -48,6 +48,7 @@ public class WelcomeScript : MonoBehaviour{
         public string studyID;
         public string UXF_settings_url;
         public string scene;
+        public string startupText;
     }
     [Serializable]
     public class StudyDictClass {
@@ -107,7 +108,9 @@ public class WelcomeScript : MonoBehaviour{
         foreach (Study study in StudyDict.studies){
             if (study.studyID == studyID){
                 UXF_settings_url = study.UXF_settings_url;
+                fileNameForStartUpText = study.startupText;
                 Debug.Log("UXF_settings_url: " + UXF_settings_url);
+                Debug.Log("startupText: " + fileNameForStartUpText);
                 SceneManager.LoadScene(study.scene);
                 return;
             }

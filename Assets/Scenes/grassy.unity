@@ -2809,6 +2809,10 @@ PrefabInstance:
       propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8857235641008765976, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
+      propertyPath: m_SortingOrder
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
 --- !u!1 &241759628 stripped
@@ -10562,7 +10566,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7349370613498367426, guid: 6f7f2048cd4d2ad4f9295e857113cd52, type: 3}
       propertyPath: m_SortingOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7349370613498367427, guid: 6f7f2048cd4d2ad4f9295e857113cd52, type: 3}
       propertyPath: m_Pivot.x
@@ -20237,6 +20241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileNameForStartUpText: startupText_grassy.json
+  UIControllerScript: {fileID: 241759632}
 --- !u!114 &5928850474011044441 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5928850472724213563, guid: a59d6f2b60113b540a9081f36377e516, type: 3}
@@ -20272,19 +20277,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: responsePixx.json
---- !u!114 &5928850474011044446
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5928850474011044439}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 214f05c7159061c4d955f67c275c5d78, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UIControllerScript: {fileID: 241759632}
 --- !u!1001 &5995311871688635383
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -353,8 +353,12 @@ public class ExperimentController : MonoBehaviour{
         Debug.Log("Application Version : " + Application.version);
         // measuredFPS
         Debug.Log("The measured FPS was: " + measuredFPS);
+        // studyID
+        Debug.Log("The studyID was: " + WelcomeScript.studyID);
+        // UXF_settings_url
+        Debug.Log("The UXF_settings_url was: " + WelcomeScript.UXF_settings_url);
 
-    	// Set bool to true
+        // Set bool to true
         sessionStarted = true;
 
         // Set frame rate to maximum
