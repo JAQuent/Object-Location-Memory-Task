@@ -130,7 +130,7 @@ public class ExperimentController : MonoBehaviour{
         }
 
         // Activate FPS by default
-        activateFPS_Counter(true);
+        activateFPS_Counter(false);
     }
 
     // Update is called once per frame

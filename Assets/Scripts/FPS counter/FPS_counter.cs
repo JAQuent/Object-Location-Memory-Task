@@ -32,11 +32,24 @@ public class FPS_counter: MonoBehaviour{
         // Set timer to refresh rate
         timer = refreshRate;
 
+        // Check if FPS test need to be run
+        Debug.Log("Run FPS test: " + WelcomeScript.testFPS);
+        if (WelcomeScript.testFPS){
 #if UNITY_WEBGL
-        StartCoroutine(SetUp_FPScounter_WebGL());
+            StartCoroutine(SetUp_FPScounter_WebGL());
 #else
-        SetUp_FPScounter_standard();
+            SetUp_FPScounter_standard();
 #endif
+        } else {
+            // Deactivate the waiting message
+            GameObject waitingMessage = transform.GetChild(4).gameObject;
+            waitingMessage.GetComponent<Text>().text = waitingMessage_string[0];
+            waitingMessage.SetActive(false);
+            GameObject screenCover = transform.GetChild(0).gameObject;
+            screenCover.SetActive(false);
+            GameObject lowFPSMessage = transform.GetChild(3).gameObject;
+            lowFPSMessage.SetActive(false);
+        }
     }
  
     /// <summary>
@@ -48,7 +61,7 @@ public class FPS_counter: MonoBehaviour{
 
         // Present waiting message
         GameObject waitingMessage = transform.GetChild(4).gameObject;
-        waitingMessage.GetComponent<UnityEngine.UI.Text>().text = waitingMessage_string[0];
+        waitingMessage.GetComponent<Text>().text = waitingMessage_string[0];
 
         // Log the start
         Debug.Log("Start of FPS measurement...");
@@ -74,7 +87,7 @@ public class FPS_counter: MonoBehaviour{
             lowFPSMessage.SetActive(false);
         } else {
             GameObject lowFPSMessage = transform.GetChild(3).gameObject;
-            lowFPSMessage.GetComponent<UnityEngine.UI.Text>().text = lowFPS_message[0] + measuredFPS + lowFPS_message[1];
+            lowFPSMessage.GetComponent<Text>().text = lowFPS_message[0] + measuredFPS + lowFPS_message[1];
         }
 
         // Change measuredFPS in ExperimentController so it can be logged.

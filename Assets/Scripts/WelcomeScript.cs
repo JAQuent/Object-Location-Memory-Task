@@ -28,6 +28,7 @@ public class WelcomeScript : MonoBehaviour{
     public static string studyID = "None";
     public static string UXF_settings_url = "None";
     public static string fileNameForStartUpText = "None";
+    public static bool testFPS = true;
 
     // JSON Data for UI 
     [Serializable]
@@ -40,6 +41,7 @@ public class WelcomeScript : MonoBehaviour{
         public bool button3Show;
         public string title;
         public string billboardText;
+        public bool testFPS;
     }
 
     // JSON Data for studyID dictionary for WebGL experiments
@@ -49,6 +51,7 @@ public class WelcomeScript : MonoBehaviour{
         public string UXF_settings_url;
         public string scene;
         public string startupText;
+        public bool testFPS;
     }
     [Serializable]
     public class StudyDictClass {
@@ -109,6 +112,7 @@ public class WelcomeScript : MonoBehaviour{
             if (study.studyID == studyID){
                 UXF_settings_url = study.UXF_settings_url;
                 fileNameForStartUpText = study.startupText;
+                testFPS = study.testFPS;
                 Debug.Log("UXF_settings_url: " + UXF_settings_url);
                 Debug.Log("startupText: " + fileNameForStartUpText);
                 SceneManager.LoadScene(study.scene);
@@ -165,6 +169,9 @@ public class WelcomeScript : MonoBehaviour{
         button1.SetActive(UIData.button1Show);
         button2.SetActive(UIData.button2Show);
         button3.SetActive(UIData.button3Show);
+
+        // Set static variable
+        testFPS = UIData.testFPS;
     }
 
     /// <summary>
