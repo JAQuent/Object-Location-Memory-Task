@@ -788,12 +788,12 @@ public class ExperimentController : MonoBehaviour{
 
 	    	// Show cueImage
 	        panel.SetActive(true);
+
 	        cueImage.sprite = objectsImages[target - 1];
 	    	cueImage.enabled = true;
 
-
-	    	// Disable movement
-	    	ThreeButtonMovement.movementAllowed = false;
+            // Disable movement
+            ThreeButtonMovement.movementAllowed = false;
 
 	    	// Wait until cue time is over 
 	        yield return new WaitForSeconds(cueTime);	

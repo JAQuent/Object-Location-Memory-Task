@@ -11,7 +11,7 @@
     "endCountDown" : 60,
     "endMessage" : "End countdown： ",
     "objectNames": ["Barrel", "Basketball", "Cake", "Traffic cone", "Dice", "Donut", "Drum", "Football", "Gift", "Lamp", "Pawn", "Pineapple", "Vase", "Teddy bear", "Apple", "Banana", "Chimpanzee", "Clarinet", "Cutter knife", "Deer", "Dog", "Drill", "Elephant", "Guitar", "Hammer", "Harmonica", "Hippo", "Insulating tape", "Kangaroo", "Keyboard for music ", "Lemon", "Measurement tape", "Orange", "Pear", "Piano", "Pliers", "Polar bear", "Pomegranate", "Saw", "Saxophone", "Strawberry", "Tiger", "Trumpet", "Turnscrew", "Violin", "Watermelon", "Wrench", "Zebra"],
-    "blockMessages": ["Press S."],
+    "blockMessages": ["Press S.", "Bla1", "Bla2"],
     "lastTrial_inBlockMessage": true,
     "useHTTPPost": false,
     "url": "http://bla/form",

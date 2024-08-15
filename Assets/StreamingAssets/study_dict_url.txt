@@ -1,1 +1,1 @@
-https://gist.githubusercontent.com/JAQuent/4eae34bc8a0d17d467369013c17fdd9d/raw/76ea140bc6f85b763185c01f48c13baa3a1d6224/study_dict.json
+https://gist.githubusercontent.com/JAQuent/4eae34bc8a0d17d467369013c17fdd9d/raw/dc3a08ea31b757ff31d737ef0813859c4f2648c7/study_dict.json
