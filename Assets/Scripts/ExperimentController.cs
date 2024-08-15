@@ -121,6 +121,8 @@ public class ExperimentController : MonoBehaviour{
     private bool lastTrial_inBlockMessage = false; // Determines the mode how messages are displayed. If true, then the last trial of 
     // a block always displays a message and messageToDisplay in the .csv is ignored. If false, then the functionality is controlled by
     // messageToDisplay in the .csv. 
+    private bool showProgressBar = false; // Should the progress bar be shown?
+    private float totalNumTrials; // Total number of trials in the session.
 
     // Excuted at the beginging
     void Start(){
@@ -431,7 +433,7 @@ public class ExperimentController : MonoBehaviour{
             showConstantCue = false;
         }
 
-        // Check whether any trials in blocks need to be shuffled
+        // Check whether any trials in blocks need to be shuffled.
         tempKey = "shuffleBlocks";
         if(containsThisKeyInSessionSettings(tempKey)){
             blocks2shuffle = session.settings.GetIntList(tempKey);
@@ -439,16 +441,24 @@ public class ExperimentController : MonoBehaviour{
             need2shuffle = true;
         } 
 
-        // Check whether actionNeedToBeEnded should be controlled
+        // Check whether actionNeedToBeEnded should be controlled.
         tempKey = "actionNeedToBeEnded";
         if(containsThisKeyInSessionSettings(tempKey)){
             ThreeButtonMovement.actionNeedToBeEnded = session.settings.GetBool(tempKey); 
-        } 
+        }
 
+        // Check whether the last trial in the block (true) or the .csv (false) drives the messages.
         tempKey = "lastTrial_inBlockMessage";
         if(containsThisKeyInSessionSettings(tempKey)){
             lastTrial_inBlockMessage = session.settings.GetBool(tempKey); 
-        } 
+        }
+
+        // Check if a progress bar should be shown. 
+        tempKey = "showProgressBar";
+        if (containsThisKeyInSessionSettings(tempKey)){
+            showProgressBar = session.settings.GetBool(tempKey);
+            ProgressBar.ActivateProgressBar(showProgressBar);
+        }
     }
 
     /// <summary>
@@ -698,6 +708,11 @@ public class ExperimentController : MonoBehaviour{
     /// Method that handles everything that need to happen at the end of trial.
     /// </summary>
     public void EndTrial(){
+        // Update progress bar if necessary
+        if (showProgressBar){
+            ProgressBar.UpdateProgressBar(trialNum, session.LastTrial.number);
+        }
+
         // Log entry
         Debug.Log("End of trial " + trialNum);
         
@@ -940,7 +955,6 @@ public class ExperimentController : MonoBehaviour{
             constantCueImage.enabled = false;
         }
 
-
         // If useHTTPPost not used than quit immediately
         if(!useHTTPPost){
             Debug.Log("Application closed now.");
@@ -957,6 +971,8 @@ public class ExperimentController : MonoBehaviour{
             session.End();
         }
 
+        // Disable progress bar
+        ProgressBar.ActivateProgressBar(false);
         
         // Set end screen active
         endScreen.SetActive(true);

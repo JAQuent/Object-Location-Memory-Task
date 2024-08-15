@@ -3,7 +3,7 @@
     [
         {
             "studyID": "OLM1",
-            "UXF_settings_url": "https://gist.githubusercontent.com/JAQuent/8d13531323262ca39793966d76168a53/raw/74c939de8c0612fbe19d06f3c0958270dc856a10/OLM_grassy_online.json",
+            "UXF_settings_url": "https://gist.githubusercontent.com/JAQuent/8d13531323262ca39793966d76168a53/raw/b76968d0c1bcc6023bafb9fba4fb49ba2b4fef59/OLM_grassy_online.json",
             "scene": "grassy",
             "startupText": "https://gist.githubusercontent.com/JAQuent/e28e42c076c08ce2457b10cab1ce85d5/raw/3a5252c1f378d7eb4977ff3aecc067a022ff76ad/startupText_grassy.json",
             "testFPS": false
