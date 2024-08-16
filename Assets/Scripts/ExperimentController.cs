@@ -965,32 +965,33 @@ public class ExperimentController : MonoBehaviour{
         }
 
         // If useHTTPPost not used than quit immediately
-        if(!useHTTPPost){
+        if (!useHTTPPost){
             Debug.Log("Application closed now.");
             Application.Quit();
         }
+        else{
+            // End session/trial if necessary
+            if (session.InTrial){
+                // End the trial
+                session.EndCurrentTrial();
+            }
+            if (!session.isEnding){
+                // End the session
+                session.End();
+            }
 
-        // End session/trial if necessary
-        if(session.InTrial){
-            // End the trial
-            session.EndCurrentTrial();  
+            // Disable progress bar
+            ProgressBar.ActivateProgressBar(false);
+
+            // Set end screen active
+            endScreen.SetActive(true);
+
+            // Start end countdown
+            startEndCountDown = true;
+
+            // Get text
+            endScreenText = endScreen.transform.GetChild(0).gameObject.GetComponent<UnityEngine.UI.Text>();
         }
-        if(!session.isEnding){
-            // End the session
-            session.End();
-        }
-
-        // Disable progress bar
-        ProgressBar.ActivateProgressBar(false);
-        
-        // Set end screen active
-        endScreen.SetActive(true);
-
-        // Start end countdown
-        startEndCountDown = true;
-
-        // Get text
-        endScreenText = endScreen.transform.GetChild(0).gameObject.GetComponent<UnityEngine.UI.Text>();
     }
 
     /// <summary>

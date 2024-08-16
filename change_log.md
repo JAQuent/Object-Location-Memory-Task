@@ -137,3 +137,4 @@
         - Added a progress bar that can be toggled on and off via the UXF settings .json: This progress bar is relative to the total number of trials. 
         - Made sure that the other scenes also work: 1) fixed that ResponsePixxInterface.cs was active bey default in the desert scene. 2) set up the UXF UI controll script correctly. 3) Change Session always 1 for each scene. 
         - Fixed that the WebGL can be started before it is ready. Now no S is necessary. 
+        - Small change how the application closes.
