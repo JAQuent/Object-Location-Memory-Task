@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UXF; 
-using System.IO;
 using UnityEngine.SceneManagement;
 
 // Description of this task phases:
@@ -22,12 +21,13 @@ public class ExperimentController : MonoBehaviour{
     // 3 = none 
     public static bool sessionStarted = false; // Has the session started yet?
     public static string measuredFPS;
+    public static bool startExperimentOnline = false; // Starts the experiments when it it WebGL
 
-	// reference to the UXF Session 
+    // reference to the UXF Session 
     public Session session; 
 
     // HTTPpost script
-    public UXF.HTTPPost HTTPPostScript; // Add the HTTPPostScript from the [UXF_DataHandling] object. 
+    public HTTPPost HTTPPostScript; // Add the HTTPPostScript from the [UXF_DataHandling] object. 
     public ResponsePixxInterface responsePixxScript; // Add the responsePixxScript. This is also attached to the Experiment game object.  
 
     // End screen
@@ -137,11 +137,20 @@ public class ExperimentController : MonoBehaviour{
 
     // Update is called once per frame
     void Update(){
-    	// Start first trial if not in trial already, the session is started and when the experiment is not started yet
+        // Start Experiment depending on build.
+#if UNITY_WEBGL
+        if(startExperimentOnline){
+            startExperiment();
+            startExperimentOnline = false;
+        }
+#else
+        // Start first trial if not in trial already, the session is started and when the experiment is not started yet
     	// These conditions are important so that the programm doesn't attempt to start the experiment at the wrong time.
         if(Input.GetKey(startButton) & !session.InTrial & sessionStarted & !experimentStarted){
         	startExperiment();
         }
+
+#endif
 
         // Only run the function if a) the confirm button is pressed or confirm is true (e.g. set by other script), 
         // b) the experiment is in trial and the button hasn't been pressed already and the trial type is "retrieval" & 

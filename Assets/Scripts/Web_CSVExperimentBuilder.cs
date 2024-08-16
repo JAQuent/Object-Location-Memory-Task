@@ -22,12 +22,17 @@ public class Web_CSVExperimentBuilder : MonoBehaviour{
 
         // parse as table
         UXFDataTable table = UXFDataTable.FromCSV(csvLines);
-        Debug.Log("Finished download and created table...");
 
         // build the experiment.
         // this adds a new trial to the session for each row in the table
         // the trial will be created with the settings from the values from the table
         // if "block_num" is specified in the table, the trial will be added to the block with that number
         session.BuildFromTable(table, copyToResults);
+
+        // Log
+        Debug.Log("Finished download and created table...");
+
+        // Set experiment start to true
+        ExperimentController.startExperimentOnline = true;
     }
 }

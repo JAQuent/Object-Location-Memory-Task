@@ -136,3 +136,4 @@
         - Make it configurable if the FPS test is run: When running via WebGL, the study dictionary contains a boolean for the FPS test. For local experiments, this information is provided via the welcome.json. As another change, the FPS counter is set to in-active when the scene is opened.
         - Added a progress bar that can be toggled on and off via the UXF settings .json: This progress bar is relative to the total number of trials. 
         - Made sure that the other scenes also work: 1) fixed that ResponsePixxInterface.cs was active bey default in the desert scene. 2) set up the UXF UI controll script correctly. 3) Change Session always 1 for each scene. 
+        - Fixed that the WebGL can be started before it is ready. Now no S is necessary. 
