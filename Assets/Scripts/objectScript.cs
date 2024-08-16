@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UXF; 
 
 public class objectScript : MonoBehaviour{
 	// Public vars

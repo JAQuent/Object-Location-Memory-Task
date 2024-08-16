@@ -3,7 +3,6 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
-using UXF;
 using UnityEngine.Networking;
 using System.IO;
 // Inspired by https://forum.unity.com/threads/fps-counter.505495/ 

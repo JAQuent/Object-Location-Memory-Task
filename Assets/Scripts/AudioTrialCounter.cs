@@ -1,7 +1,6 @@
 // This sctrip is inspired by Benjamin Outram: https://www.benjaminoutram.com/blog/2018/7/13/procedural-audio-in-unity-noise-and-tone
 // The purpose of the script is to give an audio signal to the experimenter indicating how many trials are left.
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UXF; 
 

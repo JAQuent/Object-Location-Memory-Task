@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-// Wirting the script was assisted by ChatGPT and bing.
+// Writing the script was assisted by ChatGPT and bing.
 
 public class DrawLines : MonoBehaviour{
 	// Public vars
