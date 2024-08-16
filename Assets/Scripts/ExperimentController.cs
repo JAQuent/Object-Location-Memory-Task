@@ -698,9 +698,17 @@ public class ExperimentController : MonoBehaviour{
     /// </summary>
     void saveResults(){
         // Save that information for this trial
-        session.CurrentTrial.result["end_x"] = endPosition.x;
-        session.CurrentTrial.result["end_z"] = endPosition.y; // Note it's y because it comes from Vector2
-        session.CurrentTrial.result["euclideanDistance"] = distance; 
+        if(trialType == "retrieval"){
+            session.CurrentTrial.result["end_x"] = endPosition.x;
+            session.CurrentTrial.result["end_z"] = endPosition.y; // Note it's y because it comes from Vector2
+            session.CurrentTrial.result["euclideanDistance"] = distance;
+        } else{
+            session.CurrentTrial.result["end_x"] = "NA";
+            session.CurrentTrial.result["end_z"] = "NA"; // Note it's y because it comes from Vector2
+            session.CurrentTrial.result["euclideanDistance"] = "NA";
+            
+        }
+        session.CurrentTrial.result["movedDistance"] = movedDistance;
         session.CurrentTrial.result["objectName"] = objectNames[target - 1];
         session.CurrentTrial.result["objectNumber"] = target;
         session.CurrentTrial.result["navStartTime"] = navStartTime;
@@ -709,7 +717,6 @@ public class ExperimentController : MonoBehaviour{
         session.CurrentTrial.result["runStartTime"] = runStartTime;
         session.CurrentTrial.result["timesObjectPresented"] = timesObjectPresented[target - 1];
         session.CurrentTrial.result["confirmButtonTime"] = confirmButtonTime;
-        session.CurrentTrial.result["movedDistance"] = movedDistance;
         session.CurrentTrial.result["warningShown"] = warningShown;
     }
 
