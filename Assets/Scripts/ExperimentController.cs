@@ -793,9 +793,11 @@ public class ExperimentController : MonoBehaviour{
     	// Set inCueOrDelayPeriod to true so that the confirm button press is ignored
     	inCueOrDelayPeriod = true;
 
-    	// Only if not continuous mode or during retrieval or on trial 1
-        // which also serves as a cue to cut the video so it match with the trial
-    	if(!continuousMode | trialType == "retrieval" | trialNum == 1){
+        // Only if not continuous mode or during retrieval or on trial 1
+        // which also serves as a cue to cut the video so it matches with the trial.
+        // This is because we always want a cue when it's not in continuousMode but even if it is,
+        // we need a cue on Trial 1 and during retrieval trials.
+        if (!continuousMode | trialType == "retrieval" | trialNum == 1){
 	    	// Log entry
 	        Debug.Log("Cue start of trial " + trialNum);
 

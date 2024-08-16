@@ -140,3 +140,4 @@
         - Small change how the application closes.
         - Fixed problems with the practice scene: changed the player to the prefab again. 
         - Fixed that encoding and control trials saved distance and end position.
+        - Improved a confusing comment. 
