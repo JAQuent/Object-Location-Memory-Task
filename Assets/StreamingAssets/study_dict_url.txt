@@ -1,1 +1,1 @@
-http://s3.eu-west-2.amazonaws.com/olm.unity.webgl2/config_files/study_dict.json
+http://s3.eu-west-2.amazonaws.com/olm.task.unity/config_files/study_dict.json

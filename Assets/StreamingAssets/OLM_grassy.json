@@ -1,6 +1,6 @@
 {
     "targetFrameRate": 60,
-    "trial_specification_name": "example.csv",
+    "trial_specification_name": "example_all_objects.csv",
     "waitForExperimenter": "Press space bar",
     "showFPS": false,
     "continuousMode": false,
