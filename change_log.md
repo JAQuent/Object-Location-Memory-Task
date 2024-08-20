@@ -142,3 +142,4 @@
         - Fixed that encoding and control trials saved distance and end position.
         - Improved a confusing comment. 
         - Removed unnecessary name spacces from scripts. 
+        - Optimise for WebGL and general performance 1: Following this tutorial https://www.youtube.com/watch?v=j0DN9P8e7dc. Mostly only madee the max size of the textures smaller and change some input stuff for models. 

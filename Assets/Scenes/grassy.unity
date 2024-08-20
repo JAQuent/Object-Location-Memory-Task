@@ -2557,6 +2557,22 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1999034067558573094, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
+      propertyPath: active
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1999034067558573094, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
+      propertyPath: credentials
+      value: 
+      objectReference: {fileID: 11400000, guid: 6a80d8879521a6d45872f2b6cc531ea5, type: 2}
+    - target: {fileID: 1999034067558573094, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
+      propertyPath: collectBrowserInfo
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1999034067558573094, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
+      propertyPath: endSessionWhenTryCloseTab
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2311804077452366147, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
