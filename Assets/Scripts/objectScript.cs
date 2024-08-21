@@ -7,7 +7,7 @@ public class objectScript : MonoBehaviour{
 
     // Update is called once per frame
     void Update(){
-        transform.Rotate(new Vector3(0, -1, 0) * Time.deltaTime * rotationSpeed);
+        transform.Rotate(new Vector3(0, -1, 0) * Time.deltaTime * 10.0f);
     }
 
     /// <summary>
