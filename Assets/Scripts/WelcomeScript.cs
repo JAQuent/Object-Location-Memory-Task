@@ -205,7 +205,7 @@ public class WelcomeScript : MonoBehaviour{
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success){
-            Debug.LogError("Error downloading CSV file: " + www.error);
+            Debug.LogError("Error downloading Study Dictionary file: " + www.error);
             yield break;
         }
 

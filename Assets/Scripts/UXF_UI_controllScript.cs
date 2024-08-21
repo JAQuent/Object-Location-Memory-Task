@@ -55,6 +55,7 @@ public class UXF_UI_controllScript : MonoBehaviour{
             StartCoroutine(SetUp_UI_WebGLExperiment());
         }
         UIControllerScript.jsonURL = WelcomeScript.UXF_settings_url;
+        UIControllerScript.experimentName = WelcomeScript.studyID;
         Debug.Log("JSON URL set: " + UIControllerScript.jsonURL);
 #else
         SetUp_UI_LocalExperiment();
