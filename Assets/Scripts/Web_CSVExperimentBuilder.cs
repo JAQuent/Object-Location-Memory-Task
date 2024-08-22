@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -19,6 +20,10 @@ public class Web_CSVExperimentBuilder : MonoBehaviour{
 
         string csvText = www.downloadHandler.text;
         string[] csvLines = csvText.Split("\n");
+        // Loop through the lines
+        for (int i = 0; i < csvLines.Length; i++){
+            csvLines[i] = csvLines[i].Replace("\r", String.Empty);
+        }
 
         // parse as table
         UXFDataTable table = UXFDataTable.FromCSV(csvLines);

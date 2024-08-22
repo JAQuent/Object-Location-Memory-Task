@@ -143,4 +143,6 @@
         - Improved a confusing comment. 
         - Removed unnecessary name spacces from scripts. 
         - Optimise for WebGL and general performance 1: Following this tutorial https://www.youtube.com/watch?v=j0DN9P8e7dc. Mostly only madee the max size of the textures smaller and change some input stuff for models. 
-        - Fix that log message in welcome script
+        - Fix that log message in welcome script & setting name for experiment
+        - Fix basketball rotating around wrong axis
+        - Fixed error that line break characters messed with reading .csv (& other changes): now "\r" is replaced by an empty string. Also added that the cursor is visible again at the end. Additionally, I also changed made it so that the rotation speed variable is used again instead a hard coded value.

@@ -968,8 +968,11 @@ public class ExperimentController : MonoBehaviour{
     /// Function to end application. This needs to be attached to the On Session End Event of the UXF Rig.
     /// </summary>
     public void TheEnd(){
+        // Enable cursor again
+        Cursor.visible = true;
+
         // In case the constant cue is active when ending, disable
-        if(showConstantCue){
+        if (showConstantCue){
             constantCueImage.enabled = false;
         }
 
