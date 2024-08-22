@@ -133,6 +133,11 @@ public class ExperimentController : MonoBehaviour{
 
         // Activate FPS by default
         activateFPS_Counter(false);
+
+#if UNITY_WEBGL
+        // If WebGL also make full screen
+        Screen.fullScreen = true;
+#endif
     }
 
     // Update is called once per frame
@@ -628,8 +633,16 @@ public class ExperimentController : MonoBehaviour{
         // Get all necessary information for setting up current trial
         getSettingsForCurrentTrial();
 
-		// Set up background 
-		if(trialType == "control" & displayingBackground){
+#if UNITY_WEBGL
+        // In WebGL, set screen to full screen if it is not already and write a log that full screen was exited by the user. 
+        if (!Screen.fullScreen){
+            Debug.Log("The screen was not fullscreen at the beginning of Trial " + trialNum);
+            Screen.fullScreen = true;
+        }
+#endif
+
+        // Set up background 
+        if (trialType == "control" & displayingBackground){
 			// For control trials
 			RenderSettings.skybox = skyboxes[1];
 			background.SetActive(false);
