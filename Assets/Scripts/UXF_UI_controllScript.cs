@@ -225,15 +225,15 @@ public class UXF_UI_controllScript : MonoBehaviour{
     private IEnumerator SetUp_UI_WebGLExperiment(){
         //////////////////// Load URL from StreamingAssets
         // Get the URL for the dictionary of studies
-        string StudyDictURLPath = fileNameForStartUpText;
+        string StartUpTextURL = fileNameForStartUpText;
 
         // download file from StreamingAssets folder
-        UnityWebRequest www = UnityWebRequest.Get(StudyDictURLPath);
+        UnityWebRequest www = UnityWebRequest.Get(StartUpTextURL);
         yield return www.SendWebRequest();
 
         if (www.result != UnityWebRequest.Result.Success)
         {
-            Debug.LogError("Error downloading CSV file: " + www.error);
+            Debug.LogError("Error downloading StartUpText file: " + www.error);
             yield break;
         }
 
