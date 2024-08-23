@@ -146,4 +146,6 @@
         - Fix that log message in welcome script & setting name for experiment
         - Fix basketball rotating around wrong axis
         - Fixed error that line break characters messed with reading .csv (& other changes): now "\r" is replaced by an empty string. Also added that the cursor is visible again at the end. Additionally, I also changed made it so that the rotation speed variable is used again instead a hard coded value.
-        - Automatically set full screen to true in WebGL and check this at each start of a trial
+        - Automatically set full screen to true in WebGL and check this at each start of a trial.
+        - Fix remaining download error message mentioning CSV.
+        - Fix that control trials always used wrong skybox but also made the code simpler by removing boolean displayingBackground.

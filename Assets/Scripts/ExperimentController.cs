@@ -92,7 +92,6 @@ public class ExperimentController : MonoBehaviour{
     private bool experimentStarted = false; // Bool if the experiment has been started by pressing S or scanner send S
     private int messageToDisplay; // Should a message be displayed after the current trial (-1 = no). If yes, then value
     // is > 0 and can be used as an index for blockMessage
-    private bool displayingBackground = true; // Is the background (including skybox) currenly displayed?
     private bool runActive = false; // Only if this is not true, we change runStartTime 
     private float confirmButtonTime = float.NaN; 
     private bool startEndCountDown; // If true it starts the end countdown
@@ -307,7 +306,6 @@ public class ExperimentController : MonoBehaviour{
         // Log entry
         Debug.Log("Movement warning end. Trial " + trialNum);
     }
-
 
     /// <summary>
     /// Method to show feedback on the centre of the screen.
@@ -641,27 +639,27 @@ public class ExperimentController : MonoBehaviour{
         }
 #endif
 
+        Debug.Log("Trial type = " + trialType);
         // Set up background 
-        if (trialType == "control" & displayingBackground){
+        if (trialType == "control"){
 			// For control trials
 			RenderSettings.skybox = skyboxes[1];
 			background.SetActive(false);
-			displayingBackground = false;
             mainSun.SetActive(false);
             controlSun.SetActive(true);
             reflectionProbe.SetActive(false);
-            RenderSettings.sun = controlSun.GetComponent<UnityEngine.Light>();
-		} else if (trialType != "control" & !displayingBackground){
+            RenderSettings.sun = controlSun.GetComponent<Light>();
+		} else if (trialType != "control"){
 			// For normal encoding & retrieval trials
 			RenderSettings.skybox = skyboxes[0];
 			background.SetActive(true);
-			displayingBackground = true;
             mainSun.SetActive(true);
-            RenderSettings.sun = mainSun.GetComponent<UnityEngine.Light>();
+            RenderSettings.sun = mainSun.GetComponent<Light>();
             controlSun.SetActive(false);
             reflectionProbe.SetActive(true);
 		}
-
+        Debug.Log(RenderSettings.skybox.name);
+        
 		// Spawn the object & set inactive at first
 		spawnObject();
 
