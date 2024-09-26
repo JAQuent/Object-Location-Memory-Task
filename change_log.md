@@ -63,7 +63,7 @@
     - Added reponsePixx functionality
     - I removed unnecessary stuff for instance extra settings for English and Chinese so that to switch between languages you just edit the .json files.
 - Version 1.8
-    - For fMRI testing add sound to notify the end of the run/block. Also add possibility to deactivate sound. Add different sound modes. 1 = all (object & message sound 2 = message only 3 = none.
+    - For fMRI testing add sound to notify the end of the run/block. Also add possibility to deactivate sound. Add different sound modes. 1 = all (object & message sound 2 = message only 3 = none.
     - Fix responsePIXX issue: While during simulation it worked flawlessly, with the responsepixx device in the lab no button press was registered. To fix this, Reset address to base address will only be done if a button was pressed.
     - Fixed welcome screen so it can handle a larger variety of aspect ratios.
     - Make messages larger so they can be read in the MRI scanner.
@@ -116,13 +116,36 @@
     - Reused from classical OLM: drum & pineapple.
     - Added the possibility to give feedback. If showFeedback is set to true in .json and will look for feedback criteria in .csv: feedback_critVal1 & feedback_critVal2.
     - Added version to welcome screen.
-    - Added a FPS check that can be aborted by pressing F1. The messages and the FPS criterium is customisable and load via normal text files. If these are not provided, defaults are chosen to make it fully backward compatible. The measured FPS is saved to the log at the beginning of the session.
+    - Added a FPS check that can be aborted by pressing F1. The messages and the FPS criterium is customisable and load via normal text files. If these are not provided, defaults are chosen to make it fully backward compatible. The measured FPS is saved to the log at the beginning of the session.
     - Added the possibility to have a constant cue image of the current object at the bottom of the screen.
     - Made small changes to the metallicness of the drum to make it less shiny.
     - Considered whether to change the original pineapple and drum or add new version for this but decided against it because all future data collection will be new projects.
     - Checked if input files for 2.1.1 are still compatible. So far it seems that is the case.
     - Added the possibility to shuffle trials in certain blocks by providing the block numbers of those blocks *shuffleBlocks* in the .json file.
     - Added the possibility to change the movement from an actions have to be stopped and an actions don’t have to be stopped for moving around. In .json it is changed by *actionNeedToBeEnded*.
-    - Added a new way to present so called block messages. One way is to set a column in the input .csv called *messageToDisplay*, which can actually present block messages even within a trial however when randomising the trial order this doesn’t work any more. Now, it can be set that the last trial of block displays the message that is provided as *blockMessages* in the .json. If *lastTrial_inBlockMessage* is true in the .json file, *messageToDisplay* is ignored.
+    - Added a new way to present so called block messages. One way is to set a column in the input .csv called *messageToDisplay*, which can actually present block messages even within a trial however when randomising the trial order this doesn’t work any more. Now, it can be set that the last trial of block displays the message that is provided as *blockMessages* in the .json. If *lastTrial_inBlockMessage* is true in the .json file, *messageToDisplay* is ignored.
 - Version 3.0.1
-    - Fixed bug: that when *actionNeedToBeEnded* is enabled that the Boolean whether the participant is moving or not was not working.
+    - Fixed bug: that when *actionNeedToBeEnded* is enabled that the Boolean whether the participant is moving or not was not working.
+- Version 4.0.0
+    - Attempting to allow WebGL builds of the task, which includes major overhauls of a lot of things. 
+        - Get .json from the internet & load .csv via WebRequest: .json for UXF need to be downloaded instead of acquired from UXF. Made custom changes to UXF CSVExperimentBuilder with conditional compiling so that it downloads .csv via WebRequest when built for WebGL.
+        - Add conditional compiling for FPS counter: When using WebGL, files are downloaded via WebRequest. 
+        - Add WebGL to whichPlatform() method.
+        - Add studyID logic for Welcome Script for WebGL: When the task is built for WebGL, the studyID is provided by the participants via a text field will a) look up the studyID in online .json file. The link for that is found in the streamingAssets folder in the scene. This .json can be remotely edit to add more studyIDs. Based on the studyID two important things are set 1) it is the scene that need to be loaded (desert, grassy or practice) and 2) the UXF .json. For now, I decided to hard code instructions for submitting the study ID to avoid having to complicated .json files. 
+        - Updating UXF_UI_controllScript: 1) add support for WebGL experiments. 2) fix bug that the script still tries to change a component even if it is not enabled. Now a component is skipped when the field is set to "" in the .json. 3) added new field to study dict to also allow download of UI .jsons. 4) fixed bug that UXF script doesn't work if [UXF_Rig] is set inactive by the FPS counter. This was done by changing the sort order and remove the corresponding line in the FPS script. 5) the script also handles other necessary changes of the UI for local vs. web experiments (mainly setting jsonURL). 6) study ID and UXF_settings_url are log to the session.
+        - Make it configurable if the FPS test is run: When running via WebGL, the study dictionary contains a boolean for the FPS test. For local experiments, this information is provided via the welcome.json. As another change, the FPS counter is set to in-active when the scene is opened.
+        - Added a progress bar that can be toggled on and off via the UXF settings .json: This progress bar is relative to the total number of trials. 
+        - Made sure that the other scenes also work: 1) fixed that ResponsePixxInterface.cs was active bey default in the desert scene. 2) set up the UXF UI controll script correctly. 3) Change Session always 1 for each scene. 
+        - Fixed that the WebGL can be started before it is ready. Now no S is necessary. 
+        - Small change how the application closes.
+        - Fixed problems with the practice scene: changed the player to the prefab again. 
+        - Fixed that encoding and control trials saved distance and end position.
+        - Improved a confusing comment. 
+        - Removed unnecessary name spacces from scripts. 
+        - Optimise for WebGL and general performance 1: Following this tutorial https://www.youtube.com/watch?v=j0DN9P8e7dc. Mostly only madee the max size of the textures smaller and change some input stuff for models. 
+        - Fix that log message in welcome script & setting name for experiment
+        - Fix basketball rotating around wrong axis
+        - Fixed error that line break characters messed with reading .csv (& other changes): now "\r" is replaced by an empty string. Also added that the cursor is visible again at the end. Additionally, I also changed made it so that the rotation speed variable is used again instead a hard coded value.
+        - Automatically set full screen to true in WebGL and check this at each start of a trial.
+        - Fix remaining download error message mentioning CSV.
+        - Fix that control trials always used wrong skybox but also made the code simpler by removing boolean displayingBackground.

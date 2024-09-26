@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UXF; 
-using System.IO;
 using UnityEngine.SceneManagement;
 
 // Description of this task phases:
@@ -22,12 +21,13 @@ public class ExperimentController : MonoBehaviour{
     // 3 = none 
     public static bool sessionStarted = false; // Has the session started yet?
     public static string measuredFPS;
+    public static bool startExperimentOnline = false; // Starts the experiments when it it WebGL
 
-	// reference to the UXF Session 
+    // reference to the UXF Session 
     public Session session; 
 
     // HTTPpost script
-    public UXF.HTTPPost HTTPPostScript; // Add the HTTPPostScript from the [UXF_DataHandling] object. 
+    public HTTPPost HTTPPostScript; // Add the HTTPPostScript from the [UXF_DataHandling] object. 
     public ResponsePixxInterface responsePixxScript; // Add the responsePixxScript. This is also attached to the Experiment game object.  
 
     // End screen
@@ -92,7 +92,6 @@ public class ExperimentController : MonoBehaviour{
     private bool experimentStarted = false; // Bool if the experiment has been started by pressing S or scanner send S
     private int messageToDisplay; // Should a message be displayed after the current trial (-1 = no). If yes, then value
     // is > 0 and can be used as an index for blockMessage
-    private bool displayingBackground = true; // Is the background (including skybox) currenly displayed?
     private bool runActive = false; // Only if this is not true, we change runStartTime 
     private float confirmButtonTime = float.NaN; 
     private bool startEndCountDown; // If true it starts the end countdown
@@ -117,9 +116,12 @@ public class ExperimentController : MonoBehaviour{
     private float feedback_critVal2; // The criteria used to display feedback (parsed from .csv).
     private bool showConstantCue = false; // Boolen that decied if a constant cue is presented during the trial (parsed from .json).
     private List<int> blocks2shuffle; // Contains the blocks that need to be shuffled
+    private bool need2shuffle = false;
     private bool lastTrial_inBlockMessage = false; // Determines the mode how messages are displayed. If true, then the last trial of 
     // a block always displays a message and messageToDisplay in the .csv is ignored. If false, then the functionality is controlled by
     // messageToDisplay in the .csv. 
+    private bool showProgressBar = false; // Should the progress bar be shown?
+    private float totalNumTrials; // Total number of trials in the session.
 
     // Excuted at the beginging
     void Start(){
@@ -129,16 +131,30 @@ public class ExperimentController : MonoBehaviour{
         }
 
         // Activate FPS by default
-        activateFPS_Counter(true);
+        activateFPS_Counter(false);
+
+#if UNITY_WEBGL
+        // If WebGL also make full screen
+        Screen.fullScreen = true;
+#endif
     }
 
     // Update is called once per frame
     void Update(){
-    	// Start first trial if not in trial already, the session is started and when the experiment is not started yet
+        // Start Experiment depending on build.
+#if UNITY_WEBGL
+        if(startExperimentOnline){
+            startExperiment();
+            startExperimentOnline = false;
+        }
+#else
+        // Start first trial if not in trial already, the session is started and when the experiment is not started yet
     	// These conditions are important so that the programm doesn't attempt to start the experiment at the wrong time.
         if(Input.GetKey(startButton) & !session.InTrial & sessionStarted & !experimentStarted){
         	startExperiment();
         }
+
+#endif
 
         // Only run the function if a) the confirm button is pressed or confirm is true (e.g. set by other script), 
         // b) the experiment is in trial and the button hasn't been pressed already and the trial type is "retrieval" & 
@@ -192,18 +208,25 @@ public class ExperimentController : MonoBehaviour{
     /// Method to start the experiment, which is mainly waiting for the S (i.e. the trigger from the scanner) to arrive. 
     /// </summary>
     void startExperiment(){
-            // Log entry
-            Debug.Log("Start message send");
+        // Log entry
+        Debug.Log("Start message send");
 
-            // Start experiment and log time
-            runStartTime = Time.time; 
-            Debug.Log("Run start " + System.DateTime.Now + " runStartTime: " + runStartTime);
+        // Start experiment and log time
+        runStartTime = Time.time; 
+        Debug.Log("Run start " + System.DateTime.Now + " runStartTime: " + runStartTime);
 
-            // Set experiment started to true
-            experimentStarted = true;
+        // Set experiment started to true
+        experimentStarted = true;
 
-            // Begin first trial
-        	session.BeginNextTrial(); 
+        // Check if shuffling is necessary
+        if (need2shuffle){
+            Debug.Log("Session number " + session.blocks.Count);
+            ShuffleBlocks(session);
+            need2shuffle = false; // Set to false so it is not done again.
+        }
+
+        // Begin first trial
+        session.BeginNextTrial(); 
     }
 
     /// <summary>
@@ -284,7 +307,6 @@ public class ExperimentController : MonoBehaviour{
         Debug.Log("Movement warning end. Trial " + trialNum);
     }
 
-
     /// <summary>
     /// Method to show feedback on the centre of the screen.
     /// </summary>
@@ -344,9 +366,13 @@ public class ExperimentController : MonoBehaviour{
         // Version of the task
         Debug.Log("Application Version : " + Application.version);
         // measuredFPS
-        Debug.Log("The measured FPS was: "+ measuredFPS);
+        Debug.Log("The measured FPS was: " + measuredFPS);
+        // studyID
+        Debug.Log("The studyID was: " + WelcomeScript.studyID);
+        // UXF_settings_url
+        Debug.Log("The UXF_settings_url was: " + WelcomeScript.UXF_settings_url);
 
-    	// Set bool to true
+        // Set bool to true
         sessionStarted = true;
 
         // Set frame rate to maximum
@@ -361,7 +387,7 @@ public class ExperimentController : MonoBehaviour{
 
         // Get warningMessage and the criterium
         string warningMessage = session.settings.GetString("warningMessage");
-        warning.transform.GetChild(0).gameObject.GetComponent<UnityEngine.UI.Text>().text = warningMessage;
+        warning.transform.GetChild(0).gameObject.GetComponent<Text>().text = warningMessage;
         warningCriterium = session.settings.GetFloat("warningCriterium");
 
         // Check if the keys have to be changed
@@ -419,23 +445,32 @@ public class ExperimentController : MonoBehaviour{
             showConstantCue = false;
         }
 
-        // Check whether any trials in blocks need to be shuffled
+        // Check whether any trials in blocks need to be shuffled.
         tempKey = "shuffleBlocks";
         if(containsThisKeyInSessionSettings(tempKey)){
-            blocks2shuffle = session.settings.GetIntList(tempKey); 
-            ShuffleBlocks(session);
+            blocks2shuffle = session.settings.GetIntList(tempKey);
+            Debug.Log("Number of blocks that will be shuffled: " + blocks2shuffle.Count);
+            need2shuffle = true;
         } 
 
-        // Check whether actionNeedToBeEnded should be controlled
+        // Check whether actionNeedToBeEnded should be controlled.
         tempKey = "actionNeedToBeEnded";
         if(containsThisKeyInSessionSettings(tempKey)){
             ThreeButtonMovement.actionNeedToBeEnded = session.settings.GetBool(tempKey); 
-        } 
+        }
 
+        // Check whether the last trial in the block (true) or the .csv (false) drives the messages.
         tempKey = "lastTrial_inBlockMessage";
         if(containsThisKeyInSessionSettings(tempKey)){
             lastTrial_inBlockMessage = session.settings.GetBool(tempKey); 
-        } 
+        }
+
+        // Check if a progress bar should be shown. 
+        tempKey = "showProgressBar";
+        if (containsThisKeyInSessionSettings(tempKey)){
+            showProgressBar = session.settings.GetBool(tempKey);
+            ProgressBar.ActivateProgressBar(showProgressBar);
+        }
     }
 
     /// <summary>
@@ -463,6 +498,7 @@ public class ExperimentController : MonoBehaviour{
     void changeKeyboardKeys(){
         // Get List of string from .json
         List<string> newKeys = session.settings.GetStringList("keys");
+        Debug.Log("Number of keys: " + newKeys.Count);
         ThreeButtonMovement.leftTurn = (KeyCode) System.Enum.Parse(typeof(KeyCode), newKeys[0]);
         ThreeButtonMovement.forwardKey = (KeyCode) System.Enum.Parse(typeof(KeyCode), newKeys[1]);
         ThreeButtonMovement.rightTurn = (KeyCode) System.Enum.Parse(typeof(KeyCode), newKeys[2]);
@@ -500,8 +536,8 @@ public class ExperimentController : MonoBehaviour{
 
 
     void getSettingsForCurrentTrial(){
-    	// Get current trial and block number
-    	trialNum =  session.currentTrialNum; 
+        // Get current trial and block number
+        trialNum =  session.currentTrialNum; 
 		blockNum =  session.currentBlockNum;
 
 		// Get current trial
@@ -595,27 +631,35 @@ public class ExperimentController : MonoBehaviour{
         // Get all necessary information for setting up current trial
         getSettingsForCurrentTrial();
 
-		// Set up background 
-		if(trialType == "control" & displayingBackground){
+#if UNITY_WEBGL
+        // In WebGL, set screen to full screen if it is not already and write a log that full screen was exited by the user. 
+        if (!Screen.fullScreen){
+            Debug.Log("The screen was not fullscreen at the beginning of Trial " + trialNum);
+            Screen.fullScreen = true;
+        }
+#endif
+
+        Debug.Log("Trial type = " + trialType);
+        // Set up background 
+        if (trialType == "control"){
 			// For control trials
 			RenderSettings.skybox = skyboxes[1];
 			background.SetActive(false);
-			displayingBackground = false;
             mainSun.SetActive(false);
             controlSun.SetActive(true);
             reflectionProbe.SetActive(false);
-            RenderSettings.sun = controlSun.GetComponent<UnityEngine.Light>();
-		} else if (trialType != "control" & !displayingBackground){
+            RenderSettings.sun = controlSun.GetComponent<Light>();
+		} else if (trialType != "control"){
 			// For normal encoding & retrieval trials
 			RenderSettings.skybox = skyboxes[0];
 			background.SetActive(true);
-			displayingBackground = true;
             mainSun.SetActive(true);
-            RenderSettings.sun = mainSun.GetComponent<UnityEngine.Light>();
+            RenderSettings.sun = mainSun.GetComponent<Light>();
             controlSun.SetActive(false);
             reflectionProbe.SetActive(true);
 		}
-
+        Debug.Log(RenderSettings.skybox.name);
+        
 		// Spawn the object & set inactive at first
 		spawnObject();
 
@@ -665,9 +709,17 @@ public class ExperimentController : MonoBehaviour{
     /// </summary>
     void saveResults(){
         // Save that information for this trial
-        session.CurrentTrial.result["end_x"] = endPosition.x;
-        session.CurrentTrial.result["end_z"] = endPosition.y; // Note it's y because it comes from Vector2
-        session.CurrentTrial.result["euclideanDistance"] = distance; 
+        if(trialType == "retrieval"){
+            session.CurrentTrial.result["end_x"] = endPosition.x;
+            session.CurrentTrial.result["end_z"] = endPosition.y; // Note it's y because it comes from Vector2
+            session.CurrentTrial.result["euclideanDistance"] = distance;
+        } else{
+            session.CurrentTrial.result["end_x"] = "NA";
+            session.CurrentTrial.result["end_z"] = "NA"; // Note it's y because it comes from Vector2
+            session.CurrentTrial.result["euclideanDistance"] = "NA";
+            
+        }
+        session.CurrentTrial.result["movedDistance"] = movedDistance;
         session.CurrentTrial.result["objectName"] = objectNames[target - 1];
         session.CurrentTrial.result["objectNumber"] = target;
         session.CurrentTrial.result["navStartTime"] = navStartTime;
@@ -676,7 +728,6 @@ public class ExperimentController : MonoBehaviour{
         session.CurrentTrial.result["runStartTime"] = runStartTime;
         session.CurrentTrial.result["timesObjectPresented"] = timesObjectPresented[target - 1];
         session.CurrentTrial.result["confirmButtonTime"] = confirmButtonTime;
-        session.CurrentTrial.result["movedDistance"] = movedDistance;
         session.CurrentTrial.result["warningShown"] = warningShown;
     }
 
@@ -684,6 +735,11 @@ public class ExperimentController : MonoBehaviour{
     /// Method that handles everything that need to happen at the end of trial.
     /// </summary>
     public void EndTrial(){
+        // Update progress bar if necessary
+        if (showProgressBar){
+            ProgressBar.UpdateProgressBar(trialNum, session.LastTrial.number);
+        }
+
         // Log entry
         Debug.Log("End of trial " + trialNum);
         
@@ -748,9 +804,11 @@ public class ExperimentController : MonoBehaviour{
     	// Set inCueOrDelayPeriod to true so that the confirm button press is ignored
     	inCueOrDelayPeriod = true;
 
-    	// Only if not continuous mode or during retrieval or on trial 1
-        // which also serves as a cue to cut the video so it match with the trial
-    	if(!continuousMode | trialType == "retrieval" | trialNum == 1){
+        // Only if not continuous mode or during retrieval or on trial 1
+        // which also serves as a cue to cut the video so it matches with the trial.
+        // This is because we always want a cue when it's not in continuousMode but even if it is,
+        // we need a cue on Trial 1 and during retrieval trials.
+        if (!continuousMode | trialType == "retrieval" | trialNum == 1){
 	    	// Log entry
 	        Debug.Log("Cue start of trial " + trialNum);
 
@@ -759,12 +817,12 @@ public class ExperimentController : MonoBehaviour{
 
 	    	// Show cueImage
 	        panel.SetActive(true);
+
 	        cueImage.sprite = objectsImages[target - 1];
 	    	cueImage.enabled = true;
 
-
-	    	// Disable movement
-	    	ThreeButtonMovement.movementAllowed = false;
+            // Disable movement
+            ThreeButtonMovement.movementAllowed = false;
 
 	    	// Wait until cue time is over 
 	        yield return new WaitForSeconds(cueTime);	
@@ -921,37 +979,42 @@ public class ExperimentController : MonoBehaviour{
     /// Function to end application. This needs to be attached to the On Session End Event of the UXF Rig.
     /// </summary>
     public void TheEnd(){
+        // Enable cursor again
+        Cursor.visible = true;
+
         // In case the constant cue is active when ending, disable
-        if(showConstantCue){
+        if (showConstantCue){
             constantCueImage.enabled = false;
         }
 
-
         // If useHTTPPost not used than quit immediately
-        if(!useHTTPPost){
+        if (!useHTTPPost){
             Debug.Log("Application closed now.");
             Application.Quit();
         }
+        else{
+            // End session/trial if necessary
+            if (session.InTrial){
+                // End the trial
+                session.EndCurrentTrial();
+            }
+            if (!session.isEnding){
+                // End the session
+                session.End();
+            }
 
-        // End session/trial if necessary
-        if(session.InTrial){
-            // End the trial
-            session.EndCurrentTrial();  
+            // Disable progress bar
+            ProgressBar.ActivateProgressBar(false);
+
+            // Set end screen active
+            endScreen.SetActive(true);
+
+            // Start end countdown
+            startEndCountDown = true;
+
+            // Get text
+            endScreenText = endScreen.transform.GetChild(0).gameObject.GetComponent<Text>();
         }
-        if(!session.isEnding){
-            // End the session
-            session.End();
-        }
-
-        
-        // Set end screen active
-        endScreen.SetActive(true);
-
-        // Start end countdown
-        startEndCountDown = true;
-
-        // Get text
-        endScreenText = endScreen.transform.GetChild(0).gameObject.GetComponent<UnityEngine.UI.Text>();
     }
 
     /// <summary>
@@ -965,15 +1028,17 @@ public class ExperimentController : MonoBehaviour{
     /// Method to log which platform is used. # More info here https://docs.unity3d.com/Manual/PlatformDependentCompilation.html
     /// </summary>
     void whichPlatform(){
-        #if UNITY_EDITOR
-            Debug.Log("Platform used is UNITY_EDITOR");
-        #elif UNITY_STANDALONE_OSX
+#if UNITY_EDITOR
+        Debug.Log("Platform used is UNITY_EDITOR");
+#elif UNITY_STANDALONE_OSX
             Debug.Log("Platform used is UNITY_STANDALONE_OSX");
-        #elif UNITY_STANDALONE_WIN
+#elif UNITY_STANDALONE_WIN
             Debug.Log("Platform used is UNITY_STANDALONE_WIN");
-        #endif
+#elif UNITY_WEBGL
+        Debug.Log("Platform used is UNITY_WEBGL");
+#endif
     }
-    
+
     /// <summary>
     /// Method to shuffle trials within a block as specified by .json file. 
     /// </summary>  
@@ -982,7 +1047,7 @@ public class ExperimentController : MonoBehaviour{
         for(int i = 1; i <= num_blocks2shuffle; i++){
             var currentBlock_index =  blocks2shuffle[i - 1];
             Debug.Log("Shuffle block: " + currentBlock_index);
-            var currentBlock = session.GetBlock(currentBlock_index);
+            Block currentBlock = session.GetBlock(1);
             currentBlock.trials.Shuffle();
         }
     }

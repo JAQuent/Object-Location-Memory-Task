@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 269cac86251610b4798aad019edff5a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 0
   collectSound: {fileID: 8300000, guid: 73659f83c6a69164d8954e9f7417965d, type: 3}
 --- !u!136 &7550098616311174747
 CapsuleCollider:
@@ -125,6 +124,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: 6d4510e557e430842802b3c5bf93f252, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ad9327fa5e96fd14da4efce11ef70c8c, type: 2}
     - target: {fileID: 919132149155446097, guid: 6d4510e557e430842802b3c5bf93f252, type: 3}
       propertyPath: m_Name
       value: watermelon

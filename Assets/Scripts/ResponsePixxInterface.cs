@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System;
 using unitypixx;
-using UnityEngine.UI;
 using System.IO;
 
 // Attach this script to the game object will control movement of the ThreeButtonMovement.cs script as well as

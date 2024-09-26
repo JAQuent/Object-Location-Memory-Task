@@ -1,0 +1,29 @@
+{
+    "studies":
+    [
+        {
+            "studyID": "OLM1_self_pilot",
+            "UXF_settings_url": "http://s3.eu-west-2.amazonaws.com/olm.task.unity/config_files/OLM1/OLM_grassy.json",
+            "scene": "grassy",
+            "startupText": "http://s3.eu-west-2.amazonaws.com/olm.task.unity/config_files/OLM1/startupText_grassy.json",
+            "testFPS": false
+
+        },
+        {
+            "studyID": "OLM2_self_pilot",
+            "UXF_settings_url": "http://s3.eu-west-2.amazonaws.com/olm.task.unity/config_files/OLM1/OLM_grassy.json",
+            "scene": "desert",
+            "startupText": "http://s3.eu-west-2.amazonaws.com/olm.task.unity/config_files/OLM1/startupText_grassy.json",
+            "testFPS": false
+
+        },
+        {
+            "studyID": "OLM3_self_pilot",
+            "UXF_settings_url": "http://s3.eu-west-2.amazonaws.com/olm.task.unity/config_files/OLM1/OLM_grassy.json",
+            "scene": "practice",
+            "startupText": "http://s3.eu-west-2.amazonaws.com/olm.task.unity/config_files/OLM1/startupText_grassy.json",
+            "testFPS": false
+
+        }
+    ]
+}
