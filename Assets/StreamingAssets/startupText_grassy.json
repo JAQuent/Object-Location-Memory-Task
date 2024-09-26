@@ -1,13 +1,13 @@
 {
-    "chromeBar": "",
-    "instructionsPanelContent1": "Test1",
-    "instructionsPanelContent2": "Test2",
-    "expSettingsprofile": "",
-    "localPathElement": "Test4",
-    "localPathElement_placeHolder": "Test5",
-    "participantID": "Test6",
-    "participantID_placeholder": "Test7",
-    "sessionNumber": "Test8",
-    "termsAndConditions": "Test9",
-    "beginButton": "Test10"
+    "chromeBar": "Startup",
+    "instructionsPanelContent1": "Welcome to OLM task! ",
+    "instructionsPanelContent2": "You could use this space to display some instructions to the researcher or the participant.",
+    "expSettingsprofile": "Experiment settings profile",
+    "localPathElement": "Local data save directory",
+    "localPathElement_placeHolder": "Press browse button to select...",
+    "participantID": "Participant ID",
+    "participantID_placeholder": "Enter text...",
+    "sessionNumber": "Session number",
+    "termsAndConditions": "Please tick if you understand the instructions and agree for your data to be collected and used for research purposes.<color=red>*</color>",
+    "beginButton": "Begin session."
 }

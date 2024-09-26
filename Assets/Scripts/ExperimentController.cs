@@ -387,7 +387,7 @@ public class ExperimentController : MonoBehaviour{
 
         // Get warningMessage and the criterium
         string warningMessage = session.settings.GetString("warningMessage");
-        warning.transform.GetChild(0).gameObject.GetComponent<UnityEngine.UI.Text>().text = warningMessage;
+        warning.transform.GetChild(0).gameObject.GetComponent<Text>().text = warningMessage;
         warningCriterium = session.settings.GetFloat("warningCriterium");
 
         // Check if the keys have to be changed
@@ -1013,7 +1013,7 @@ public class ExperimentController : MonoBehaviour{
             startEndCountDown = true;
 
             // Get text
-            endScreenText = endScreen.transform.GetChild(0).gameObject.GetComponent<UnityEngine.UI.Text>();
+            endScreenText = endScreen.transform.GetChild(0).gameObject.GetComponent<Text>();
         }
     }
 
