@@ -4664,6 +4664,10 @@ PrefabInstance:
       propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8857235641008765976, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
+      propertyPath: m_SortingOrder
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0a3b6392f04558844bd340e68ced1ff9, type: 3}
 --- !u!114 &653429041 stripped
@@ -5827,6 +5831,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5995311870483503484, guid: 9d9407723ffbbcd488f6399b8e1f5ec8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5995311870483503485, guid: 9d9407723ffbbcd488f6399b8e1f5ec8, type: 3}
+      propertyPath: m_SortingOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5995311870483503486, guid: 9d9407723ffbbcd488f6399b8e1f5ec8, type: 3}
@@ -9292,6 +9300,10 @@ PrefabInstance:
     - target: {fileID: 7349370613498367422, guid: 6f7f2048cd4d2ad4f9295e857113cd52, type: 3}
       propertyPath: m_Name
       value: FPS_Counter
+      objectReference: {fileID: 0}
+    - target: {fileID: 7349370613498367426, guid: 6f7f2048cd4d2ad4f9295e857113cd52, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7349370613498367427, guid: 6f7f2048cd4d2ad4f9295e857113cd52, type: 3}
       propertyPath: m_Pivot.x

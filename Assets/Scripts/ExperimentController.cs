@@ -131,7 +131,7 @@ public class ExperimentController : MonoBehaviour{
         }
 
         // Activate FPS by default
-        activateFPS_Counter(false);
+        activateFPS_Counter(WelcomeScript.testFPS);
 
 #if UNITY_WEBGL
         // If WebGL also make full screen

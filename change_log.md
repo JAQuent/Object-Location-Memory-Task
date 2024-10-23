@@ -149,3 +149,5 @@
         - Automatically set full screen to true in WebGL and check this at each start of a trial.
         - Fix remaining download error message mentioning CSV.
         - Fix that control trials always used wrong skybox but also made the code simpler by removing boolean displaying background.
+- Version 4.0.1
+    - Fixing problem around the FPS counter: a) making sure that the FPS counter is started as soon as the scene opens. b) draw the FPS screen over the UXF UI.
