@@ -151,3 +151,5 @@
         - Fix that control trials always used wrong skybox but also made the code simpler by removing boolean displaying background.
 - Version 4.0.1
     - Fixing problem around the FPS counter: a) making sure that the FPS counter is started as soon as the scene opens. b) draw the FPS screen over the UXF UI.
+- Internal change:
+    - Added a script AngleCalculator.cs: The script calculates the angle between two objects relative to the player. It is meant to check the viewing angle based on two objects estimating the angle between them. I used "cubes" with 0.1 x 1 x 0.1 dimensions and estimated the viewing angle to be 90 degrees with a setting of field of view 60 and 16:9 aspect ratio.
