@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8759358484309672685
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8759358484309672687}
+  - component: {fileID: 8759358484309672684}
+  m_Layer: 0
+  m_Name: CreateScreenshots
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8759358484309672687
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8759358484309672685}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -12.746643, y: -17.923706, z: 26.907883}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8759358484309672684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8759358484309672685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c02fea5889de194e84a0148b18bb3b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cameraToUse: {fileID: 0}
+  cameraPositions:
+  - {x: -85.26239, y: 12.25, z: -29.80898}
+  - {x: -51.45744, y: 12.25, z: -74.23195}
+  - {x: 2.002501, y: 12.25, z: -90.30083}
+  - {x: 54.69755, y: 12.25, z: -71.87787}
+  - {x: 86.5, y: 12.25, z: -26}
+  - {x: 85.26239, y: 12.25, z: 29.80898}
+  - {x: 51.45744, y: 12.25, z: 74.23195}
+  - {x: -2.002501, y: 12.25, z: 90.30083}
+  - {x: -54.69755, y: 12.25, z: 71.87787}
+  - {x: -86.5, y: 12.25, z: 26}
+  targetPoint:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  moveDuration: 5
+  screenshotInterval: 0.01666667
+  objectsToDisable:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  externalPath: C:/Users/alex/Desktop/screenshots
+  objectsToSpawn:
+  - {fileID: 8690098749714790803, guid: 5521c63e96f43ea458888a706fd2d0d4, type: 3}
+  - {fileID: 804170167774747276, guid: 1e9ac2ecc8dbb484a8cc7373eae2aeb9, type: 3}
+  - {fileID: 6748230238056727315, guid: 975adde44cee4ea459fee7c598f314f9, type: 3}
+  - {fileID: 2921325989559284562, guid: a4cf6edafd12cdd44b23d6dd23148ea5, type: 3}
+  - {fileID: 3167361324686006857, guid: a7962d36ed9308145bfa8b5dc482fda2, type: 3}
+  - {fileID: 8506471554729172766, guid: 964170671f7a2644fa0fda9ad78a4793, type: 3}
+  spawnPositions:
+  - {x: -35.458508, y: 2, z: -51.71758}
+  - {x: 29.170734, y: 2, z: -0.4616055}
+  - {x: -40.525597, y: 2, z: 15.779091}
+  - {x: 2.716224, y: 2, z: 51.220768}
+  - {x: -25.074814, y: 2, z: -26.410355}
+  - {x: 26.647718, y: 2, z: 25.686995}
