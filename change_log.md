@@ -154,3 +154,6 @@
 - Internal changes:
     - Added a script AngleCalculator.cs: The script calculates the angle between two objects relative to the player. It is meant to check the viewing angle based on two objects estimating the angle between them. I used "cubes" with 0.1 x 1 x 0.1 dimensions and estimated the viewing angle to be 90 degrees with a setting of field of view 60 and 16:9 aspect ratio.
     - Added create_Screenshots.cs & prefar: This script takes camera positions and object positions to create screenshots while the camera moves through the environment. 
+- Version 4.0.2
+    - Fix bug that startupText is not loaded in Windows.
+    - Deleted unnecessary files in StreamingAssets folder.

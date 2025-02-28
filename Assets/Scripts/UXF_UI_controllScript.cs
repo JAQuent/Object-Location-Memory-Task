@@ -83,7 +83,7 @@ public class UXF_UI_controllScript : MonoBehaviour{
         sr.Close();
 
         // Get the Startup Text from the JSON file
-        GetDataFromJSON(fileNameForStartUpText);
+        GetDataFromJSON(fileContents);
     
         // Change the UI elements
         ChangeUI();
