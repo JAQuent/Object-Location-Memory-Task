@@ -1047,7 +1047,7 @@ public class ExperimentController : MonoBehaviour{
         for(int i = 1; i <= num_blocks2shuffle; i++){
             var currentBlock_index =  blocks2shuffle[i - 1];
             Debug.Log("Shuffle block: " + currentBlock_index);
-            Block currentBlock = session.GetBlock(1);
+            Block currentBlock = session.GetBlock(currentBlock_index);
             currentBlock.trials.Shuffle();
         }
     }

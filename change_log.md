@@ -157,3 +157,5 @@
 - Version 4.0.2
     - Fix bug that startupText is not loaded in Windows.
     - Deleted unnecessary files in StreamingAssets folder.
+- Version 4.0.3
+    - Fix bug that only the first block was actually shuffled. 
