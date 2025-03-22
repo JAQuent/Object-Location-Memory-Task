@@ -180,7 +180,7 @@ In the main .json file several things can and have to be configured in order for
 - _endMessage_ = String for message to be displayed at the end of the experiment as part of the countdown from _endCountDown_ to zero. After that, the task closes automatically. 
 - _url_ = String for the url of the HTTPPost server.
 - _username_ = String for the username for the HTTPPost server.
-- _password_ = String for the password for the HTTPPost server. __BE CAREFUL not share a sensitive password with participants as they can also just see the password in the folder.__ 
+- _password_ = String for the password for the HTTPPost server. __BE CAREFUL not to share a sensitive password with participants as because it can be accessed by everyone.__ 
 - _changeKeys_ = Specification whether you want to change the default keys from W, A, D plus L to something else. Possible values: false/true. 
 - _keys_ = A list of strings for the four keys necessary for the task. Please check [here](https://docs.unity3d.com/ScriptReference/KeyCode.html) to get the correct names. Please do __not__ use "S", "R" or "space bar" as they are reserved keys.
 - _useResponsePixx_ = Specification whether you want to use a responsePixx button box. This needs to be configured separately (see below). 
