@@ -34,8 +34,8 @@
 
 ### Categorical objects
 | Object name | source |
-| Animals Pack Medium | https://sketchfab.com/3d-models/animals-pack-medium-785c39df44a2425189ef1089ae325f1a |
 | --- | --- |
+| Animals Pack Medium | https://sketchfab.com/3d-models/animals-pack-medium-785c39df44a2425189ef1089ae325f1a |
 | deer-full-body | https://sketchfab.com/3d-models/deer-full-body-2205809f7e61444db62640b2d02c89f3 |
 | Canaan Dog | https://free3d.com/3d-model/canaan-dog-v1--72376.html |
 | elephant | https://sketchfab.com/3d-models/elephant-888cb879964e4b248f83a42624c0f973#download |
