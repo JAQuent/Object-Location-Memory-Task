@@ -76,3 +76,6 @@ crashlytics-build.properties
 ignore*
 RenderMonster_output
 Assets/Utilities/CrazyOptimizer*
+
+Assets/StreamingAssets/Screenshots/*
+Assets/StreamingAssets/positions.*
