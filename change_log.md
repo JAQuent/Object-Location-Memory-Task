@@ -160,7 +160,7 @@
 - Version 4.0.3
     - Fix bug that only the first block was actually shuffled. 
 - Version 4.0.4
-    - Because of s security issue (https://unity.com/security/sept-2025-01), the Unity verison was change to 2021.3.45f2. However, for this release no new build files were created. This will only happen with the next release. 
+    - Because of s security issue (https://unity.com/security/sept-2025-01), the Unity version was change to 2021.3.45f2. However, for this release no new build files were created. This will only happen with the next release. 
     - Updated Credits.md.
-    - Update README.md for Zenodo DOI.
+    - Updatec README.md for Zenodo DOI.
     - Add CITATION.cff file.
