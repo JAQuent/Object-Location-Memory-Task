@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/473855131.svg)](https://zenodo.org/badge/latestdoi/473855131)
+
 <p align="center">
         <img src="nonUnity_folder/images/banner.png" width="100%">
 </p>

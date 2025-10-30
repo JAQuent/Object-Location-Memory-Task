@@ -19,18 +19,18 @@
 | Water tank | water-tank.rar | https://free3d.com/3d-model/low-poly-water-tank-for-use-in-games-2k-textures-49734.html |
 | WoodenChessPawn | WoodenChessPawn.zip | https://free3d.com/3d-model/woodenchesspawnsidea-v1--434515.html |
 | Street Cone | street-cone.zip | https://free3d.com/3d-model/street-cone-pbr-438608.html |
-| Donut | donut.zip | https://www.turbosquid.com/3d-models/donuts-food-homer-blend-free/542504 |
 | Donut | 86-34-donut.zip | https://free3d.com/3d-model/donut-716088.html |
 | Vase | 85-vase.zip | https://free3d.com/3d-model/flower-vase-215055.html |
 | Flower Vase | Flower_Vase_.fbx.rar | https://www.turbosquid.com/3d-models/flower-vase-3d-model/721487 |
 | Basketball | NBA_BASKETBALL.rar | https://free3d.com/3d-model/official-nba-spalding-basketball-86751.html |
 | Vase | Vase.blend | https://www.turbosquid.com/3d-models/vase-games-3d-1509284 |
 | Coke | coke_bottle.zip | https://sketchfab.com/3d-models/day-3-coke-bottle-58f61a86bdfd49dab68dfbf10eb9b842 |
-| dice | dice.rar | https://free3d.com/3d-model/dice-34662.html |
+| Dice | dice.rar | https://free3d.com/3d-model/dice-34662.html |
 | Cake | cake-3d.zip | https://sketchfab.com/3d-models/cake-3d-756da5ef6d0249479510e6bdd1856e42 |
 | Drum | small-drum.zip | https://sketchfab.com/3d-models/small-drum-e34246f2fcdd4c81b0d982a2053b854c |
 | Chinese lamp | chinese-lamp.zip | https://sketchfab.com/3d-models/chinese-lamp-9fbf203c240d43699c311cd1be0db309 |
 | Pineapple | pineapple.zip | https://sketchfab.com/3d-models/pineapple-3debe241ac7e401aa36ae944daa1708e |
+| Barrel | 866322dfac5c55799f32fb9a1cdb2cf3.zip | https://free3d.io/?a=download&id=9655a896 |
 
 ### Categorical objects
 | Object name | source |
@@ -60,3 +60,18 @@
 ## Sounds
 - [notification2-freesound.wav](https://freesound.org/people/Thoribass/sounds/254819/#)
 - [Correct.mp3](https://freesound.org/people/LittleRainySeasons/sounds/335908/)
+
+## Unity asset store resources
+| Name | URL |
+| --- | --- |
+| Canyon Pack - By Pixel Make | https://assetstore.unity.com/packages/3d/canyon-pack-by-pixel-make-98470 |
+| Chinese Pavilion 3D Model | https://assetstore.unity.com/packages/3d/environments/industrial/chinese-pavilion-3d-model-157126 |
+| Conifers [BOTD] | https://assetstore.unity.com/packages/3d/vegetation/trees/conifers-botd-142076 |
+| Desert Buildings | https://assetstore.unity.com/packages/3d/environments/urban/desert-buildings-71445 |
+| Autumn Mountain | https://assetstore.unity.com/packages/3d/environments/landscapes/autumn-mountain-52251#content |
+| HQ Rocks | https://assetstore.unity.com/packages/3d/props/exterior/hq-rocks-pack-66895 |
+| Free Snow Mountain | https://assetstore.unity.com/packages/3d/environments/landscapes/free-snow-mountain-63002#content |
+| VIS - PBR Grass Textures | https://assetstore.unity.com/packages/2d/textures-materials/floors/vis-pbr-grass-textures-198071 |
+| Free HDR Sky | https://assetstore.unity.com/packages/2d/textures-materials/sky/free-hdr-sky-61217#content |
+| Skybox Series Free | https://assetstore.unity.com/packages/2d/textures-materials/sky/skybox-series-free-103633#content |
+| Brick Textures 4k | https://assetstore.unity.com/packages/2d/textures-materials/brick-textures-4k-178830 |
